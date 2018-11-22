@@ -16,6 +16,8 @@ use wasm_bindgen::prelude::*;
 use keys::Key;
 use state::State;
 
+const WRAPPER_ID: &str = "wrapper";
+
 cfg_if! {
     // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
     // allocator.
@@ -56,18 +58,32 @@ pub fn process_key(key_val: &str) -> bool {
     };
 
     STATE.with(|state_cell| {
+        // Access state mutably
         let mut state = state_cell.borrow_mut();
+
+        // Get old virtual DOM
         let old_vdom = state.to_virtual_node();
+
+        // Handle input
         state.handle_key(key);
+
+        // Get new virtual DOM
         let new_vdom = state.to_virtual_node();
+
+        // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
         web_sys::console::log_1(&format!("RS: New state: {:?}", &state).into());
         web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
 
-        set_inner_html("wrapper", &state.to_html());
+        // Patch the current DOM
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
+        virtual_dom_rs::patch(wrapper, &patches);
     });
 
+    // We handled the event, so prevent the default event from being handled.
     true
 }
 

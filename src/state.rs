@@ -132,17 +132,6 @@ impl State {
         self.caret_end = end;
     }
 
-    pub fn to_html(&self) -> String {
-        let mut out = String::new();
-        for node in self.nodes.iter() {
-            match node {
-                Node::Text(text) => out.push_str(&text),
-                Node::Newline => out.push_str("<br>"),
-            }
-        }
-        out
-    }
-
     pub fn to_virtual_node(&self) -> VirtualNode {
         let mut root = VirtualNode::new("span");
         if root.children.is_none() {
