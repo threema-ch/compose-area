@@ -84,6 +84,25 @@ const updateCaretPosition = () => {
     }
 };
 
+/**
+ * Navigation keys according to https://www.w3.org/TR/uievents-key/
+ */
+function isNavigationKey(key) {
+    switch (key) {
+        case 'ArrowDown':
+        case 'ArrowLeft':
+        case 'ArrowRight':
+        case 'ArrowUp':
+        case 'End':
+        case 'Home':
+        case 'PageDown':
+        case 'PageUp':
+            return true;
+        default:
+            return false;
+    }
+}
+
 wrapper.addEventListener("keydown", (e) => {
     console.log('keydown:', e);
     if (!e.ctrlKey && !e.altKey && !e.metaKey) {
@@ -95,7 +114,7 @@ wrapper.addEventListener("keydown", (e) => {
 });
 wrapper.addEventListener("keyup", (e) => {
     console.log('keyup:', e);
-    if (e.key.startsWith('Arrow')) {
+    if (isNavigationKey(e.key)) {
         updateCaretPosition();
     }
 });
