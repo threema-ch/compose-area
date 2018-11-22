@@ -1,4 +1,5 @@
 extern crate cfg_if;
+extern crate unicode_normalization;
 extern crate virtual_dom_rs;
 extern crate wasm_bindgen;
 extern crate web_sys;
@@ -46,9 +47,13 @@ pub fn set_inner_html(id: &str, html: &str) {
     wrapper.set_inner_html(html);
 }
 
+/// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
-pub fn process_key(key_val: &str) {
-    let key = Key::from_str(key_val);
+pub fn process_key(key_val: &str) -> bool {
+    let key = match Key::from_str(key_val) {
+        Some(key) => key,
+        None => return false,
+    };
 
     STATE.with(|state_cell| {
         let mut state = state_cell.borrow_mut();
@@ -57,9 +62,24 @@ pub fn process_key(key_val: &str) {
         let new_vdom = state.to_virtual_node();
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        web_sys::console::log_1(&format!("New state: {:?}", &state).into());
-        web_sys::console::log_1(&format!("Patches {:?}", &patches).into());
+        web_sys::console::log_1(&format!("RS: New state: {:?}", &state).into());
+        web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
 
         set_inner_html("wrapper", &state.to_html());
+    });
+
+    true
+}
+
+/// Set the start and end of the caret position (relative to the HTML).
+#[wasm_bindgen]
+pub fn update_caret_position(start: usize, end: usize) {
+    web_sys::console::log_1(&format!("RS: Update caret position ({}, {})", start, end).into());
+    if end < start {
+        return;
+    }
+    STATE.with(|state_cell| {
+        let mut state = state_cell.borrow_mut();
+        state.set_caret_position(start, end);
     });
 }

@@ -8,15 +8,28 @@ pub(crate) enum Node {
     Newline,
 }
 
+impl Node {
+    fn to_html_size(&self) -> usize {
+        match self {
+            Node::Text(val) => val.len(),
+            Node::Newline => 4, // <br>
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct State {
     nodes: Vec<Node>,
+    caret_start: usize,
+    caret_end: usize,
 }
 
 impl State {
     pub fn new() -> Self {
         State {
             nodes: vec![],
+            caret_start: 0,
+            caret_end: 0,
         }
     }
 
@@ -25,7 +38,6 @@ impl State {
             Key::Enter => self.add_newline(),
             Key::Backspace => self.handle_backspace(),
             Key::Character(c) => self.add_text(c.to_string()),
-            _ => {},
         }
     }
 
@@ -53,6 +65,11 @@ impl State {
 
     pub fn add_newline(&mut self) {
         self.nodes.push(Node::Newline);
+    }
+
+    pub fn set_caret_position(&mut self, start: usize, end: usize) {
+        self.caret_start = start;
+        self.caret_end = end;
     }
 
     pub fn to_html(&self) -> String {
