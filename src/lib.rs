@@ -12,9 +12,10 @@ use std::cell::RefCell;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
+use web_sys::{Element, Node, NodeList, Range};
 
 use keys::Key;
-use state::State;
+use state::{State, Direction};
 
 const WRAPPER_ID: &str = "wrapper";
 
@@ -49,6 +50,63 @@ pub fn set_inner_html(id: &str, html: &str) {
     wrapper.set_inner_html(html);
 }
 
+/// A position relative to a node.
+enum Position<'a> {
+    After(&'a Node),
+    Offset(&'a Node, u32),
+}
+
+fn add_range_at(pos: Position) {
+    web_sys::console::debug_1(&"add_range_at".into());
+
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+
+    let range: Range = document.create_range().expect("Could not create range");
+    match pos {
+        Position::After(node) => {
+            range.set_start_after(node).expect("Could not set range start after");
+            range.set_end_after(node).expect("Could not set range end after");
+        }
+        Position::Offset(node, 0) => {
+            range.set_start_before(node).expect("Could not set range start before");
+            range.set_end_before(node).expect("Could not set range end before");
+        }
+        Position::Offset(node, offset) => {
+            range.set_start(node, offset).expect("Could not set range start");
+            range.set_end(node, offset).expect("Could not set range end");
+        }
+    }
+
+    if let Some(sel) = window.get_selection().expect("Could not get selection from window") {
+        sel.remove_all_ranges().expect("Could not remove ranges");
+        sel.add_range(&range).expect("Could not add range");
+    } else {
+        // TODO warn
+    }
+}
+
+fn browser_set_caret_position(wrapper: &Element, state: &State) {
+    web_sys::console::debug_1(&"browser_set_caret_position".into());
+
+    let nodes: NodeList = wrapper.child_nodes();
+    let node_count = nodes.length();
+    assert_eq!(node_count, state.node_count() as u32);
+
+    if let Some(pos) = state.find_start_node(Direction::After) {
+        match nodes.get(pos.index as u32) {
+            Some(ref node) => add_range_at(Position::Offset(&node, pos.offset as u32)),
+            None => { /* TODO */ }
+        }
+    } else {
+        // We're at the end of the node list. Use the latest node.
+        match nodes.get(node_count - 1) {
+            Some(ref node) => add_range_at(Position::After(&node)),
+            None => { /* TODO */ },
+        }
+    }
+}
+
 /// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
 pub fn process_key(key_val: &str) -> bool {
@@ -81,6 +139,11 @@ pub fn process_key(key_val: &str) -> bool {
         let document = window.document().expect("should have a document on window");
         let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
         virtual_dom_rs::patch(wrapper, &patches);
+
+        // Update the caret position in the browser
+        // TODO: Do we really need to lookup the wrapper again? https://github.com/chinedufn/percy/issues/49
+        let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
+        browser_set_caret_position(&wrapper, &state);
     });
 
     // We handled the event, so prevent the default event from being handled.
