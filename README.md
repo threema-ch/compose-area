@@ -9,3 +9,11 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 ## Building
 
     wasm-pack build
+
+## Testing
+
+    # Unit tests
+    cargo test
+
+    # Browser tests (headless)
+    wasm-pack test --headless --firefox
