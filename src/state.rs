@@ -124,21 +124,36 @@ impl State {
     }
 
     fn handle_backspace(&mut self) {
-        let mut remove_node = false;
-        match self.nodes.last_mut() {
-            Some(Node::Text(val)) => {
-                self.caret_start -= 1;
-                self.caret_end = self.caret_start;
-                remove_node = val.pop().is_none();
-            },
-            Some(Node::Newline) => remove_node = true,
-            None => {},
-        };
-        if remove_node {
-            if let Some(removed) = self.nodes.pop() {
-                self.caret_start -= removed.html_size();
-                self.caret_end = self.caret_start;
+        // Handle start-of-input case, nothing to do
+        if self.caret_start == 0 {
+            return;
+        }
+
+        // Set if the entire node should be removed
+        // (e.g. because it became empty after the deletion).
+        let mut remove_node: Option<usize> = None;
+
+        if let Some(current_node) = self.find_start_node_mut(Direction::Before) {
+            match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
+                // Text node, remove last character and the entire node in
+                // case there's only a single character in it.
+                &mut Node::Text(ref mut val) => {
+                    if val.len() <= 1 {
+                        remove_node = Some(current_node.index);
+                    } else {
+                        val.remove(current_node.offset - 1);
+                        self.caret_start -= 1;
+                        self.caret_end = self.caret_start;
+                    }
+                },
+                // Block node, remove it entirely
+                &mut Node::Newline => remove_node = Some(current_node.index),
             }
+        }
+        if let Some(index) = remove_node {
+            let removed_node = self.nodes.remove(index);
+            self.caret_start -= removed_node.html_size();
+            self.caret_end = self.caret_start;
         }
     }
 
@@ -250,6 +265,51 @@ mod tests {
         state.set_caret_position(2, 2);
         state.handle_key(Key::Character("d"));
         assert_eq!(state.nodes, vec![Node::Text("abdc".into())]);
+    }
+
+    #[test]
+    fn test_handle_key_backspace_in_text() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("abc".into())];
+        state.set_caret_position(2, 2);
+        state.handle_key(Key::Backspace);
+        assert_eq!(state.nodes, vec![Node::Text("ac".into())]);
+        assert_eq!(state.caret_start, 1);
+        assert_eq!(state.caret_end, 1);
+    }
+
+    #[test]
+    fn test_handle_key_backspace_after_text() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("abc".into()), Node::Newline];
+        state.set_caret_position(3, 3);
+        state.handle_key(Key::Backspace);
+        assert_eq!(state.nodes, vec![Node::Text("ab".into()), Node::Newline]);
+        assert_eq!(state.caret_start, 2);
+        assert_eq!(state.caret_end, 2);
+    }
+
+    #[test]
+    fn test_handle_key_backspace_after_newline() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("abc".into()), Node::Newline, Node::Text("d".into())];
+        let pos = 3 + Node::Newline.html_size();
+        state.set_caret_position(pos, pos);
+        state.handle_key(Key::Backspace);
+        assert_eq!(state.nodes, vec![Node::Text("abc".into()), Node::Text("d".into())]);
+        assert_eq!(state.caret_start, 3);
+        assert_eq!(state.caret_end, 3);
+    }
+
+    #[test]
+    fn test_handle_key_backspace_before_text() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("ab".into())];
+        state.set_caret_position(0, 0);
+        state.handle_key(Key::Backspace);
+        assert_eq!(state.nodes, vec![Node::Text("ab".into())]);
+        assert_eq!(state.caret_start, 0);
+        assert_eq!(state.caret_end, 0);
     }
 
     /// Empty node list
