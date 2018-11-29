@@ -3,7 +3,7 @@ use virtual_dom_rs::VirtualNode;
 use ::keys::Key;
 
 #[derive(Debug, PartialEq, Clone)]
-pub(crate) enum Node {
+pub enum Node {
     Text(String),
     Newline,
 }
@@ -19,11 +19,11 @@ impl Node {
 
 /// The node at the current caret position.
 #[derive(Debug, PartialEq)]
-struct CurrentNode {
+pub struct NodeIndexOffset {
     /// Node index.
-    index: usize,
+    pub index: usize,
     /// Offset from the node start.
-    offset: usize,
+    pub offset: usize,
 }
 
 /// This enum is relevant when determining the current node while the caret is
@@ -31,11 +31,14 @@ struct CurrentNode {
 ///
 /// Depending on this enum value, the node before or after the cursor is returned.
 #[derive(Debug, PartialEq)]
-enum Direction {
+pub enum Direction {
     Before,
     After,
 }
 
+/// The full application state of the compose area.
+///
+/// TODO: Evaluate whether we could store the caret position as (DomNode/Offset pair)
 #[derive(Debug)]
 pub struct State {
     nodes: Vec<Node>,
@@ -52,6 +55,16 @@ impl State {
         }
     }
 
+    /// Return the number of nodes.
+    pub fn node_count(&self) -> usize {
+        self.nodes.len()
+    }
+
+    /// Return the start and end caret position.
+    pub fn caret_position(&self) -> (usize, usize) {
+        (self.caret_start, self.caret_end)
+    }
+
     /// Return the node at the current caret start position and the offset from
     /// the beginning of that node.
     ///
@@ -61,7 +74,7 @@ impl State {
     /// If the current caret position is after the end of the last node and the
     /// direction is `Before`, then the last node will be returned, with
     /// corrected offset.
-    fn find_start_node_mut(&mut self, direction: Direction) -> Option<CurrentNode> {
+    pub fn find_start_node(&self, direction: Direction) -> Option<NodeIndexOffset> {
         let mut offset = self.caret_start;
         let mut html_size = 0;
 
@@ -71,13 +84,13 @@ impl State {
         }
 
         // Iterate through the nodes
-        for (index, node) in self.nodes.iter_mut().enumerate() {
+        for (index, node) in self.nodes.iter().enumerate() {
             // If we're exactly at the start of the node, we can stop looking further.
             if offset == 0 {
                 return match direction {
                     Direction::Before if index == 0 => None,
-                    Direction::Before => Some(CurrentNode { offset: html_size, index: index - 1 }),
-                    Direction::After => Some(CurrentNode { offset, index }),
+                    Direction::Before => Some(NodeIndexOffset { offset: html_size, index: index - 1 }),
+                    Direction::After => Some(NodeIndexOffset { offset, index }),
                 };
             }
 
@@ -90,13 +103,13 @@ impl State {
                     // If we're at the end and the caller wanted the node before
                     // the current caret position, return the current node.
                     if new_offset == 0 && direction == Direction::Before {
-                        return Some(CurrentNode { offset, index });
+                        return Some(NodeIndexOffset { offset, index });
                     }
                     offset = new_offset;
                 },
                 None => {
                     // Underflow. Once we're below 0, we found the node.
-                    return Some(CurrentNode { offset, index });
+                    return Some(NodeIndexOffset { offset, index });
                 },
             }
         }
@@ -106,7 +119,7 @@ impl State {
             Direction::Before => {
                 assert!(offset > 0);
                 // Fall back to the last node, but fix the offset.
-                Some(CurrentNode {
+                Some(NodeIndexOffset {
                     offset: self.nodes.last().unwrap().html_size(),
                     index: self.nodes.len() - 1,
                 })
@@ -133,7 +146,7 @@ impl State {
         // (e.g. because it became empty after the deletion).
         let mut remove_node: Option<usize> = None;
 
-        if let Some(current_node) = self.find_start_node_mut(Direction::Before) {
+        if let Some(current_node) = self.find_start_node(Direction::Before) {
             match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
                 // Text node, remove last character and the entire node in
                 // case there's only a single character in it.
@@ -159,7 +172,7 @@ impl State {
 
     pub fn add_text(&mut self, text: String) {
         // Find the current node we're at
-        if let Some(current_node) = self.find_start_node_mut(Direction::After) {
+        if let Some(current_node) = self.find_start_node(Direction::After) {
             // If we're already at or in a text node, update existing text.
             match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
                 &mut Node::Text(ref mut val) => {
@@ -316,8 +329,8 @@ mod tests {
     #[test]
     fn test_find_start_node_empty() {
         let mut state = State::new();
-        assert!(state.find_start_node_mut(Direction::Before).is_none());
-        assert!(state.find_start_node_mut(Direction::After).is_none());
+        assert!(state.find_start_node(Direction::Before).is_none());
+        assert!(state.find_start_node(Direction::After).is_none());
     }
 
     /// Before the first node
@@ -325,9 +338,9 @@ mod tests {
     fn test_find_start_node_before_first() {
         let mut state = State::new();
         state.nodes = vec![Node::Text("ab".into())];
-        assert_eq!(state.find_start_node_mut(Direction::Before), None);
-        assert_eq!(state.find_start_node_mut(Direction::After),
-                   Some(CurrentNode { offset: 0, index: 0 }));
+        assert_eq!(state.find_start_node(Direction::Before), None);
+        assert_eq!(state.find_start_node(Direction::After),
+                   Some(NodeIndexOffset { offset: 0, index: 0 }));
     }
 
     /// In the middle of a text node
@@ -336,10 +349,10 @@ mod tests {
         let mut state = State::new();
         state.nodes = vec![Node::Text("ab".into())];
         state.set_caret_position(1, 1);
-        assert_eq!(state.find_start_node_mut(Direction::Before),
-                   Some(CurrentNode { offset: 1, index: 0 }));
-        assert_eq!(state.find_start_node_mut(Direction::After),
-                   Some(CurrentNode { offset: 1, index: 0 }));
+        assert_eq!(state.find_start_node(Direction::Before),
+                   Some(NodeIndexOffset { offset: 1, index: 0 }));
+        assert_eq!(state.find_start_node(Direction::After),
+                   Some(NodeIndexOffset { offset: 1, index: 0 }));
     }
 
     /// At the end
@@ -348,9 +361,9 @@ mod tests {
         let mut state = State::new();
         state.nodes = vec![Node::Text("ab".into())];
         state.set_caret_position(2, 2);
-        assert_eq!(state.find_start_node_mut(Direction::Before),
-                   Some(CurrentNode { offset: 2, index: 0 }));
-        assert_eq!(state.find_start_node_mut(Direction::After), None);
+        assert_eq!(state.find_start_node(Direction::Before),
+                   Some(NodeIndexOffset { offset: 2, index: 0 }));
+        assert_eq!(state.find_start_node(Direction::After), None);
     }
 
     /// Between two nodes
@@ -359,10 +372,10 @@ mod tests {
         let mut state = State::new();
         state.nodes = vec![Node::Text("ab".into()), Node::Newline];
         state.set_caret_position(2, 2);
-        assert_eq!(state.find_start_node_mut(Direction::Before),
-                   Some(CurrentNode { offset: 2, index: 0 }));
-        assert_eq!(state.find_start_node_mut(Direction::After),
-                   Some(CurrentNode { offset: 0, index: 1 }));
+        assert_eq!(state.find_start_node(Direction::Before),
+                   Some(NodeIndexOffset { offset: 2, index: 0 }));
+        assert_eq!(state.find_start_node(Direction::After),
+                   Some(NodeIndexOffset { offset: 0, index: 1 }));
     }
 
     #[test]
@@ -375,10 +388,10 @@ mod tests {
         state.set_caret_position(6, 6);
 
         // There is nothing after the caret position
-        assert_eq!(state.find_start_node_mut(Direction::After), None);
+        assert_eq!(state.find_start_node(Direction::After), None);
 
         // Use the last element but fix the offset
-        assert_eq!(state.find_start_node_mut(Direction::Before),
-                   Some(CurrentNode { offset: 3, index: 1 }));
+        assert_eq!(state.find_start_node(Direction::Before),
+                   Some(NodeIndexOffset { offset: 3, index: 1 }));
     }
 }
