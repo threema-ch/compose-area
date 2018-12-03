@@ -130,7 +130,7 @@ impl State {
 
     pub fn handle_key(&mut self, key: Key) {
         match key {
-            Key::Enter => self.add_newline(),
+            Key::Enter => self.handle_enter(),
             Key::Backspace => self.handle_backspace(),
             Key::Character(c) => self.add_text(c.to_string()),
         }
@@ -170,7 +170,7 @@ impl State {
         }
     }
 
-    pub fn add_text(&mut self, text: String) {
+    fn add_text(&mut self, text: String) {
         // Find the current node we're at
         if let Some(current_node) = self.find_start_node(Direction::After) {
             // If we're already at or in a text node, update existing text.
@@ -201,11 +201,39 @@ impl State {
         self.nodes.push(Node::Text(text));
     }
 
-    pub fn add_newline(&mut self) {
-        let nl = Node::Newline;
-        self.caret_start += nl.html_size();
+    fn handle_enter(&mut self) {
+        // Find the current node we're at
+        if let Some(current_node) = self.find_start_node(Direction::After) {
+            // If we're between two nodes, insert node
+            if current_node.offset == 0 {
+                self.caret_start += Node::Newline.html_size();
+                self.caret_end = self.caret_start;
+                self.nodes.insert(current_node.index, Node::Newline);
+                return;
+            }
+
+            // Otherwise, if we're at a text node, split it and insert newline between.
+            let split_node = {
+                match self.nodes.get_mut(current_node.index).expect("No node at the specified index") {
+                    &mut Node::Text(ref mut val) => {
+                        Some(Node::Text(val.split_off(current_node.offset)))
+                    }
+                    _ => None
+                }
+            };
+            if let Some(split_node) = split_node {
+                self.caret_start += Node::Newline.html_size();
+                self.caret_end = self.caret_start;
+                self.nodes.insert(current_node.index + 1, Node::Newline);
+                self.nodes.insert(current_node.index + 2, split_node);
+                return;
+            }
+        }
+
+        // If none was found, insert at end
+        self.caret_start += Node::Newline.html_size();
         self.caret_end = self.caret_start;
-        self.nodes.push(nl);
+        self.nodes.push(Node::Newline);
     }
 
     pub fn set_caret_position(&mut self, start: usize, end: usize) {
@@ -281,7 +309,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_key_backspace_in_text() {
+    fn test_handle_backspace_in_text() {
         let mut state = State::new();
         state.nodes = vec![Node::Text("abc".into())];
         state.set_caret_position(2, 2);
@@ -292,7 +320,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_key_backspace_after_text() {
+    fn test_handle_backspace_after_text() {
         let mut state = State::new();
         state.nodes = vec![Node::Text("abc".into()), Node::Newline];
         state.set_caret_position(3, 3);
@@ -303,7 +331,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_key_backspace_after_newline() {
+    fn test_handle_backspace_after_newline() {
         let mut state = State::new();
         state.nodes = vec![Node::Text("abc".into()), Node::Newline, Node::Text("d".into())];
         let pos = 3 + Node::Newline.html_size();
@@ -315,7 +343,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_key_backspace_before_text() {
+    fn test_handle_backspace_before_text() {
         let mut state = State::new();
         state.nodes = vec![Node::Text("ab".into())];
         state.set_caret_position(0, 0);
@@ -323,6 +351,58 @@ mod tests {
         assert_eq!(state.nodes, vec![Node::Text("ab".into())]);
         assert_eq!(state.caret_start, 0);
         assert_eq!(state.caret_end, 0);
+    }
+
+    #[test]
+    fn test_handle_enter_start() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("ab".into())];
+        state.set_caret_position(0, 0);
+        state.handle_key(Key::Enter);
+        assert_eq!(state.nodes, vec![Node::Newline, Node::Text("ab".into())]);
+        assert_eq!(state.caret_start, Node::Newline.html_size());
+        assert_eq!(state.caret_end, Node::Newline.html_size());
+    }
+
+    #[test]
+    fn test_handle_enter_end() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("ab".into())];
+        state.set_caret_position(2, 2);
+        state.handle_key(Key::Enter);
+        assert_eq!(state.nodes, vec![Node::Text("ab".into()), Node::Newline]);
+        assert_eq!(state.caret_start, 2 + Node::Newline.html_size());
+        assert_eq!(state.caret_end, 2 + Node::Newline.html_size());
+    }
+
+    #[test]
+    fn test_handle_enter_between_nodes() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("a".into()), Node::Text("b".into())];
+        state.set_caret_position(1, 1);
+        state.handle_key(Key::Enter);
+        assert_eq!(state.nodes, vec![
+            Node::Text("a".into()),
+            Node::Newline,
+            Node::Text("b".into()),
+        ]);
+        assert_eq!(state.caret_start, 1 + Node::Newline.html_size());
+        assert_eq!(state.caret_end, 1 + Node::Newline.html_size());
+    }
+
+    #[test]
+    fn test_handle_enter_split_text() {
+        let mut state = State::new();
+        state.nodes = vec![Node::Text("ab".into())];
+        state.set_caret_position(1, 1);
+        state.handle_key(Key::Enter);
+        assert_eq!(state.nodes, vec![
+            Node::Text("a".into()),
+            Node::Newline,
+            Node::Text("b".into()),
+        ]);
+        assert_eq!(state.caret_start, 1 + Node::Newline.html_size());
+        assert_eq!(state.caret_end, 1 + Node::Newline.html_size());
     }
 
     /// Empty node list
