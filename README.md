@@ -17,3 +17,15 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
     # Browser tests (headless)
     wasm-pack test --headless --firefox
+
+## Running the testproject
+
+    # Setup npm
+    cd pkg
+    npm link
+    cd ../www
+    npm install
+    npm link compose-area 
+
+    # Run server
+    npm run start
