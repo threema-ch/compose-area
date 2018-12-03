@@ -138,11 +138,9 @@ pub fn process_key(key_val: &str) -> bool {
         let window = web_sys::window().expect("no global `window` exists");
         let document = window.document().expect("should have a document on window");
         let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
-        virtual_dom_rs::patch(wrapper, &patches);
+        virtual_dom_rs::patch(wrapper.clone(), &patches);
 
         // Update the caret position in the browser
-        // TODO: Do we really need to lookup the wrapper again? https://github.com/chinedufn/percy/issues/49
-        let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
         browser_set_caret_position(&wrapper, &state);
     });
 
