@@ -252,6 +252,10 @@ impl State {
                 Node::Newline => root.children.as_mut().unwrap().push(VirtualNode::new("br")),
             }
         }
+
+        // Due to contenteditable quirks, always add a trailing newline.
+        root.children.as_mut().unwrap().push(VirtualNode::new("br"));
+
         root
     }
 }
