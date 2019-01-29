@@ -110,6 +110,9 @@ fn browser_set_caret_position(wrapper: &Element, state: &State) {
 /// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
 pub fn process_key(key_val: &str) -> bool {
+    // Set the panic hook
+    utils::set_panic_hook();
+
     let key = match Key::from_str(key_val) {
         Some(key) => key,
         None => return false,

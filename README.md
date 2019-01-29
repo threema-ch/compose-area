@@ -8,7 +8,11 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
 ## Building
 
+    # Debug build
     wasm-pack build
+
+    # Release build
+    wasm-pack build --release -- --no-default-features
 
 ## Testing
 
