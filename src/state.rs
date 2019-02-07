@@ -1,4 +1,4 @@
-use virtual_dom_rs::{VirtualNode, VElement};
+use virtual_dom_rs::VirtualNode;
 
 use crate::keys::Key;
 
@@ -241,19 +241,20 @@ impl State {
         self.caret_end = end;
     }
 
-    pub fn to_virtual_node(&self) -> VirtualNode {
-        let mut root = VElement::new("span");
+    pub fn to_virtual_nodes(&self) -> Vec<VirtualNode> {
+        let mut virtual_nodes = Vec::with_capacity(self.node_count() + 1);
+
         for node in self.nodes.iter() {
             match node {
-                Node::Text(text) => root.children.push(VirtualNode::text(text)),
-                Node::Newline => root.children.push(VirtualNode::element("br")),
+                Node::Text(text) => virtual_nodes.push(VirtualNode::text(text)),
+                Node::Newline => virtual_nodes.push(VirtualNode::element("br")),
             }
         }
 
         // Due to contenteditable quirks, always add a trailing newline.
-        root.children.push(VirtualNode::element("br"));
+        virtual_nodes.push(VirtualNode::element("br"));
 
-        root.into()
+        virtual_nodes
     }
 }
 

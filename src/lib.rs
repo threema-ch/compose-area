@@ -8,7 +8,7 @@ mod utils;
 use std::cell::RefCell;
 
 use cfg_if::cfg_if;
-use virtual_dom_rs::VirtualNode;
+use virtual_dom_rs::{VirtualNode, VElement};
 use wasm_bindgen::prelude::*;
 use web_sys::{Element, Node, NodeList, Range};
 
@@ -31,6 +31,16 @@ thread_local! {
     static STATE: RefCell<State> = RefCell::new(State::new());
 }
 
+/// Wrap the list of virtual nodes in a content editable wrapper element.
+fn wrap(virtual_nodes: Vec<VirtualNode>) -> VirtualNode {
+    let mut wrapper = VElement::new("div");
+    wrapper.props.insert("id".into(), WRAPPER_ID.into());
+    wrapper.props.insert("class".into(), "cawrapper initialized".into());
+    wrapper.props.insert("contenteditable".into(), "true".into());
+    wrapper.children = virtual_nodes;
+    wrapper.into()
+}
+
 #[wasm_bindgen]
 pub fn bind_to(id: &str) {
     utils::set_panic_hook();
@@ -46,12 +56,10 @@ pub fn bind_to(id: &str) {
     // it should be, which can lead to funny errors when patching.
     STATE.with(|state_cell| {
         let state = state_cell.borrow();
-        let initial_vdom: VirtualNode = state.to_virtual_node();
+        let initial_vdom: VirtualNode = wrap(state.to_virtual_nodes());
         let initial_dom: Node = initial_vdom.create_dom_node().node;
-        while let Some(node) = wrapper.last_child() {
-            wrapper.remove_child(&node).expect("Could not remove wrapper child node");
-        }
-        wrapper.append_child(&initial_dom).expect("Could not initialize wrapper");
+        wrapper.replace_with_with_node_1(&initial_dom)
+            .expect("Could not initialize wrapper");
     });
 
     web_sys::console::log_1(&format!("Initialized #{}", id).into());
@@ -105,7 +113,7 @@ fn browser_set_caret_position(wrapper: &Element, state: &State) {
 
     let nodes: NodeList = wrapper.child_nodes();
     let node_count = nodes.length();
-    assert_eq!(node_count, state.node_count() as u32);
+    assert_eq!(node_count, state.node_count() as u32 + 1);
 
     if let Some(pos) = state.find_start_node(Direction::After) {
         match nodes.get(pos.index as u32) {
@@ -139,13 +147,13 @@ pub fn process_key(key_val: &str) -> bool {
         let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
 
         // Get old virtual DOM
-        let old_vdom = state.to_virtual_node();
+        let old_vdom = wrap(state.to_virtual_nodes());
 
         // Handle input
         state.handle_key(key);
 
         // Get new virtual DOM
-        let new_vdom = state.to_virtual_node();
+        let new_vdom = wrap(state.to_virtual_nodes());
 
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
