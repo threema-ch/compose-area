@@ -8,6 +8,7 @@ mod utils;
 use std::cell::RefCell;
 
 use cfg_if::cfg_if;
+use virtual_dom_rs::VirtualNode;
 use wasm_bindgen::prelude::*;
 use web_sys::{Element, Node, NodeList, Range};
 
@@ -32,12 +33,28 @@ thread_local! {
 
 #[wasm_bindgen]
 pub fn bind_to(id: &str) {
-    web_sys::console::log_1(&format!("bind_to {}", id).into());
+    utils::set_panic_hook();
 
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let wrapper = document.get_element_by_id(id).expect("did not find element");
-    web_sys::console::log_1(&format!("bound to {:?}", wrapper).into());
+    web_sys::console::log_1(&format!("Bind to #{}", id).into());
+
+    let window = web_sys::window().expect("No global `window` exists");
+    let document = window.document().expect("Should have a document on window");
+    let wrapper: Element = document.get_element_by_id(id).expect("Did not find element");
+
+    // Initialize the wrapper element with the initial empty DOM.
+    // This prevents the case where the wrapper element is not initialized as
+    // it should be, which can lead to funny errors when patching.
+    STATE.with(|state_cell| {
+        let state = state_cell.borrow();
+        let initial_vdom: VirtualNode = state.to_virtual_node();
+        let initial_dom: Node = initial_vdom.create_dom_node().node;
+        while let Some(node) = wrapper.last_child() {
+            wrapper.remove_child(&node).expect("Could not remove wrapper child node");
+        }
+        wrapper.append_child(&initial_dom).expect("Could not initialize wrapper");
+    });
+
+    web_sys::console::log_1(&format!("Initialized #{}", id).into());
 }
 
 pub fn set_inner_html(id: &str, html: &str) {
@@ -107,9 +124,6 @@ fn browser_set_caret_position(wrapper: &Element, state: &State) {
 /// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
 pub fn process_key(key_val: &str) -> bool {
-    // Set the panic hook
-    utils::set_panic_hook();
-
     let key = match Key::from_str(key_val) {
         Some(key) => key,
         None => return false,
@@ -118,6 +132,11 @@ pub fn process_key(key_val: &str) -> bool {
     STATE.with(|state_cell| {
         // Access state mutably
         let mut state = state_cell.borrow_mut();
+
+        // Get access to wrapper element
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
 
         // Get old virtual DOM
         let old_vdom = state.to_virtual_node();
@@ -131,13 +150,11 @@ pub fn process_key(key_val: &str) -> bool {
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        web_sys::console::log_1(&format!("RS: New state: {:?}", &state).into());
+        web_sys::console::log_1(&format!("RS: Old vdom: {:?}", &old_vdom).into());
+        web_sys::console::log_1(&format!("RS: New vdom: {:?}", &new_vdom).into());
         web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
 
         // Patch the current DOM
-        let window = web_sys::window().expect("no global `window` exists");
-        let document = window.document().expect("should have a document on window");
-        let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
         virtual_dom_rs::patch(wrapper.clone(), &patches);
 
         // Update the caret position in the browser
