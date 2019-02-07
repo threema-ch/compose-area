@@ -1,4 +1,4 @@
-use virtual_dom_rs::VirtualNode;
+use virtual_dom_rs::{VirtualNode, VElement};
 
 use ::keys::Key;
 
@@ -242,21 +242,18 @@ impl State {
     }
 
     pub fn to_virtual_node(&self) -> VirtualNode {
-        let mut root = VirtualNode::new("span");
-        if root.children.is_none() {
-            root.children = Some(vec![]);
-        };
+        let mut root = VElement::new("span");
         for node in self.nodes.iter() {
             match node {
-                Node::Text(text) => root.children.as_mut().unwrap().push(VirtualNode::text(text)),
-                Node::Newline => root.children.as_mut().unwrap().push(VirtualNode::new("br")),
+                Node::Text(text) => root.children.push(VirtualNode::text(text)),
+                Node::Newline => root.children.push(VirtualNode::element("br")),
             }
         }
 
         // Due to contenteditable quirks, always add a trailing newline.
-        root.children.as_mut().unwrap().push(VirtualNode::new("br"));
+        root.children.push(VirtualNode::element("br"));
 
-        root
+        root.into()
     }
 }
 
