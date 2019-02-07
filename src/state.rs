@@ -1,6 +1,6 @@
 use virtual_dom_rs::{VirtualNode, VElement};
 
-use ::keys::Key;
+use crate::keys::Key;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Node {
@@ -409,7 +409,7 @@ mod tests {
     /// Empty node list
     #[test]
     fn test_find_start_node_empty() {
-        let mut state = State::new();
+        let state = State::new();
         assert!(state.find_start_node(Direction::Before).is_none());
         assert!(state.find_start_node(Direction::After).is_none());
     }

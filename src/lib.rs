@@ -1,8 +1,5 @@
-extern crate cfg_if;
-extern crate unicode_normalization;
-extern crate virtual_dom_rs;
-extern crate wasm_bindgen;
-extern crate web_sys;
+use virtual_dom_rs;
+use web_sys;
 
 mod keys;
 mod state;
@@ -14,8 +11,8 @@ use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
 use web_sys::{Element, Node, NodeList, Range};
 
-use keys::Key;
-use state::{State, Direction};
+use crate::keys::Key;
+use crate::state::{State, Direction};
 
 const WRAPPER_ID: &str = "wrapper";
 
