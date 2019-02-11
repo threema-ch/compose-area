@@ -68,7 +68,8 @@ pub fn bind_to(id: &str) {
     // This prevents the case where the wrapper element is not initialized as
     // it should be, which can lead to funny errors when patching.
     STATE.with(|state_cell| {
-        let state = state_cell.borrow();
+        let mut state = state_cell.borrow_mut();
+        state.reset();
         let initial_vdom: VirtualNode = wrap(state.to_virtual_nodes());
         let initial_dom: Node = initial_vdom.create_dom_node().node;
         wrapper.replace_with_with_node_1(&initial_dom)

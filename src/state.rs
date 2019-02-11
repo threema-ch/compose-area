@@ -55,6 +55,13 @@ impl State {
         }
     }
 
+    /// Reset / clear internal state.
+    pub fn reset(&mut self) {
+        self.nodes.clear();
+        self.caret_start = 0;
+        self.caret_end = 0;
+    }
+
     /// Return the number of nodes.
     pub fn node_count(&self) -> usize {
         self.nodes.len()
