@@ -15,8 +15,6 @@ use web_sys::{Element, Node, NodeList, Range};
 use crate::keys::Key;
 use crate::state::{State, Direction};
 
-const WRAPPER_ID: &str = "wrapper";
-
 cfg_if! {
     // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
     // allocator.
@@ -29,12 +27,18 @@ cfg_if! {
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State::new());
+    static WRAPPER_ID: RefCell<Option<String>> = RefCell::new(Some(String::new()));
 }
 
 /// Wrap the list of virtual nodes in a content editable wrapper element.
 fn wrap(virtual_nodes: Vec<VirtualNode>) -> VirtualNode {
     let mut wrapper = VElement::new("div");
-    wrapper.props.insert("id".into(), WRAPPER_ID.into());
+    WRAPPER_ID.with(|wrapper_cell| {
+        match *wrapper_cell.borrow() {
+            Some(ref id) => wrapper.props.insert("id".into(), id.to_string()),
+            None => panic!("Not yet initialized, please call `bind_to` first"),
+        }
+    });
     wrapper.props.insert("class".into(), "cawrapper initialized".into());
     wrapper.props.insert("contenteditable".into(), "true".into());
     wrapper.children = virtual_nodes;
@@ -50,6 +54,15 @@ pub fn bind_to(id: &str) {
     let window = web_sys::window().expect("No global `window` exists");
     let document = window.document().expect("Should have a document on window");
     let wrapper: Element = document.get_element_by_id(id).expect("Did not find element");
+
+    // Initialize WRAPPER_ID
+    WRAPPER_ID.with(|wrapper_id_cell| {
+        let mut wrapper_id_ref = wrapper_id_cell.borrow_mut();
+        if wrapper_id_ref.is_none() {
+            web_sys::console::warn_1(&format!("Re-initializing WRAPPER_ID state").into());
+        }
+        *wrapper_id_ref = Some(id.to_string());
+    });
 
     // Initialize the wrapper element with the initial empty DOM.
     // This prevents the case where the wrapper element is not initialized as
@@ -137,6 +150,11 @@ pub fn process_key(key_val: &str) -> bool {
         None => return false,
     };
 
+    // Get wrapper ID
+    let wrapper_id = WRAPPER_ID.with(|wrapper_cell| {
+        wrapper_cell.borrow().clone().expect("Not yet initialized, please call `bind_to` first")
+    });
+
     STATE.with(|state_cell| {
         // Access state mutably
         let mut state = state_cell.borrow_mut();
@@ -144,7 +162,7 @@ pub fn process_key(key_val: &str) -> bool {
         // Get access to wrapper element
         let window = web_sys::window().expect("no global `window` exists");
         let document = window.document().expect("should have a document on window");
-        let wrapper = document.get_element_by_id(WRAPPER_ID).expect("did not find element");
+        let wrapper = document.get_element_by_id(&wrapper_id).expect("did not find element");
 
         // Get old virtual DOM
         let old_vdom = wrap(state.to_virtual_nodes());
