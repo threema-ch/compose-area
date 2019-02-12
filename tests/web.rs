@@ -22,33 +22,38 @@ fn test_bind_to() {
     let wrapper_before = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_before.outer_html(), format!("<div id=\"{}\"></div>", WRAPPER_ID));
 
-    compose_area::bind_to(WRAPPER_ID);
+    let ctx = compose_area::bind_to(WRAPPER_ID);
 
     // Initialized wrapper
     let wrapper_after = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_after.class_name(), "cawrapper initialized");
     assert_eq!(wrapper_after.get_attribute("contenteditable").unwrap(), "true");
+
+    compose_area::dispose(ctx);
 }
 
 struct KeyHtmlTest {
     keys: Vec<&'static str>,
-    expected: &'static str, 
+    expected: &'static str,
 }
 
 impl KeyHtmlTest {
     fn test(&self) {
         // Initialize
         let document = helpers::setup_compose_area_test(WRAPPER_ID);
-        compose_area::bind_to(WRAPPER_ID);
+        let ctx = compose_area::bind_to(WRAPPER_ID);
 
         // Send keys
         for key in self.keys.iter() {
-            compose_area::process_key(&key);
+            compose_area::process_key(ctx, &key);
         }
 
         // Ensure correct inner HTML
         let wrapper = helpers::get_wrapper(&document, WRAPPER_ID);
         assert_eq!(wrapper.inner_html(), self.expected);
+
+        // Dispose context
+        compose_area::dispose(ctx);
     }
 }
 
@@ -65,5 +70,21 @@ fn test_insert_newline() {
     KeyHtmlTest {
         keys: vec!["a", "b", "Enter"],
         expected: "ab<br><br>",
+    }.test();
+}
+
+#[wasm_bindgen_test]
+fn test_remove_character() {
+    KeyHtmlTest {
+        keys: vec!["a", "b", "c", "Backspace"],
+        expected: "ab<br>",
+    }.test();
+}
+
+#[wasm_bindgen_test]
+fn test_remove_newline() {
+    KeyHtmlTest {
+        keys: vec!["a", "b", "Enter", "Backspace"],
+        expected: "ab<br>",
     }.test();
 }

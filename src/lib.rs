@@ -1,3 +1,5 @@
+//! Note: This library is not thread safe!
+
 use virtual_dom_rs;
 use web_sys;
 
@@ -5,7 +7,7 @@ mod keys;
 mod state;
 mod utils;
 
-use std::cell::RefCell;
+use std::mem;
 
 use cfg_if::cfg_if;
 use virtual_dom_rs::{VirtualNode, VElement};
@@ -25,28 +27,24 @@ cfg_if! {
     }
 }
 
-thread_local! {
-    static STATE: RefCell<State> = RefCell::new(State::new());
-    static WRAPPER_ID: RefCell<Option<String>> = RefCell::new(Some(String::new()));
+pub struct Context {
+    pub state: State,
+    pub wrapper_id: String,
 }
 
 /// Wrap the list of virtual nodes in a content editable wrapper element.
-fn wrap(virtual_nodes: Vec<VirtualNode>) -> VirtualNode {
+fn wrap(virtual_nodes: Vec<VirtualNode>, wrapper_id: &str) -> VirtualNode {
     let mut wrapper = VElement::new("div");
-    WRAPPER_ID.with(|wrapper_cell| {
-        match *wrapper_cell.borrow() {
-            Some(ref id) => wrapper.props.insert("id".into(), id.to_string()),
-            None => panic!("Not yet initialized, please call `bind_to` first"),
-        }
-    });
+    wrapper.props.insert("id".into(), wrapper_id.to_string());
     wrapper.props.insert("class".into(), "cawrapper initialized".into());
     wrapper.props.insert("contenteditable".into(), "true".into());
     wrapper.children = virtual_nodes;
     wrapper.into()
 }
 
+/// Initialize a new compose area wrapper with the specified `id`.
 #[wasm_bindgen]
-pub fn bind_to(id: &str) {
+pub fn bind_to(id: &str) -> *mut Context {
     utils::set_panic_hook();
 
     web_sys::console::log_1(&format!("Bind to #{}", id).into());
@@ -55,28 +53,22 @@ pub fn bind_to(id: &str) {
     let document = window.document().expect("Should have a document on window");
     let wrapper: Element = document.get_element_by_id(id).expect("Did not find element");
 
-    // Initialize WRAPPER_ID
-    WRAPPER_ID.with(|wrapper_id_cell| {
-        let mut wrapper_id_ref = wrapper_id_cell.borrow_mut();
-        if wrapper_id_ref.is_none() {
-            web_sys::console::warn_1(&format!("Re-initializing WRAPPER_ID state").into());
-        }
-        *wrapper_id_ref = Some(id.to_string());
-    });
-
     // Initialize the wrapper element with the initial empty DOM.
     // This prevents the case where the wrapper element is not initialized as
     // it should be, which can lead to funny errors when patching.
-    STATE.with(|state_cell| {
-        let mut state = state_cell.borrow_mut();
-        state.reset();
-        let initial_vdom: VirtualNode = wrap(state.to_virtual_nodes());
-        let initial_dom: Node = initial_vdom.create_dom_node().node;
-        wrapper.replace_with_with_node_1(&initial_dom)
-            .expect("Could not initialize wrapper");
-    });
+    let state = State::new();
+    let initial_vdom: VirtualNode = wrap(state.to_virtual_nodes(), id);
+    let initial_dom: Node = initial_vdom.create_dom_node().node;
+    wrapper.replace_with_with_node_1(&initial_dom)
+        .expect("Could not initialize wrapper");
 
     web_sys::console::log_1(&format!("Initialized #{}", id).into());
+
+    let ctx = Box::new(Context {
+        state,
+        wrapper_id: id.to_owned(),
+    });
+    Box::into_raw(ctx)
 }
 
 pub fn set_inner_html(id: &str, html: &str) {
@@ -145,48 +137,49 @@ fn browser_set_caret_position(wrapper: &Element, state: &State) {
 
 /// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
-pub fn process_key(key_val: &str) -> bool {
+pub fn process_key(ctx: *mut Context, key_val: &str) -> bool {
+    // Validate and parse key value
+    if key_val.len() == 0 {
+        web_sys::console::warn_1(&"process_key: No key value provided".into());
+        return false;
+    }
     let key = match Key::from_str(key_val) {
         Some(key) => key,
         None => return false,
     };
 
-    // Get wrapper ID
-    let wrapper_id = WRAPPER_ID.with(|wrapper_cell| {
-        wrapper_cell.borrow().clone().expect("Not yet initialized, please call `bind_to` first")
-    });
+    // Dereference context
+    let mut context = unsafe { Box::from_raw(ctx) };
 
-    STATE.with(|state_cell| {
-        // Access state mutably
-        let mut state = state_cell.borrow_mut();
+    // Get access to wrapper element
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+    let wrapper = document.get_element_by_id(&context.wrapper_id).expect("did not find element");
 
-        // Get access to wrapper element
-        let window = web_sys::window().expect("no global `window` exists");
-        let document = window.document().expect("should have a document on window");
-        let wrapper = document.get_element_by_id(&wrapper_id).expect("did not find element");
+    // Get old virtual DOM
+    let old_vdom = wrap(context.state.to_virtual_nodes(), &context.wrapper_id);
 
-        // Get old virtual DOM
-        let old_vdom = wrap(state.to_virtual_nodes());
+    // Handle input
+    context.state.handle_key(key);
 
-        // Handle input
-        state.handle_key(key);
+    // Get new virtual DOM
+    let new_vdom = wrap(context.state.to_virtual_nodes(), &context.wrapper_id);
 
-        // Get new virtual DOM
-        let new_vdom = wrap(state.to_virtual_nodes());
+    // Do the DOM diffing
+    let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        // Do the DOM diffing
-        let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
+    web_sys::console::log_1(&format!("RS: Old vdom: {:?}", &old_vdom).into());
+    web_sys::console::log_1(&format!("RS: New vdom: {:?}", &new_vdom).into());
+    web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
 
-        web_sys::console::log_1(&format!("RS: Old vdom: {:?}", &old_vdom).into());
-        web_sys::console::log_1(&format!("RS: New vdom: {:?}", &new_vdom).into());
-        web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
+    // Patch the current DOM
+    virtual_dom_rs::patch(wrapper.clone(), &patches);
 
-        // Patch the current DOM
-        virtual_dom_rs::patch(wrapper.clone(), &patches);
+    // Update the caret position in the browser
+    browser_set_caret_position(&wrapper, &context.state);
 
-        // Update the caret position in the browser
-        browser_set_caret_position(&wrapper, &state);
-    });
+    // Forget about the context box to prevent it from being freed
+    mem::forget(context);
 
     // We handled the event, so prevent the default event from being handled.
     true
@@ -194,13 +187,25 @@ pub fn process_key(key_val: &str) -> bool {
 
 /// Set the start and end of the caret position (relative to the HTML).
 #[wasm_bindgen]
-pub fn update_caret_position(start: usize, end: usize) {
-    web_sys::console::log_1(&format!("RS: Update caret position ({}, {})", start, end).into());
+pub fn update_caret_position(ctx: *mut Context, start: usize, end: usize) {
+    // Dereference context
+    let mut context = unsafe { Box::from_raw(ctx) };
+
+    // Update state
     if end < start {
         return;
     }
-    STATE.with(|state_cell| {
-        let mut state = state_cell.borrow_mut();
-        state.set_caret_position(start, end);
-    });
+    context.state.set_caret_position(start, end);
+
+    // Forget about the context box to prevent it from being freed
+    mem::forget(context);
+}
+
+/// Dipose all state related to the specified context.
+///
+/// After calling this function, the context may not be used anymore.
+#[wasm_bindgen]
+pub fn dispose(ctx: *mut Context) {
+    // Dereference context and drop
+    unsafe { Box::from_raw(ctx); }
 }
