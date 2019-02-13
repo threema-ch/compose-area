@@ -83,3 +83,11 @@ fn test_remove_newline() {
         expected: "ab<br>",
     }.test();
 }
+
+#[wasm_bindgen_test]
+fn test_remove_last_char() {
+    KeyHtmlTest {
+        keys: vec!["a", "Backspace"],
+        expected: "<br>",
+    }.test();
+}
