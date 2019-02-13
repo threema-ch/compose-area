@@ -133,6 +133,8 @@ impl ComposeArea {
 
     /// Return whether the default event handler should be prevented from running.
     pub fn process_key(&mut self, key_val: &str) -> bool {
+        web_sys::console::log_1(&format!("\n# Process key: {}", &key_val).into());
+
         // Validate and parse key value
         if key_val.len() == 0 {
             web_sys::console::warn_1(&"process_key: No key value provided".into());
@@ -160,9 +162,9 @@ impl ComposeArea {
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        web_sys::console::log_1(&format!("RS: Old vdom: {:?}", &old_vdom).into());
-        web_sys::console::log_1(&format!("RS: New vdom: {:?}", &new_vdom).into());
-        web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
+        web_sys::console::log_1(&format!("Old vdom: {:?}", &old_vdom).into());
+        web_sys::console::log_1(&format!("New vdom: {:?}", &new_vdom).into());
+        web_sys::console::log_1(&format!("Patches {:?}", &patches).into());
 
         // Patch the current DOM
         virtual_dom_rs::patch(wrapper.clone(), &patches);
