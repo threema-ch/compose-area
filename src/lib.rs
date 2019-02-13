@@ -27,12 +27,13 @@ cfg_if! {
 
 /// The context object containing the state.
 #[wasm_bindgen]
-pub struct Ctx {
+pub struct ComposeArea {
     state: State,
     wrapper_id: String,
 }
 
-/// Wrap the list of virtual nodes in a content editable wrapper element.
+/// Helper function: Wrap the list of virtual nodes in a content editable
+/// wrapper element.
 fn wrap(virtual_nodes: Vec<VirtualNode>, wrapper_id: &str) -> VirtualNode {
     let mut wrapper = VElement::new("div");
     wrapper.props.insert("id".into(), wrapper_id.to_string());
@@ -44,7 +45,7 @@ fn wrap(virtual_nodes: Vec<VirtualNode>, wrapper_id: &str) -> VirtualNode {
 
 /// Initialize a new compose area wrapper with the specified `id`.
 #[wasm_bindgen]
-pub fn bind_to(id: &str) -> Ctx {
+pub fn bind_to(id: &str) -> ComposeArea {
     utils::set_panic_hook();
 
     web_sys::console::log_1(&format!("Bind to #{}", id).into());
@@ -64,17 +65,10 @@ pub fn bind_to(id: &str) -> Ctx {
 
     web_sys::console::log_1(&format!("Initialized #{}", id).into());
 
-    Ctx {
+    ComposeArea {
         state,
         wrapper_id: id.to_owned(),
     }
-}
-
-pub fn set_inner_html(id: &str, html: &str) {
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let wrapper = document.get_element_by_id(id).expect("did not find element");
-    wrapper.set_inner_html(html);
 }
 
 /// A position relative to a node.
@@ -134,56 +128,59 @@ fn browser_set_caret_position(wrapper: &Element, state: &State) {
     }
 }
 
-/// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
-pub fn process_key(ctx: &mut Ctx, key_val: &str) -> bool {
-    // Validate and parse key value
-    if key_val.len() == 0 {
-        web_sys::console::warn_1(&"process_key: No key value provided".into());
-        return false;
+impl ComposeArea {
+
+    /// Return whether the default event handler should be prevented from running.
+    pub fn process_key(&mut self, key_val: &str) -> bool {
+        // Validate and parse key value
+        if key_val.len() == 0 {
+            web_sys::console::warn_1(&"process_key: No key value provided".into());
+            return false;
+        }
+        let key = match Key::from_str(key_val) {
+            Some(key) => key,
+            None => return false,
+        };
+
+        // Get access to wrapper element
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        let wrapper = document.get_element_by_id(&self.wrapper_id).expect("did not find element");
+
+        // Get old virtual DOM
+        let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+
+        // Handle input
+        self.state.handle_key(key);
+
+        // Get new virtual DOM
+        let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+
+        // Do the DOM diffing
+        let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
+
+        web_sys::console::log_1(&format!("RS: Old vdom: {:?}", &old_vdom).into());
+        web_sys::console::log_1(&format!("RS: New vdom: {:?}", &new_vdom).into());
+        web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
+
+        // Patch the current DOM
+        virtual_dom_rs::patch(wrapper.clone(), &patches);
+
+        // Update the caret position in the browser
+        browser_set_caret_position(&wrapper, &self.state);
+
+        // We handled the event, so prevent the default event from being handled.
+        true
     }
-    let key = match Key::from_str(key_val) {
-        Some(key) => key,
-        None => return false,
-    };
 
-    // Get access to wrapper element
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let wrapper = document.get_element_by_id(&ctx.wrapper_id).expect("did not find element");
-
-    // Get old virtual DOM
-    let old_vdom = wrap(ctx.state.to_virtual_nodes(), &ctx.wrapper_id);
-
-    // Handle input
-    ctx.state.handle_key(key);
-
-    // Get new virtual DOM
-    let new_vdom = wrap(ctx.state.to_virtual_nodes(), &ctx.wrapper_id);
-
-    // Do the DOM diffing
-    let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
-
-    web_sys::console::log_1(&format!("RS: Old vdom: {:?}", &old_vdom).into());
-    web_sys::console::log_1(&format!("RS: New vdom: {:?}", &new_vdom).into());
-    web_sys::console::log_1(&format!("RS: Patches {:?}", &patches).into());
-
-    // Patch the current DOM
-    virtual_dom_rs::patch(wrapper.clone(), &patches);
-
-    // Update the caret position in the browser
-    browser_set_caret_position(&wrapper, &ctx.state);
-
-    // We handled the event, so prevent the default event from being handled.
-    true
-}
-
-/// Set the start and end of the caret position (relative to the HTML).
-#[wasm_bindgen]
-pub fn update_caret_position(ctx: &mut Ctx, start: usize, end: usize) {
-    // Update state
-    if end < start {
-        return;
+    /// Set the start and end of the caret position (relative to the HTML).
+    pub fn update_caret_position(&mut self, start: usize, end: usize) {
+        // Update state
+        if end < start {
+            return;
+        }
+        self.state.set_caret_position(start, end);
     }
-    ctx.state.set_caret_position(start, end);
+
 }

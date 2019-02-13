@@ -22,7 +22,7 @@ fn test_bind_to() {
     let wrapper_before = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_before.outer_html(), format!("<div id=\"{}\"></div>", WRAPPER_ID));
 
-    let _ctx = compose_area::bind_to(WRAPPER_ID);
+    let _area = compose_area::bind_to(WRAPPER_ID);
 
     // Initialized wrapper
     let wrapper_after = helpers::get_wrapper(&document, WRAPPER_ID);
@@ -39,11 +39,11 @@ impl KeyHtmlTest {
     fn test(&self) {
         // Initialize
         let document = helpers::setup_compose_area_test(WRAPPER_ID);
-        let mut ctx = compose_area::bind_to(WRAPPER_ID);
+        let mut area = compose_area::bind_to(WRAPPER_ID);
 
         // Send keys
         for key in self.keys.iter() {
-            compose_area::process_key(&mut ctx, &key);
+            area.process_key(&key);
         }
 
         // Ensure correct inner HTML

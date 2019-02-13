@@ -1,6 +1,6 @@
 import * as wasm from "compose-area";
 
-const ctx = wasm.bind_to("wrapper");
+const composeArea = wasm.bind_to("wrapper");
 
 function getCaretPosition(rootNode) {
     if (rootNode.innerHTML.length < 1) {
@@ -80,7 +80,7 @@ const wrapper = document.getElementById("wrapper");
 const updateCaretPosition = () => {
     const caretPos = getCaretPosition(wrapper);
     if (caretPos !== null) {
-        wasm.update_caret_position(ctx, caretPos[0], caretPos[1]);
+        composeArea.update_caret_position(caretPos[0], caretPos[1]);
     }
 };
 
@@ -106,7 +106,7 @@ function isNavigationKey(key) {
 wrapper.addEventListener("keydown", (e) => {
     console.log('keydown:', e);
     if (!e.ctrlKey && !e.altKey && !e.metaKey) {
-        const preventDefault = wasm.process_key(ctx, e.key);
+        const preventDefault = composeArea.process_key(e.key);
         if (preventDefault) {
             e.preventDefault();
         }
