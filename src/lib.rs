@@ -7,8 +7,6 @@ mod keys;
 mod state;
 mod utils;
 
-use std::mem;
-
 use cfg_if::cfg_if;
 use virtual_dom_rs::{VirtualNode, VElement};
 use wasm_bindgen::prelude::*;
@@ -27,9 +25,11 @@ cfg_if! {
     }
 }
 
-pub struct Context {
-    pub state: State,
-    pub wrapper_id: String,
+/// The context object containing the state.
+#[wasm_bindgen]
+pub struct Ctx {
+    state: State,
+    wrapper_id: String,
 }
 
 /// Wrap the list of virtual nodes in a content editable wrapper element.
@@ -44,7 +44,7 @@ fn wrap(virtual_nodes: Vec<VirtualNode>, wrapper_id: &str) -> VirtualNode {
 
 /// Initialize a new compose area wrapper with the specified `id`.
 #[wasm_bindgen]
-pub fn bind_to(id: &str) -> *mut Context {
+pub fn bind_to(id: &str) -> Ctx {
     utils::set_panic_hook();
 
     web_sys::console::log_1(&format!("Bind to #{}", id).into());
@@ -64,11 +64,10 @@ pub fn bind_to(id: &str) -> *mut Context {
 
     web_sys::console::log_1(&format!("Initialized #{}", id).into());
 
-    let ctx = Box::new(Context {
+    Ctx {
         state,
         wrapper_id: id.to_owned(),
-    });
-    Box::into_raw(ctx)
+    }
 }
 
 pub fn set_inner_html(id: &str, html: &str) {
@@ -137,7 +136,7 @@ fn browser_set_caret_position(wrapper: &Element, state: &State) {
 
 /// Return whether the default event handler should be prevented from running.
 #[wasm_bindgen]
-pub fn process_key(ctx: *mut Context, key_val: &str) -> bool {
+pub fn process_key(ctx: &mut Ctx, key_val: &str) -> bool {
     // Validate and parse key value
     if key_val.len() == 0 {
         web_sys::console::warn_1(&"process_key: No key value provided".into());
@@ -148,22 +147,19 @@ pub fn process_key(ctx: *mut Context, key_val: &str) -> bool {
         None => return false,
     };
 
-    // Dereference context
-    let mut context = unsafe { Box::from_raw(ctx) };
-
     // Get access to wrapper element
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
-    let wrapper = document.get_element_by_id(&context.wrapper_id).expect("did not find element");
+    let wrapper = document.get_element_by_id(&ctx.wrapper_id).expect("did not find element");
 
     // Get old virtual DOM
-    let old_vdom = wrap(context.state.to_virtual_nodes(), &context.wrapper_id);
+    let old_vdom = wrap(ctx.state.to_virtual_nodes(), &ctx.wrapper_id);
 
     // Handle input
-    context.state.handle_key(key);
+    ctx.state.handle_key(key);
 
     // Get new virtual DOM
-    let new_vdom = wrap(context.state.to_virtual_nodes(), &context.wrapper_id);
+    let new_vdom = wrap(ctx.state.to_virtual_nodes(), &ctx.wrapper_id);
 
     // Do the DOM diffing
     let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
@@ -176,10 +172,7 @@ pub fn process_key(ctx: *mut Context, key_val: &str) -> bool {
     virtual_dom_rs::patch(wrapper.clone(), &patches);
 
     // Update the caret position in the browser
-    browser_set_caret_position(&wrapper, &context.state);
-
-    // Forget about the context box to prevent it from being freed
-    mem::forget(context);
+    browser_set_caret_position(&wrapper, &ctx.state);
 
     // We handled the event, so prevent the default event from being handled.
     true
@@ -187,25 +180,10 @@ pub fn process_key(ctx: *mut Context, key_val: &str) -> bool {
 
 /// Set the start and end of the caret position (relative to the HTML).
 #[wasm_bindgen]
-pub fn update_caret_position(ctx: *mut Context, start: usize, end: usize) {
-    // Dereference context
-    let mut context = unsafe { Box::from_raw(ctx) };
-
+pub fn update_caret_position(ctx: &mut Ctx, start: usize, end: usize) {
     // Update state
     if end < start {
         return;
     }
-    context.state.set_caret_position(start, end);
-
-    // Forget about the context box to prevent it from being freed
-    mem::forget(context);
-}
-
-/// Dipose all state related to the specified context.
-///
-/// After calling this function, the context may not be used anymore.
-#[wasm_bindgen]
-pub fn dispose(ctx: *mut Context) {
-    // Dereference context and drop
-    unsafe { Box::from_raw(ctx); }
+    ctx.state.set_caret_position(start, end);
 }

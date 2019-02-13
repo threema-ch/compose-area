@@ -22,14 +22,12 @@ fn test_bind_to() {
     let wrapper_before = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_before.outer_html(), format!("<div id=\"{}\"></div>", WRAPPER_ID));
 
-    let ctx = compose_area::bind_to(WRAPPER_ID);
+    let _ctx = compose_area::bind_to(WRAPPER_ID);
 
     // Initialized wrapper
     let wrapper_after = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_after.class_name(), "cawrapper initialized");
     assert_eq!(wrapper_after.get_attribute("contenteditable").unwrap(), "true");
-
-    compose_area::dispose(ctx);
 }
 
 struct KeyHtmlTest {
@@ -41,19 +39,16 @@ impl KeyHtmlTest {
     fn test(&self) {
         // Initialize
         let document = helpers::setup_compose_area_test(WRAPPER_ID);
-        let ctx = compose_area::bind_to(WRAPPER_ID);
+        let mut ctx = compose_area::bind_to(WRAPPER_ID);
 
         // Send keys
         for key in self.keys.iter() {
-            compose_area::process_key(ctx, &key);
+            compose_area::process_key(&mut ctx, &key);
         }
 
         // Ensure correct inner HTML
         let wrapper = helpers::get_wrapper(&document, WRAPPER_ID);
         assert_eq!(wrapper.inner_html(), self.expected);
-
-        // Dispose context
-        compose_area::dispose(ctx);
     }
 }
 
