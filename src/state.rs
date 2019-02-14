@@ -1,4 +1,4 @@
-use virtual_dom_rs::VirtualNode;
+use virtual_dom_rs::{VirtualNode, VElement};
 
 use crate::keys::Key;
 
@@ -8,6 +8,10 @@ pub enum Node {
     ///
     /// This is a vec of u16 because JavaScript uses UTF-16 strings.
     Text(Vec<u16>),
+
+    /// An image node.
+    Image { src: String, alt: String, cls: String },
+
     /// A newline node.
     Newline,
 }
@@ -15,8 +19,17 @@ pub enum Node {
 impl Node {
     fn html_size(&self) -> usize {
         match self {
+            // Just the text length
             Node::Text(val) => val.len(),
-            Node::Newline => 4, // <br>
+
+            // <img src=".." alt=".." class="..">
+            Node::Image { src, alt, cls } => 28
+                + src.encode_utf16().count()
+                + alt.encode_utf16().count()
+                + cls.encode_utf16().count(),
+
+            // <br>
+            Node::Newline => 4,
         }
     }
 
@@ -177,8 +190,10 @@ impl State {
                         self.caret_end = self.caret_start;
                     }
                 },
-                // Block node, remove it entirely
-                &mut Node::Newline => remove_node = Some(current_node.index),
+
+                // Block nodes, remove it entirely
+                &mut Node::Newline |
+                &mut Node::Image { .. } => remove_node = Some(current_node.index),
             }
         }
         if let Some(index) = remove_node {
@@ -222,13 +237,29 @@ impl State {
     }
 
     fn handle_enter(&mut self) {
+        self.insert_block_element(Node::Newline);
+    }
+
+    pub fn insert_image<S, A, C>(&mut self, src: S, alt: A, cls: C)
+        where S: Into<String>,
+              A: Into<String>,
+              C: Into<String>,
+    {
+        self.insert_block_element(Node::Image {
+            src: src.into(),
+            alt: alt.into(),
+            cls: cls.into(),
+        });
+    }
+
+    fn insert_block_element(&mut self, new_node: Node) {
         // Find the current node we're at
         if let Some(current_node) = self.find_start_node(Direction::After) {
             // If we're between two nodes, insert node
             if current_node.offset == 0 {
-                self.caret_start += Node::Newline.html_size();
+                self.caret_start += new_node.html_size();
                 self.caret_end = self.caret_start;
-                self.nodes.insert(current_node.index, Node::Newline);
+                self.nodes.insert(current_node.index, new_node);
                 return;
             }
 
@@ -242,18 +273,18 @@ impl State {
                 }
             };
             if let Some(split_node) = split_node {
-                self.caret_start += Node::Newline.html_size();
+                self.caret_start += new_node.html_size();
                 self.caret_end = self.caret_start;
-                self.nodes.insert(current_node.index + 1, Node::Newline);
+                self.nodes.insert(current_node.index + 1, new_node);
                 self.nodes.insert(current_node.index + 2, split_node);
                 return;
             }
         }
 
         // If none was found, insert at end
-        self.caret_start += Node::Newline.html_size();
+        self.caret_start += new_node.html_size();
         self.caret_end = self.caret_start;
-        self.nodes.push(Node::Newline);
+        self.nodes.push(new_node);
     }
 
     pub fn set_caret_position(&mut self, start: usize, end: usize) {
@@ -271,6 +302,13 @@ impl State {
                     virtual_nodes.push(VirtualNode::text(string))
                 },
                 Node::Newline => virtual_nodes.push(VirtualNode::element("br")),
+                Node::Image { src, alt, cls } => {
+                    let mut element = VElement::new("img");
+                    element.props.insert("src".into(), src.clone());
+                    element.props.insert("alt".into(), alt.clone());
+                    element.props.insert("class".into(), cls.clone());
+                    virtual_nodes.push(element.into())
+                },
             }
         }
 
@@ -518,6 +556,27 @@ mod tests {
 
         state.handle_key(Key::Character("ü"));
         assert_eq!(state.nodes, vec![Node::text_from_str("aü")]);
+        state.set_caret_position(2, 2);
+
+        state.handle_key(Key::Backspace);
+        assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
+    }
+
+    #[test]
+    fn insert_image() {
+        let mut state = State::new();
+        assert!(state.nodes.is_empty());
+
+        state.handle_key(Key::Character("a"));
+        assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
+        state.set_caret_position(1, 1);
+
+        state.insert_image("heart.png", "♥", "emoji heart");
+        assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::Image {
+            src: "heart.png".into(),
+            alt: "♥".into(),
+            cls: "emoji heart".into(),
+        }]);
         state.set_caret_position(2, 2);
 
         state.handle_key(Key::Backspace);

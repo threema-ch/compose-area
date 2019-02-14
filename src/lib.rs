@@ -154,7 +154,9 @@ pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
 #[wasm_bindgen]
 impl ComposeArea {
 
-    /// Return whether the default event handler should be prevented from running.
+    /// Handle the specified key.
+    ///
+    /// Return whether the default keyup event handler should be prevented from running.
     pub fn process_key(&mut self, key_val: &str) -> bool {
         web_sys::console::log_1(&format!("\n# Process key: {}", &key_val).into());
 
@@ -197,6 +199,38 @@ impl ComposeArea {
 
         // We handled the event, so prevent the default event from being handled.
         true
+    }
+
+    /// Insert an image.
+    pub fn insert_image(&mut self, src: String, alt: String, cls: String) {
+        web_sys::console::log_1(&format!("\n# Insert image: {}", &alt).into());
+
+        // Get access to wrapper element
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        let wrapper = document.get_element_by_id(&self.wrapper_id).expect("did not find element");
+
+        // Get old virtual DOM
+        let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+
+        // Handle image
+        self.state.insert_image(src, alt, cls);
+
+        // Get new virtual DOM
+        let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+
+        // Do the DOM diffing
+        let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
+
+        web_sys::console::log_1(&format!("Old vdom: {:?}", &old_vdom).into());
+        web_sys::console::log_1(&format!("New vdom: {:?}", &new_vdom).into());
+        web_sys::console::log_1(&format!("Patches {:?}", &patches).into());
+
+        // Patch the current DOM
+        virtual_dom_rs::patch(wrapper.clone(), &patches);
+
+        // Update the caret position in the browser
+        _set_caret_position_from_state(&wrapper, &self.state);
     }
 
     /// Update the caret position.

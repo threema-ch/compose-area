@@ -45,3 +45,22 @@ wrapper.addEventListener("mouseup", (e) => {
     console.log('mouseup', e);
     composeArea.update_caret_position();
 });
+
+function insertEmoji(e) {
+    const img = e.target.children[0];
+    composeArea.insert_image(img.src, img.alt, "emoji");
+    composeArea.update_caret_position();
+}
+
+document.getElementById("tongue").addEventListener("click", (e) => {
+    console.log("Insert stuck out tongue emoji");
+    insertEmoji(e);
+});
+document.getElementById("beers").addEventListener("click", (e) => {
+    console.log("Insert beers emoji", e);
+    insertEmoji(e);
+});
+document.getElementById("facepalm").addEventListener("click", (e) => {
+    console.log("Insert woman facepalming emoji");
+    insertEmoji(e);
+});
