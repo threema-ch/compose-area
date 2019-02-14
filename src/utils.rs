@@ -21,6 +21,19 @@ cfg_if! {
     }
 }
 
+cfg_if! {
+    // When the `console_log` feature is enabled, forward log calls to the
+    // JS console.
+    if #[cfg(feature = "console_log")] {
+        pub fn init_log() {
+            use log::Level;
+            console_log::init_with_level(Level::Trace).expect("Error initializing logger");
+        }
+    } else {
+        pub fn init_log() {}
+    }
+}
+
 #[inline]
 fn is_text_node(node: &Node) -> bool {
     node.node_type() == Node::TEXT_NODE
@@ -116,9 +129,7 @@ impl fmt::Display for CaretPosition {
 
 macro_rules! unknown_caret_position {
     ($errmsg:expr) => {{
-        web_sys::console::warn_1(
-            &format!("Could not determine caret position: {}", $errmsg).into()
-        );
+        warn!("Could not determine caret position: {}", $errmsg);
         return CaretPosition::new(0, 0);
     }}
 }

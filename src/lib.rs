@@ -1,5 +1,7 @@
 //! Note: This library is not thread safe!
 
+#[macro_use] extern crate log;
+
 mod keys;
 mod state;
 mod utils;
@@ -55,8 +57,9 @@ fn wrap(virtual_nodes: Vec<VirtualNode>, wrapper_id: &str) -> VirtualNode {
 #[wasm_bindgen]
 pub fn bind_to(id: &str) -> ComposeArea {
     utils::set_panic_hook();
+    utils::init_log();
 
-    web_sys::console::log_1(&format!("Bind to #{}", id).into());
+    info!("Bind to #{}", id);
 
     let window = web_sys::window().expect("No global `window` exists");
     let document = window.document().expect("Should have a document on window");
@@ -71,7 +74,7 @@ pub fn bind_to(id: &str) -> ComposeArea {
     wrapper.replace_with_with_node_1(&initial_dom)
         .expect("Could not initialize wrapper");
 
-    web_sys::console::log_1(&format!("Initialized #{}", id).into());
+    info!("Initialized #{}", id);
 
     ComposeArea {
         state,
@@ -158,11 +161,11 @@ impl ComposeArea {
     ///
     /// Return whether the default keyup event handler should be prevented from running.
     pub fn process_key(&mut self, key_val: &str) -> bool {
-        web_sys::console::log_1(&format!("\n# Process key: {}", &key_val).into());
+        debug!("\n# Process key: {}", &key_val);
 
         // Validate and parse key value
         if key_val.len() == 0 {
-            web_sys::console::warn_1(&"process_key: No key value provided".into());
+            warn!("process_key: No key value provided");
             return false;
         }
         let key = match Key::from_str(key_val) {
@@ -187,9 +190,9 @@ impl ComposeArea {
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        web_sys::console::log_1(&format!("Old vdom: {:?}", &old_vdom).into());
-        web_sys::console::log_1(&format!("New vdom: {:?}", &new_vdom).into());
-        web_sys::console::log_1(&format!("Patches {:?}", &patches).into());
+        debug!("Old vdom: {:?}", &old_vdom);
+        debug!("New vdom: {:?}", &new_vdom);
+        debug!("Patches {:?}", &patches);
 
         // Patch the current DOM
         virtual_dom_rs::patch(wrapper.clone(), &patches);
@@ -203,7 +206,7 @@ impl ComposeArea {
 
     /// Insert an image.
     pub fn insert_image(&mut self, src: String, alt: String, cls: String) {
-        web_sys::console::log_1(&format!("\n# Insert image: {}", &alt).into());
+        debug!("\n# Insert image: {}", &alt);
 
         // Get access to wrapper element
         let window = web_sys::window().expect("no global `window` exists");
@@ -222,9 +225,9 @@ impl ComposeArea {
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        web_sys::console::log_1(&format!("Old vdom: {:?}", &old_vdom).into());
-        web_sys::console::log_1(&format!("New vdom: {:?}", &new_vdom).into());
-        web_sys::console::log_1(&format!("Patches {:?}", &patches).into());
+        debug!("Old vdom: {:?}", &old_vdom);
+        debug!("New vdom: {:?}", &new_vdom);
+        debug!("Patches {:?}", &patches);
 
         // Patch the current DOM
         virtual_dom_rs::patch(wrapper.clone(), &patches);
