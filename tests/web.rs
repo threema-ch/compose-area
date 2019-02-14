@@ -100,6 +100,17 @@ fn test_delete_nothing() {
     }.test();
 }
 
+/// Remove a character that has 1 byte in UTF-16 but two bytes in UTF-8.
+///
+/// This fails if UTF-16 is not handled properly.
+#[wasm_bindgen_test]
+fn test_remove_multibyte() {
+    KeyHtmlTest {
+        keys: vec!["ü", "Backspace"],
+        expected: "<br>",
+    }.test();
+}
+
 /// Ensure that nothing panics when setting the caret position with empty state.
 #[wasm_bindgen_test]
 fn test_set_caret_position_from_state_when_empty() {
