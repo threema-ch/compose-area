@@ -52,15 +52,6 @@ function insertEmoji(e) {
     composeArea.update_caret_position();
 }
 
-document.getElementById("tongue").addEventListener("click", (e) => {
-    console.log("Insert stuck out tongue emoji");
-    insertEmoji(e);
-});
-document.getElementById("beers").addEventListener("click", (e) => {
-    console.log("Insert beers emoji", e);
-    insertEmoji(e);
-});
-document.getElementById("facepalm").addEventListener("click", (e) => {
-    console.log("Insert woman facepalming emoji");
-    insertEmoji(e);
-});
+document.getElementById("tongue").addEventListener("click", insertEmoji);
+document.getElementById("beers").addEventListener("click", insertEmoji);
+document.getElementById("facepalm").addEventListener("click", insertEmoji);
