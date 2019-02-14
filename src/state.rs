@@ -563,7 +563,7 @@ mod tests {
     }
 
     #[test]
-    fn insert_image() {
+    fn insert_image_at_end() {
         let mut state = State::new();
         assert!(state.nodes.is_empty());
         assert_eq!(state.caret_position(), (0, 0));
@@ -587,5 +587,42 @@ mod tests {
         state.handle_key(Key::Backspace);
         assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
         assert_eq!(state.caret_position(), (1, 1));
+    }
+
+    #[test]
+    fn insert_image_between_text() {
+        let mut state = State::new();
+        assert!(state.nodes.is_empty());
+        assert_eq!(state.caret_position(), (0, 0));
+
+        let src = "heart.png";
+        let alt = "♥";
+        let cls = "emoji hääärz";
+
+        // Insert 4 characters
+        state.handle_key(Key::Character("a"));
+        state.handle_key(Key::Character("ä"));
+        state.handle_key(Key::Character("ö"));
+        state.handle_key(Key::Character("o"));
+
+        // Ensure there's a single text node
+        assert_eq!(state.nodes, vec![Node::text_from_str("aäöo")]);
+
+        // Move back two characters
+        state.set_caret_position(2, 2);
+
+        // Insert image
+        state.insert_image(src, alt, cls);
+        assert_eq!(state.nodes, vec![
+            Node::text_from_str("aä"),
+            Node::Image {
+                src: src.into(),
+                alt: alt.into(),
+                cls: cls.into(),
+            },
+            Node::text_from_str("öo"),
+        ]);
+        let len = format!("<img src=\"{}\" alt=\"{}\" class=\"{}\">", src, alt, cls).encode_utf16().count();
+        assert_eq!(state.caret_position(), (2 + len, 2 + len));
     }
 }
