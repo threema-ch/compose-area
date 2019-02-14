@@ -566,20 +566,26 @@ mod tests {
     fn insert_image() {
         let mut state = State::new();
         assert!(state.nodes.is_empty());
+        assert_eq!(state.caret_position(), (0, 0));
 
         state.handle_key(Key::Character("a"));
         assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
-        state.set_caret_position(1, 1);
+        assert_eq!(state.caret_position(), (1, 1));
 
-        state.insert_image("heart.png", "♥", "emoji heart");
+        let src = "heart.png";
+        let alt = "♥";
+        let cls = "emoji hääärz";
+        state.insert_image(src, alt, cls);
         assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::Image {
-            src: "heart.png".into(),
-            alt: "♥".into(),
-            cls: "emoji heart".into(),
+            src: src.into(),
+            alt: alt.into(),
+            cls: cls.into(),
         }]);
-        state.set_caret_position(2, 2);
+        let len = format!("<img src=\"{}\" alt=\"{}\" class=\"{}\">", src, alt, cls).encode_utf16().count();
+        assert_eq!(state.caret_position(), (1 + len, 1 + len));
 
         state.handle_key(Key::Backspace);
         assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
+        assert_eq!(state.caret_position(), (1, 1));
     }
 }
