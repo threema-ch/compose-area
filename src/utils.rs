@@ -1,3 +1,5 @@
+use std::fmt;
+
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -106,6 +108,12 @@ impl CaretPosition {
     }
 }
 
+impl fmt::Display for CaretPosition {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "(start={}, end={})", self.start, self.end)
+    }
+}
+
 macro_rules! unknown_caret_position {
     ($errmsg:expr) => {{
         web_sys::console::warn_1(
@@ -132,12 +140,28 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
         return CaretPosition::new(0, 0);
     }
 
-    // Get the current selecton
+    // Get the current selection
     let selection = match window.get_selection() {
         Ok(Some(selection)) => selection,
         Ok(None) => unknown_caret_position!("No selection found"),
         Err(_) => unknown_caret_position!("Error during get_selection"),
     };
+
+    // Get selection anchor node
+    let anchor_node = match selection.anchor_node() {
+        Some(node) => node,
+        None => unknown_caret_position!("No anchor node in selection"),
+    };
+
+    // If the anchor node is the root element, we're at the start.
+    if anchor_node.is_same_node(Some(root_element.unchecked_ref::<Node>())) {
+        return CaretPosition::new(0, 0);
+    }
+
+    // Ensure that the selection is within the root element
+    if !root_element.contains(Some(&anchor_node)) {
+        unknown_caret_position!("Selection is not inside root element");
+    }
 
     // Get the range of the current selection
     let range = match selection.get_range_at(0) {

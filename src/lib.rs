@@ -1,16 +1,13 @@
 //! Note: This library is not thread safe!
 
-use virtual_dom_rs;
-use web_sys;
-
 mod keys;
 mod state;
 mod utils;
 
 use cfg_if::cfg_if;
-use virtual_dom_rs::{VirtualNode, VElement};
+use virtual_dom_rs::{self, VirtualNode, VElement};
 use wasm_bindgen::prelude::*;
-use web_sys::{Element, Node, NodeList, Range};
+use web_sys::{self, Element, Node, NodeList, Range};
 
 use crate::keys::Key;
 use crate::state::{State, Direction};
@@ -31,6 +28,16 @@ cfg_if! {
 pub struct ComposeArea {
     state: State,
     wrapper_id: String,
+}
+
+impl ComposeArea {
+    pub fn state_ref(&self) -> &State {
+        &self.state
+    }
+
+    pub fn state_mut(&mut self) -> &mut State {
+        &mut self.state
+    }
 }
 
 /// Helper function: Wrap the list of virtual nodes in a content editable
@@ -79,8 +86,6 @@ enum Position<'a> {
 }
 
 fn add_range_at(pos: Position) {
-    web_sys::console::debug_1(&"add_range_at".into());
-
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
 
@@ -108,21 +113,38 @@ fn add_range_at(pos: Position) {
     }
 }
 
-fn browser_set_caret_position(wrapper: &Element, state: &State) {
-    web_sys::console::debug_1(&"browser_set_caret_position".into());
-
+/// Set the caret position in the browser using the specified state.
+///
+/// This will only work if the wrapper element has been properly initialized,
+/// matches the state and contains the trailing newline element.
+///
+/// Note: This function is only public for testing purposes.
+pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
     let nodes: NodeList = wrapper.child_nodes();
-    let node_count = nodes.length();
-    assert_eq!(node_count, state.node_count() as u32 + 1);
+    let dom_node_count = nodes.length();
 
-    if let Some(pos) = state.find_start_node(Direction::After) {
+    // Note: We need to be careful here, because the node list will contain 1
+    //       more entry than the nodes in the state object, because a trailing
+    //       <br> will always be appended to the DOM nodes.
+    let state_node_count = state.node_count();
+    assert_eq!(dom_node_count, state_node_count as u32 + 1, "Unexpected node count");
+
+    if state_node_count == 0 {
+        // No state nodes. Only one DOM node.
+        match nodes.get(0) {
+            Some(ref node) => add_range_at(Position::Offset(&node, 0)),
+            None => { /* TODO */ },
+        }
+    } else if let Some(pos) = state.find_start_node(Direction::After) {
         match nodes.get(pos.index as u32) {
             Some(ref node) => add_range_at(Position::Offset(&node, pos.offset as u32)),
             None => { /* TODO */ }
         }
     } else {
-        // We're at the end of the node list. Use the latest node.
-        match nodes.get(node_count - 1) {
+        // We're at the end of the state node list.
+        // Use the second-to-last node (since the last node is the <br> element.
+        let index = dom_node_count - 1 /* 0 based indexing */ - 1 /* <br> element */;
+        match nodes.get(index) {
             Some(ref node) => add_range_at(Position::After(&node)),
             None => { /* TODO */ },
         }
@@ -171,7 +193,7 @@ impl ComposeArea {
         virtual_dom_rs::patch(wrapper.clone(), &patches);
 
         // Update the caret position in the browser
-        browser_set_caret_position(&wrapper, &self.state);
+        _set_caret_position_from_state(&wrapper, &self.state);
 
         // We handled the event, so prevent the default event from being handled.
         true

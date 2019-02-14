@@ -91,3 +91,46 @@ fn test_remove_last_char() {
         expected: "<br>",
     }.test();
 }
+
+#[wasm_bindgen_test]
+fn test_delete_nothing() {
+    KeyHtmlTest {
+        keys: vec!["Backspace"],
+        expected: "<br>",
+    }.test();
+}
+
+/// Ensure that nothing panics when setting the caret position with empty state.
+#[wasm_bindgen_test]
+fn test_set_caret_position_from_state_when_empty() {
+    // Initialize
+    let document = helpers::setup_compose_area_test(WRAPPER_ID);
+    let mut area = compose_area::bind_to(WRAPPER_ID);
+    let wrapper = helpers::get_wrapper(&document, WRAPPER_ID);
+
+    // Check initial position
+    let pos1 = compose_area::get_caret_position(&wrapper);
+    assert_eq!(pos1.start, 0, "Wrong intial start");
+    assert_eq!(pos1.end, 0, "Wrong intial end");
+
+    // Create state
+    let state = area.state_mut();
+
+    // Update position
+    state.set_caret_position(0, 0);
+    compose_area::_set_caret_position_from_state(&wrapper, state);
+
+    // Check new position
+    let pos2 = compose_area::get_caret_position(&wrapper);
+    assert_eq!(pos2.start, 0, "Wrong start 2");
+    assert_eq!(pos2.end, 0, "Wrong end 2");
+
+    // Set position that's too large
+    state.set_caret_position(99, 99);
+    compose_area::_set_caret_position_from_state(&wrapper, state);
+
+    // Check final position
+    let pos3 = compose_area::get_caret_position(&wrapper);
+    assert_eq!(pos3.start, 0, "Wrong start 3");
+    assert_eq!(pos3.end, 0, "Wrong end 3");
+}
