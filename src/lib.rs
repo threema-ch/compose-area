@@ -199,13 +199,18 @@ impl ComposeArea {
         true
     }
 
-    /// Set the start and end of the caret position (relative to the HTML).
-    pub fn update_caret_position(&mut self, start: usize, end: usize) {
-        // Update state
-        if end < start {
-            return;
-        }
-        self.state.set_caret_position(start, end);
-    }
+    /// Update the caret position.
+    ///
+    /// Call this after every action that might have modified the DOM.
+    pub fn update_caret_position(&mut self) {
+        // Get access to wrapper element
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        let wrapper = document.get_element_by_id(&self.wrapper_id).expect("did not find element");
 
+        // Refresh caret pos
+        let pos = get_caret_position(&wrapper);
+        assert!(pos.start <= pos.end);
+        self.state.set_caret_position(pos.start as usize, pos.end as usize);
+    }
 }
