@@ -2,7 +2,65 @@ version: 2
 
 jobs:
 
-  unit-tests:
+  build:
+    docker:
+      - image: rust:latest
+    steps:
+      - checkout
+
+      # Load cargo target from cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v1-cargo-cache-build-{{ arch }}-{{ .Branch }}
+            - v1-cargo-cache-build-{{ arch }}
+
+      # Install nightly & wasm
+      - run:
+          name: Install Rust nightly
+          command: rustup update nightly && rustup default nightly
+      - run:
+          name: Add wasm32 target
+          command: rustup target add wasm32-unknown-unknown
+
+      # Install wasm tools
+      - run:
+          name: Install wasm-pack
+          command: >
+            curl -L https://github.com/rustwasm/wasm-pack/releases/download/v0.6.0/wasm-pack-v0.6.0-x86_64-unknown-linux-musl.tar.gz
+            | tar --strip-components=1 --wildcards -xzf - "*/wasm-pack"
+            && chmod +x wasm-pack
+            && mv wasm-pack $CARGO_HOME/bin/
+
+      # Show versions
+      - run:
+          name: Show versions
+          command: rustc --version && cargo --version && wasm-pack --version
+
+      # Build
+      - run:
+          name: Build compose-area
+          command: wasm-pack build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - pkg
+            - selenium
+            - www
+
+      # Save cache
+      - save_cache:
+          key: v1-cargo-cache-build-{{ arch }}-{{ .Branch }}
+          paths:
+            - target
+            - /usr/local/cargo
+      - save_cache:
+          key: v1-cargo-cache-build-{{ arch }}
+          paths:
+            - target
+            - /usr/local/cargo
+
+  test-unittests:
     docker:
       - image: rust:latest
     steps:
@@ -42,7 +100,7 @@ jobs:
             - target
             - /usr/local/cargo
 
-  browser-unit-tests:
+  test-browsertests:
     docker:
       - image: rust:latest
     steps:
@@ -103,9 +161,62 @@ jobs:
             - target
             - /usr/local/cargo
 
+  test-integrationtests:
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - attach_workspace:
+          at: .
+
+      # Load npm cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
+            - v1-npm-cache-integrationtest-{{ arch }}
+
+      - run:
+          name: Prepare non-global npm directory
+          command: mkdir ~/.npm-global && npm config set prefix '~/.npm-global'
+      - run:
+          name: Set up test server
+          command: >
+            PATH=~/.npm-global/bin:$PATH
+            && cd pkg
+            && npm link
+            && cd ../www
+            && npm ci
+            && npm link compose-area
+      - run:
+          name: Start test server
+          command: cd www && npm run start
+          background: true
+      - run:
+          name: Set up selenium tests
+          command: cd selenium && npm ci
+      - run:
+          name: Run selenium tests
+          command: cd selenium && npm test firefox
+
+      # Save cache
+      - save_cache:
+          key: v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
+          paths:
+            - www/node_modules
+            - selenium/node_modules
+      - save_cache:
+          key: v1-npm-cache-integrationtest-{{ arch }}
+          paths:
+            - www/node_modules
+            - selenium/node_modules
+
 workflows:
   version: 2
-  build:
+  build-and-test:
     jobs:
-      - unit-tests
-      - browser-unit-tests
+      - build
+      - test-unittests
+      - test-browsertests
+      - test-integrationtests:
+          requires:
+            - build
