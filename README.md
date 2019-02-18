@@ -1,5 +1,7 @@
 # compose-area
 
+[![Build status](https://circleci.com/gh/threema-ch/compose-area.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/threema-ch/compose-area)
+
 A compose area with support for Emoji, written with Rust + Webassembly.
 
 ## Setup

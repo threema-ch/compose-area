@@ -1,0 +1,111 @@
+version: 2
+
+jobs:
+
+  unit-tests:
+    docker:
+      - image: rust:latest
+    steps:
+      - checkout
+
+      # Load cargo target from cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v1-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
+            - v1-cargo-cache-unittest-{{ arch }}
+
+      # Install nightly
+      - run:
+          name: Install Rust nightly
+          command: rustup update nightly && rustup default nightly
+
+      # Show versions
+      - run:
+          name: Show versions
+          command: rustc --version && cargo --version
+
+      # Run tests
+      - run:
+          name: Run unit tests
+          command: cargo test
+
+      # Save cache
+      - save_cache:
+          key: v1-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
+          paths:
+            - target
+            - /usr/local/cargo
+      - save_cache:
+          key: v1-cargo-cache-unittest-{{ arch }}
+          paths:
+            - target
+            - /usr/local/cargo
+
+  browser-unit-tests:
+    docker:
+      - image: rust:latest
+    steps:
+      - checkout
+
+      # Load cargo target from cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v1-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
+            - v1-cargo-cache-browsertest-{{ arch }}
+
+      # Install nightly & wasm
+      - run:
+          name: Install Rust nightly
+          command: rustup update nightly && rustup default nightly
+      - run:
+          name: Add wasm32 target
+          command: rustup target add wasm32-unknown-unknown
+
+      # Install wasm tools
+      - run:
+          name: Install wasm-pack
+          command: >
+            curl -L https://github.com/rustwasm/wasm-pack/releases/download/v0.6.0/wasm-pack-v0.6.0-x86_64-unknown-linux-musl.tar.gz
+            | tar --strip-components=1 --wildcards -xzf - "*/wasm-pack"
+            && chmod +x wasm-pack
+            && mv wasm-pack $CARGO_HOME/bin/
+
+      # Install browsers
+      - run:
+          name: Install latest firefox
+          command: >
+            apt-get update
+            && apt-get install -y libgtk-3-0 libdbus-glib-1-2
+            && wget -q -O - "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US"
+            |  tar xj
+
+      # Show versions
+      - run:
+          name: Show versions
+          command: rustc --version && cargo --version && wasm-pack --version && firefox/firefox --version
+
+      # Run tests
+      - run:
+          name: Run browser unit tests
+          command: PATH=$(pwd)/firefox:$PATH wasm-pack test --headless --firefox
+
+      # Save cache
+      - save_cache:
+          key: v1-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
+          paths:
+            - target
+            - /usr/local/cargo
+      - save_cache:
+          key: v1-cargo-cache-browsertest-{{ arch }}
+          paths:
+            - target
+            - /usr/local/cargo
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - unit-tests
+      - browser-unit-tests
