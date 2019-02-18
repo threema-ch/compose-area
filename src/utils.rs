@@ -27,7 +27,10 @@ cfg_if! {
     if #[cfg(feature = "console_log")] {
         pub fn init_log() {
             use log::Level;
-            console_log::init_with_level(Level::Trace).expect("Error initializing logger");
+            // Best effort, ignore error if initialization fails.
+            // (This could be the ase if the logger is initialized multiple
+            // times.)
+            let _ = console_log::init_with_level(Level::Trace);
         }
     } else {
         pub fn init_log() {}
