@@ -3,3 +3,4 @@
 /bin/
 **/*.rs.bk
 wasm-pack.log
+node_modules/
