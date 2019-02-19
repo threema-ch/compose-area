@@ -3,7 +3,7 @@ use std::fmt;
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Element, Node};
+use web_sys::{Element, Node, HtmlImageElement};
 
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -212,4 +212,78 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
     };
 
     CaretPosition::new(start, end)
+}
+
+
+/// Process a DOM node recursively and extract text.
+///
+/// Convert elements like images to alt text.
+#[wasm_bindgen]
+pub fn extract_text(root_element: &Element, no_trim: bool) -> String {
+    let mut text = String::new();
+    visit_child_nodes(root_element, &mut text);
+    if no_trim {
+        text
+    } else {
+        text.trim().to_string()
+    }
+}
+
+/// Used by extract_text.
+///
+/// TODO: This could be optimized by avoiding copies and re-allocations.
+fn visit_child_nodes(parent_node: &Element, text: &mut String) {
+    let mut last_node_type = "".to_string();
+    let children = parent_node.child_nodes();
+    for i in 0..children.length() {
+        let node = match children.item(i) {
+            Some(n) => n,
+            None => {
+                warn!("visit_child_nodes: Index out of bounds");
+                return;
+            },
+        };
+        match node.node_type() {
+            Node::TEXT_NODE => {
+                if last_node_type == "div" {
+                    // An image following a div should go on a new line
+                    text.push('\n');
+                }
+                last_node_type = "text".to_string();
+                text.push_str(
+                    // Append text, but strip leading and trailing newlines
+                    node.node_value()
+                        .unwrap_or("".into())
+                        .trim_matches(|c| c == '\n' || c == '\r')
+                );
+            }
+            Node::ELEMENT_NODE => {
+                let element: &Element = node.unchecked_ref();
+                let tag = element.tag_name().to_lowercase();
+                let _last_node_type = last_node_type.clone();
+                last_node_type = tag.clone();
+                match &*tag {
+                    "span" => {
+                        visit_child_nodes(element, text);
+                    }
+                    "div" => {
+                        text.push('\n');
+                        visit_child_nodes(element, text);
+                    }
+                    "img" => {
+                        if _last_node_type == "div" {
+                            // An image following a div should go on a new line
+                            text.push('\n');
+                        }
+                        text.push_str(&node.unchecked_ref::<HtmlImageElement>().alt());
+                    }
+                    "br" => {
+                        text.push('\n');
+                    }
+                    _other => {}
+                }
+            }
+            other => warn!("visit_child_nodes: Unhandled node type: {}", other),
+        }
+    }
 }

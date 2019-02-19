@@ -13,7 +13,7 @@ use web_sys::{self, Element, Node, NodeList, Range};
 
 use crate::keys::Key;
 use crate::state::{State, Direction};
-pub use crate::utils::{CaretPosition, get_caret_position};
+pub use crate::utils::{CaretPosition, get_caret_position, extract_text};
 
 cfg_if! {
     // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
