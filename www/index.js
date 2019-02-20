@@ -58,7 +58,7 @@ wrapper.addEventListener("mouseup", (e) => {
 // Emoji handling
 
 function insertEmoji(e) {
-    const img = e.target.children[0];
+    const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
     composeArea.insert_image(img.src, img.alt, "emoji");
     composeArea.update_caret_position();
 }
