@@ -1,8 +1,10 @@
 import * as wasm from "compose-area";
 
-const composeArea = wasm.bind_to("wrapper");
+// Assign wasm module to window object for testing purposes.
+window.wasm = wasm;
 
-const wrapper = document.getElementById("wrapper");
+// Initialize compose area
+const composeArea = wasm.bind_to("wrapper");
 
 /**
  * Navigation keys according to https://www.w3.org/TR/uievents-key/
@@ -23,6 +25,10 @@ function isNavigationKey(key) {
     }
 }
 
+// Add wrapper event listeners
+
+const wrapper = document.getElementById("wrapper");
+
 wrapper.addEventListener("keydown", (e) => {
     console.log('keydown:', e);
     if (!e.ctrlKey && !e.altKey && !e.metaKey) {
@@ -32,26 +38,30 @@ wrapper.addEventListener("keydown", (e) => {
         }
     }
 });
+
 wrapper.addEventListener("keyup", (e) => {
     console.log('keyup:', e);
     if (isNavigationKey(e.key)) {
         composeArea.update_caret_position();
     }
 });
+
 wrapper.addEventListener("mousedown", (e) => {
     console.log('mousedown', e);
 });
+
 wrapper.addEventListener("mouseup", (e) => {
     console.log('mouseup', e);
     composeArea.update_caret_position();
 });
 
+// Emoji handling
+
 function insertEmoji(e) {
-    const img = e.target.children[0];
+    const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
     composeArea.insert_image(img.src, img.alt, "emoji");
     composeArea.update_caret_position();
 }
-
 document.getElementById("tongue").addEventListener("click", insertEmoji);
 document.getElementById("beers").addEventListener("click", insertEmoji);
 document.getElementById("facepalm").addEventListener("click", insertEmoji);

@@ -68,8 +68,8 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
             // We reached our target node, simply add the offset to the position
             // Note: The offset means something different depending on whether the
             // node is a text node or an element node! If it's a text node, it's the
-            // character offset from the start. If it's an element node, it is the
-            // number of elements from the start.
+            // char (code unit) offset from the start. If it's an element node,
+            // it is the number of elements from the start.
             match child_node.node_type() {
                 Node::TEXT_NODE => return pos + text_offset,
                 Node::ELEMENT_NODE => {
@@ -104,15 +104,18 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
     pos
 }
 
-fn get_position(root_element: &Element, node: &Node, offset: u32) -> Option<u32> {
-    if root_element.contains(Some(node)) {
-        Some(get_offset_from_start(root_element, node, offset))
-    } else {
-        None
-    }
-}
-
+/// A caret position specifies the offset in the HTML source code relative to
+/// the start of the wrapper element.
+///
+/// Example: If the caret is at the end of this wrapper element:
+///
+/// ```html
+/// <div id="wrapper">hi<br></div>
+/// ```
+///
+/// ...then the offset will be 6.
 #[wasm_bindgen]
+#[derive(Debug, Copy, Clone)]
 pub struct CaretPosition {
     pub start: u32,
     pub end: u32,
@@ -140,6 +143,11 @@ macro_rules! unknown_caret_position {
 /// Find the current caret position. If it cannot be determined, the position
 /// (0, 0) will be returned.
 ///
+/// Note: When getting the window selection, it will be relative to an anchor
+///       node. If the anchor node is an element node, then the offset is
+///       referring to the number of child elements. If the anchor node is a
+///       text node, then the offset is referring to the codepoints.
+///
 /// TODO: Return a tuple once
 /// https://github.com/rustwasm/wasm-bindgen/issues/122 is resolved!
 ///
@@ -161,29 +169,13 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
         Err(_) => unknown_caret_position!("Error during get_selection"),
     };
 
-    // Get selection anchor node
-    let anchor_node = match selection.anchor_node() {
-        Some(node) => node,
-        None => unknown_caret_position!("No anchor node in selection"),
-    };
-
-    // If the anchor node is the root element, we're at the start.
-    if anchor_node.is_same_node(Some(root_element.unchecked_ref::<Node>())) {
-        return CaretPosition::new(0, 0);
-    }
-
-    // Ensure that the selection is within the root element
-    if !root_element.contains(Some(&anchor_node)) {
-        unknown_caret_position!("Selection is not inside root element");
-    }
-
     // Get the range of the current selection
     let range = match selection.get_range_at(0) {
         Ok(range) => range,
         Err(_) => unknown_caret_position!("Error during get_range_at(0)"),
     };
 
-    // Find the start position
+    // Find the start/end container/offset
     let start_container = match range.start_container() {
         Ok(container) => container,
         Err(_) => unknown_caret_position!("Error during start_container()"),
@@ -192,12 +184,6 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
         Ok(offset) => offset,
         Err(_) => unknown_caret_position!("Error during start_offset()"),
     };
-    let start = match get_position(&root_element, &start_container, start_offset) {
-        Some(start) => start,
-        None => unknown_caret_position!("get_caret_position: Could not find start"),
-    };
-
-    // Find the end position
     let end_container = match range.end_container() {
         Ok(container) => container,
         Err(_) => unknown_caret_position!("Error during end_container()"),
@@ -206,11 +192,14 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
         Ok(offset) => offset,
         Err(_) => unknown_caret_position!("Error during end_offset()"),
     };
-    let end = match get_position(&root_element, &end_container, end_offset) {
-        Some(end) => end,
-        None => unknown_caret_position!("get_caret_position: Could not find end"),
-    };
 
+    // Ensure that the start container is within the root element
+    if !root_element.contains(Some(&start_container)) {
+        unknown_caret_position!("Selection is not inside root element");
+    }
+
+    let start = get_offset_from_start(&root_element, &start_container, start_offset);
+    let end = get_offset_from_start(&root_element, &end_container, end_offset);
     CaretPosition::new(start, end)
 }
 
