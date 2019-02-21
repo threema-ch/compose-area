@@ -1,12 +1,15 @@
 # compose-area
 
-[![Build status](https://circleci.com/gh/threema-ch/compose-area.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/threema-ch/compose-area)
+[![CircleCI][circle-ci-badge]][circle-ci]
+[![License][license-badge]][license]
 
 A compose area with support for Emoji, written with Rust + Webassembly.
+
 
 ## Setup
 
     cargo install wasm-pack
+
 
 ## Building
 
@@ -15,6 +18,7 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
     # Release build
     wasm-pack build --release -- --no-default-features
+
 
 ## Testing
 
@@ -30,6 +34,7 @@ A compose area with support for Emoji, written with Rust + Webassembly.
     cd selenium
     npm test firefox
 
+
 ## Running the testproject
 
     # Setup npm
@@ -41,3 +46,22 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
     # Run server
     npm run start
+
+
+## License
+
+Licensed under either of
+
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
+   http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or
+   http://opensource.org/licenses/MIT)
+
+at your option.
+
+
+<!-- Badges -->
+[circle-ci]: https://circleci.com/gh/threema-ch/compose-area/tree/master
+[circle-ci-badge]: https://circleci.com/gh/threema-ch/compose-area/tree/master.svg?style=shield
+[license]: https://github.com/threema-ch/compose-area#license
+[license-badge]: https://img.shields.io/badge/License-Apache%202.0%20%2f%20MIT-blue.svg
