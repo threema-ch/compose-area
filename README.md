@@ -23,6 +23,12 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
     # Browser tests (headless)
     wasm-pack test --headless --firefox
+    # ...or if you want to filter tests by name
+    cargo test --target wasm32-unknown-unknown <filter>
+
+    # Selenium tests (test server must be started)
+    cd selenium
+    npm test firefox
 
 ## Running the testproject
 

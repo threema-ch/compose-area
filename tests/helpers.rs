@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 
+use log::Level;
 use virtual_dom_rs::VirtualNode;
 use web_sys::Node;
 
@@ -7,6 +8,12 @@ thread_local! {
     pub static COUNTER: RefCell<u32> = RefCell::new(0);
 }
 
+/// Setup function that should be called by all tests.
+pub(crate) fn setup_test() {
+    // Initialize console logger, ignore errors. (Errors occur if the logger is
+    // initialized multiple times, we can ignore that.)
+    let _ = console_log::init_with_level(Level::Trace);
+}
 
 /// Set up the compose area test. Return reference to document.
 pub(crate) fn setup_compose_area_test(wrapper_id: &str) -> web_sys::Document {
@@ -19,6 +26,9 @@ pub(crate) fn setup_compose_area_test(wrapper_id: &str) -> web_sys::Document {
     if let Some(old_wrapper_element) = document.get_element_by_id(wrapper_id) {
         old_wrapper_element.remove();
     }
+
+    // Clear any selections
+    unset_caret_position();
 
     // Insert wrapper element into DOM
     let wrapper = {
@@ -89,4 +99,11 @@ impl ExtractTextTest {
         let text: String = compose_area::extract_text(&test_wrapper, false);
         assert_eq!(&text, self.expected);
     }
+}
+
+/// Remove all selection ranges from the DOM.
+pub(crate) fn unset_caret_position() {
+    let window = web_sys::window().expect("No global `window` exists");
+    let sel = window.get_selection().unwrap().unwrap();
+    sel.remove_all_ranges().unwrap();
 }

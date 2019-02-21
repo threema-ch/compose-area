@@ -6,9 +6,11 @@ mod keys;
 mod state;
 mod utils;
 
+use std::mem;
+
 use cfg_if::cfg_if;
 use virtual_dom_rs::{self, VirtualNode, VElement};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{self, Element, Node, NodeList, Range};
 
 use crate::keys::Key;
@@ -71,8 +73,14 @@ pub fn bind_to(id: &str) -> ComposeArea {
     let state = State::new();
     let initial_vdom: VirtualNode = wrap(state.to_virtual_nodes(), id);
     let initial_dom: Node = initial_vdom.create_dom_node().node;
-    wrapper.replace_with_with_node_1(&initial_dom)
-        .expect("Could not initialize wrapper");
+    wrapper.replace_with_with_node_1(&initial_dom).expect("Could not initialize wrapper");
+    mem::forget(wrapper); // Has been replaced, dead DOM reference
+
+    // Initialize caret position
+    _set_caret_position_from_state(
+        initial_dom.unchecked_ref::<Element>(),
+        &state,
+    );
 
     info!("Initialized #{}", id);
 
@@ -83,6 +91,7 @@ pub fn bind_to(id: &str) -> ComposeArea {
 }
 
 /// A position relative to a node.
+#[derive(Debug)]
 enum Position<'a> {
     After(&'a Node),
     Offset(&'a Node, u32),
@@ -96,15 +105,15 @@ fn add_range_at(pos: Position) {
     match pos {
         Position::After(node) => {
             range.set_start_after(node).expect("Could not set range start after");
-            range.set_end_after(node).expect("Could not set range end after");
+            range.collapse();
         }
         Position::Offset(node, 0) => {
             range.set_start_before(node).expect("Could not set range start before");
-            range.set_end_before(node).expect("Could not set range end before");
+            range.collapse();
         }
         Position::Offset(node, offset) => {
-            range.set_start(node, offset).expect("Could not set range start");
-            range.set_end(node, offset).expect("Could not set range end");
+            range.set_start(node, offset).expect("Could not set range start before");
+            range.collapse();
         }
     }
 
@@ -112,7 +121,7 @@ fn add_range_at(pos: Position) {
         sel.remove_all_ranges().expect("Could not remove ranges");
         sel.add_range(&range).expect("Could not add range");
     } else {
-        // TODO warn
+        warn!("Could not get window selection");
     }
 }
 
@@ -136,12 +145,12 @@ pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
         // No state nodes. Only one DOM node.
         match nodes.get(0) {
             Some(ref node) => add_range_at(Position::Offset(&node, 0)),
-            None => { /* TODO */ },
+            None => unreachable!("Trailing <br> node not found"),
         }
     } else if let Some(pos) = state.find_start_node(Direction::After) {
         match nodes.get(pos.index as u32) {
             Some(ref node) => add_range_at(Position::Offset(&node, pos.offset as u32)),
-            None => { /* TODO */ }
+            None => unreachable!(format!("Node at index {} not found", pos.index)),
         }
     } else {
         // We're at the end of the state node list.
@@ -149,7 +158,7 @@ pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
         let index = dom_node_count - 1 /* 0 based indexing */ - 1 /* <br> element */;
         match nodes.get(index) {
             Some(ref node) => add_range_at(Position::After(&node)),
-            None => { /* TODO */ },
+            None => unreachable!(format!("Node at index {} not found", index)),
         }
     }
 }
@@ -190,10 +199,6 @@ impl ComposeArea {
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
-        debug!("Old vdom: {:?}", &old_vdom);
-        debug!("New vdom: {:?}", &new_vdom);
-        debug!("Patches {:?}", &patches);
-
         // Patch the current DOM
         virtual_dom_rs::patch(wrapper.clone(), &patches);
 
@@ -224,10 +229,6 @@ impl ComposeArea {
 
         // Do the DOM diffing
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
-
-        debug!("Old vdom: {:?}", &old_vdom);
-        debug!("New vdom: {:?}", &new_vdom);
-        debug!("Patches {:?}", &patches);
 
         // Patch the current DOM
         virtual_dom_rs::patch(wrapper.clone(), &patches);
