@@ -107,7 +107,7 @@ jobs:
             - target
             - /usr/local/cargo
 
-  test-unittests:
+  test-unit:
     docker:
       - image: rust:latest
     steps:
@@ -147,7 +147,7 @@ jobs:
             - target
             - /usr/local/cargo
 
-  test-browsertests:
+  test-browser:
     docker:
       - image: rust:latest
     steps:
@@ -208,14 +208,14 @@ jobs:
             - target
             - /usr/local/cargo
 
-  test-integrationtests-firefox:
+  test-integration-firefox:
     docker:
       - image: circleci/node:10-browsers
     steps: *steps-integrationtests
     environment:
       BROWSER: firefox
 
-  test-integrationtests-chrome:
+  test-integration-chrome:
     docker:
       - image: circleci/node:10-browsers
     steps: *steps-integrationtests
@@ -227,11 +227,11 @@ workflows:
   build-and-test:
     jobs:
       - build
-      - test-unittests
-      - test-browsertests
-      - test-integrationtests-firefox:
+      - test-unit
+      - test-browser
+      - test-integration-firefox:
           requires:
             - build
-      - test-integrationtests-chrome:
+      - test-integration-chrome:
           requires:
             - build
