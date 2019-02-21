@@ -1,5 +1,52 @@
 version: 2
 
+references:
+  steps-integrationtests: &steps-integrationtests
+    - attach_workspace:
+        at: .
+
+    # Load npm cache if possible.
+    # Multiple caches are used to increase the chance of a cache hit.
+    - restore_cache:
+        keys:
+          - v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
+          - v1-npm-cache-integrationtest-{{ arch }}
+
+    - run:
+        name: Prepare non-global npm directory
+        command: mkdir ~/.npm-global && npm config set prefix '~/.npm-global'
+    - run:
+        name: Set up test server
+        command: >
+          PATH=~/.npm-global/bin:$PATH
+          && cd pkg
+          && npm link
+          && cd ../www
+          && npm ci
+          && npm link compose-area
+    - run:
+        name: Start test server
+        command: cd www && npm run start
+        background: true
+    - run:
+        name: Set up selenium tests
+        command: cd selenium && npm ci
+    - run:
+        name: Run selenium tests
+        command: cd selenium && npm test $BROWSER
+
+    # Save cache
+    - save_cache:
+        key: v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
+        paths:
+          - www/node_modules
+          - selenium/node_modules
+    - save_cache:
+        key: v1-npm-cache-integrationtest-{{ arch }}
+        paths:
+          - www/node_modules
+          - selenium/node_modules
+
 jobs:
 
   build:
@@ -161,54 +208,19 @@ jobs:
             - target
             - /usr/local/cargo
 
-  test-integrationtests:
+  test-integrationtests-firefox:
     docker:
       - image: circleci/node:10-browsers
-    steps:
-      - attach_workspace:
-          at: .
+    steps: *steps-integrationtests
+    environment:
+      BROWSER: firefox
 
-      # Load npm cache if possible.
-      # Multiple caches are used to increase the chance of a cache hit.
-      - restore_cache:
-          keys:
-            - v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
-            - v1-npm-cache-integrationtest-{{ arch }}
-
-      - run:
-          name: Prepare non-global npm directory
-          command: mkdir ~/.npm-global && npm config set prefix '~/.npm-global'
-      - run:
-          name: Set up test server
-          command: >
-            PATH=~/.npm-global/bin:$PATH
-            && cd pkg
-            && npm link
-            && cd ../www
-            && npm ci
-            && npm link compose-area
-      - run:
-          name: Start test server
-          command: cd www && npm run start
-          background: true
-      - run:
-          name: Set up selenium tests
-          command: cd selenium && npm ci
-      - run:
-          name: Run selenium tests
-          command: cd selenium && npm test firefox
-
-      # Save cache
-      - save_cache:
-          key: v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
-          paths:
-            - www/node_modules
-            - selenium/node_modules
-      - save_cache:
-          key: v1-npm-cache-integrationtest-{{ arch }}
-          paths:
-            - www/node_modules
-            - selenium/node_modules
+  test-integrationtests-chrome:
+    docker:
+      - image: circleci/node:10-browsers
+    steps: *steps-integrationtests
+    environment:
+      BROWSER: chrome
 
 workflows:
   version: 2
@@ -217,6 +229,9 @@ workflows:
       - build
       - test-unittests
       - test-browsertests
-      - test-integrationtests:
+      - test-integrationtests-firefox:
+          requires:
+            - build
+      - test-integrationtests-chrome:
           requires:
             - build
