@@ -47,10 +47,13 @@ fn is_text_node(node: &Node) -> bool {
 /// E.g. when passing in a div element, the length will be 5 (`<div>`).
 fn get_opening_tag_len(node: &Element) -> usize {
     let name = node.node_name(); // e.g. "div"
-    name.len() + 2 // e.g. "<div>"
+    name.encode_utf16().count() + 2 // e.g. "<div>"
 }
 
 /// Return the node offset from the start of the root element.
+///
+/// Implementation note: It's important that byte lengths are always measured
+/// in UTF-16 encoding!
 fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
     let text_offset = if is_text_node(node) { offset } else { 0 };
     let node_offset = if !is_text_node(node) { offset } else { 0 };
@@ -91,11 +94,11 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
         // We're at a node previous to the target node. Increase pos.
         match child_node.node_type() {
             Node::TEXT_NODE => {
-                pos += child_node.text_content().expect("Text node without text content").len() as u32;
+                pos += child_node.text_content().expect("Text node without text content").encode_utf16().count() as u32;
             }
             Node::ELEMENT_NODE => {
                 let element_ref: &Element = child_node.unchecked_ref();
-                pos += element_ref.outer_html().len() as u32;
+                pos += element_ref.outer_html().encode_utf16().count() as u32;
             }
             other => panic!(format!("Unsupported node type: {}", other)),
         }

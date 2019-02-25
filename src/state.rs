@@ -17,6 +17,10 @@ pub enum Node {
 }
 
 impl Node {
+    /// Calculate the byte length of the node when converted to HTML.
+    ///
+    /// Important: JavaScript uses UTF-16 as string encoding, all strings must
+    /// be encoded that way.
     fn html_size(&self) -> usize {
         match self {
             // Just the text length
@@ -624,5 +628,15 @@ mod tests {
         ]);
         let len = format!("<img src=\"{}\" alt=\"{}\" class=\"{}\">", src, alt, cls).encode_utf16().count();
         assert_eq!(state.caret_position(), (2 + len, 2 + len));
+    }
+
+    #[test]
+    fn test_html_size_with_emoji() {
+        let node = Node::Image {
+            src: "test.jpg".to_string(),
+            alt: "🍻".to_string(),
+            cls: "umläöüt".to_string(),
+        };
+        assert_eq!(node.html_size(), 45);
     }
 }
