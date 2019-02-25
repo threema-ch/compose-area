@@ -100,6 +100,12 @@ impl State {
         (self.caret_start, self.caret_end)
     }
 
+    /// Update the start and end caret position.
+    pub fn set_caret_position(&mut self, start: usize, end: usize) {
+        self.caret_start = start;
+        self.caret_end = end;
+    }
+
     /// Return the node at the current caret start position and the offset from
     /// the beginning of that node.
     ///
@@ -166,7 +172,7 @@ impl State {
     /// If some elements are selected (caret_start != caret_end),
     /// remove those elements and return `true`. Otherwise, return `false`.
     fn remove_selection(&mut self) -> bool {
-        if self.caret_end <= self.caret_start {
+        if self.caret_start >= self.caret_end {
             return false;
         }
 
@@ -264,6 +270,11 @@ impl State {
     }
 
     fn handle_backspace(&mut self) {
+        // If there's a selection, remove it and return
+        if self.remove_selection() {
+            return;
+        }
+
         // Handle start-of-input case, nothing to do
         if self.caret_start == 0 {
             return;
@@ -305,6 +316,8 @@ impl State {
     }
 
     fn handle_text(&mut self, text: Vec<u16>) {
+        self.remove_selection();
+
         // Find the current node we're at
         if let Some(current_node) = self.find_start_node(Direction::After) {
             // If we're already at or in a text node, update existing text.
@@ -338,6 +351,7 @@ impl State {
     }
 
     fn handle_enter(&mut self) {
+        self.remove_selection();
         self.insert_block_element(Node::Newline);
     }
 
@@ -386,11 +400,6 @@ impl State {
         self.caret_start += new_node.html_size();
         self.caret_end = self.caret_start;
         self.nodes.push(new_node);
-    }
-
-    pub fn set_caret_position(&mut self, start: usize, end: usize) {
-        self.caret_start = start;
-        self.caret_end = end;
     }
 
     pub fn to_virtual_nodes(&self) -> Vec<VirtualNode> {
@@ -487,6 +496,22 @@ mod tests {
             state.set_caret_position(2, 2);
             state.handle_key(Key::Character("d"));
             assert_eq!(state.nodes, vec![Node::text_from_str("abdc")]);
+        }
+
+        #[test]
+        fn replace_text() {
+            let mut state = State::new();
+            assert!(state.nodes.is_empty());
+
+            state.handle_key(Key::Character("a"));
+            state.handle_key(Key::Character("b"));
+            state.handle_key(Key::Character("c"));
+            state.handle_key(Key::Character("d"));
+            assert_eq!(state.nodes, vec![Node::text_from_str("abcd")]);
+
+            state.set_caret_position(1, 3);
+            state.handle_key(Key::Character("X"));
+            assert_eq!(state.nodes, vec![Node::text_from_str("aXd")]);
         }
     }
 
