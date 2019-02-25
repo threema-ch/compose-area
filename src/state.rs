@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use virtual_dom_rs::{VirtualNode, VElement};
 
 use crate::keys::Key;
@@ -161,6 +163,66 @@ impl State {
         }
     }
 
+    /// If some elements are selected (caret_start != caret_end),
+    /// remove those elements and return `true`. Otherwise, return `false`.
+    fn remove_selection(&mut self) -> bool {
+        if self.caret_end <= self.caret_start {
+            return false;
+        }
+
+        // General approach: We get the node at the current start position. We
+        // then start removing nodes after the start position until nodes with
+        // length (end - start) have been removed.
+        while self.caret_end > self.caret_start {
+            let mut remove_node = None;
+            let difference = self.caret_end - self.caret_start;
+
+            // Find the node right of the start pos.
+            if let Some(start_node) = self.find_start_node(Direction::After) {
+                match self.nodes.get_mut(start_node.index).expect("No node at the specified index!") {
+                    // Text node
+                    &mut Node::Text(ref mut val) => {
+                        if start_node.offset == 0 && val.len() <= difference {
+                            // In case we're at the start of the text and if the length
+                            // of the text is less than the amount of characters we have
+                            // to remove, remove the entire node.
+                            remove_node = Some(start_node.index);
+                        } else {
+                            // Otherwise, remove characters from the text.
+                            let chars_available = val.len() - start_node.offset;
+                            let chars_to_remove = min(chars_available, difference);
+                            for _ in 0..chars_to_remove {
+                                val.remove(start_node.offset);
+                                self.caret_end -= 1;
+                            }
+                            if self.caret_end < self.caret_start {
+                                warn!("caret_start > caret_end after shortening text");
+                                self.caret_start = self.caret_end;
+                            }
+                        }
+                    },
+
+                    // Block nodes, remove them entirely
+                    &mut Node::Newline |
+                    &mut Node::Image { .. } => remove_node = Some(start_node.index),
+                }
+            }
+
+            // Remove node, deduce its length from the end pos.
+            // If necessary, adjust the start pos (although that shouldn't happen).
+            if let Some(index) = remove_node {
+                let removed_node = self.nodes.remove(index);
+                self.caret_end -= min(removed_node.html_size(), difference);
+                if self.caret_end < self.caret_start {
+                    warn!("caret_start > caret_end after removing node");
+                    self.caret_start = self.caret_end;
+                }
+            }
+        }
+
+        true
+    }
+
     pub fn handle_key(&mut self, key: Key) {
         match key {
             Key::Enter => self.handle_enter(),
@@ -188,7 +250,7 @@ impl State {
                         // entire node.
                         remove_node = Some(current_node.index);
                     } else {
-                        // Otherwise, remove last character and the entire node in
+                        // Otherwise, remove last character before the current position
                         val.remove(current_node.offset - 1);
                         self.caret_start -= 1;
                         self.caret_end = self.caret_start;
@@ -327,8 +389,16 @@ impl State {
 mod tests {
     use super::*;
 
+    fn image_node() -> Node {
+        Node::Image {
+            src: "img.jpg".to_string(),
+            alt: "😀".to_string(),
+            cls: "em".to_string(),
+        }
+    }
+
     #[test]
-    fn test_handle_key_simple() {
+    fn handle_key_simple() {
         eprint!("a");
         let mut state = State::new();
         assert!(state.nodes.is_empty());
@@ -367,7 +437,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_key_at_caret_pos_text() {
+    fn handle_key_at_caret_pos_text() {
         let mut state = State::new();
         assert!(state.nodes.is_empty());
 
@@ -381,8 +451,26 @@ mod tests {
         assert_eq!(state.nodes, vec![Node::text_from_str("abdc")]);
     }
 
+    /// Some characters are selected, followed by a keypress.
+    /// The selected text should be replaced.
     #[test]
-    fn test_handle_backspace_in_text() {
+    fn replace_text() {
+        let mut state = State::new();
+        assert!(state.nodes.is_empty());
+
+        state.handle_key(Key::Character("a"));
+        state.handle_key(Key::Character("b"));
+        state.handle_key(Key::Character("c"));
+        state.handle_key(Key::Character("d"));
+        assert_eq!(state.nodes, vec![Node::text_from_str("abcd")]);
+
+        state.set_caret_position(1, 3);
+        state.handle_key(Key::Character("X"));
+        assert_eq!(state.nodes, vec![Node::text_from_str("aXd")]);
+    }
+
+    #[test]
+    fn handle_backspace_in_text() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("abc")];
         state.set_caret_position(2, 2);
@@ -393,7 +481,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_backspace_after_text() {
+    fn handle_backspace_after_text() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("abc"), Node::Newline];
         state.set_caret_position(3, 3);
@@ -404,7 +492,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_backspace_after_newline() {
+    fn handle_backspace_after_newline() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("abc"), Node::Newline, Node::text_from_str("d")];
         let pos = 3 + Node::Newline.html_size();
@@ -416,7 +504,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_backspace_before_text() {
+    fn handle_backspace_before_text() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         state.set_caret_position(0, 0);
@@ -427,7 +515,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_enter_start() {
+    fn handle_enter_start() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         state.set_caret_position(0, 0);
@@ -438,7 +526,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_enter_end() {
+    fn handle_enter_end() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         state.set_caret_position(2, 2);
@@ -449,7 +537,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_enter_between_nodes() {
+    fn handle_enter_between_nodes() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("a"), Node::text_from_str("b")];
         state.set_caret_position(1, 1);
@@ -464,7 +552,7 @@ mod tests {
     }
 
     #[test]
-    fn test_handle_enter_split_text() {
+    fn handle_enter_split_text() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         state.set_caret_position(1, 1);
@@ -480,7 +568,7 @@ mod tests {
 
     /// Empty node list
     #[test]
-    fn test_find_start_node_empty() {
+    fn find_start_node_empty() {
         let state = State::new();
         assert!(state.find_start_node(Direction::Before).is_none());
         assert!(state.find_start_node(Direction::After).is_none());
@@ -488,7 +576,7 @@ mod tests {
 
     /// Before the first node
     #[test]
-    fn test_find_start_node_before_first() {
+    fn find_start_node_before_first() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         assert_eq!(state.find_start_node(Direction::Before), None);
@@ -498,7 +586,7 @@ mod tests {
 
     /// In the middle of a text node
     #[test]
-    fn test_find_start_node_in_text() {
+    fn find_start_node_in_text() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         state.set_caret_position(1, 1);
@@ -510,7 +598,7 @@ mod tests {
 
     /// At the end
     #[test]
-    fn test_find_start_node_at_end() {
+    fn find_start_node_at_end() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab")];
         state.set_caret_position(2, 2);
@@ -521,7 +609,7 @@ mod tests {
 
     /// Between two nodes
     #[test]
-    fn test_find_start_node_between_two() {
+    fn find_start_node_between_two() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab"), Node::Newline];
         state.set_caret_position(2, 2);
@@ -532,7 +620,7 @@ mod tests {
     }
 
     #[test]
-    fn test_find_start_node_outofbounds() {
+    fn find_start_node_outofbounds() {
         let mut state = State::new();
         state.nodes = vec![Node::text_from_str("ab"), Node::text_from_str("cde")];
 
@@ -550,7 +638,7 @@ mod tests {
 
     /// Remove a character that has 1 byte in UTF-16 but two bytes in UTF-8.
     #[test]
-    fn test_handle_key_remove_multibyte() {
+    fn handle_key_remove_multibyte() {
         let mut state = State::new();
         assert!(state.nodes.is_empty());
 
@@ -631,12 +719,83 @@ mod tests {
     }
 
     #[test]
-    fn test_html_size_with_emoji() {
+    fn html_size_with_emoji() {
         let node = Node::Image {
             src: "test.jpg".to_string(),
             alt: "🍻".to_string(),
             cls: "umläöüt".to_string(),
         };
         assert_eq!(node.html_size(), 45);
+    }
+
+    mod remove_selection {
+        use super::*;
+
+        #[test]
+        fn remove_nothing() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("ab")];
+            state.set_caret_position(1, 1);
+            assert_eq!(state.caret_position(), (1, 1));
+            assert!(!state.remove_selection());
+            assert_eq!(state.caret_position(), (1, 1));
+        }
+
+        #[test]
+        fn remove_entire_text_node() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("ab")];
+            state.set_caret_position(0, 2);
+            assert!(state.remove_selection());
+            assert_eq!(state.nodes.len(), 0);
+        }
+
+        #[test]
+        fn remove_partial_text_node_middle() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("abcde"), Node::text_from_str("f")];
+            state.set_caret_position(1, 3);
+            assert!(state.remove_selection());
+            assert_eq!(state.nodes, vec![Node::text_from_str("ade"), Node::text_from_str("f")]);
+        }
+
+        #[test]
+        fn remove_partial_text_node_to_end() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("abcde"), Node::text_from_str("f")];
+            state.set_caret_position(1, 5);
+            assert!(state.remove_selection());
+            assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::text_from_str("f")]);
+        }
+
+        #[test]
+        fn remove_partial_text_node_past_end() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("abcde"), Node::text_from_str("fg")];
+            state.set_caret_position(1, 6);
+            assert!(state.remove_selection());
+            assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::text_from_str("g")]);
+        }
+
+        #[test]
+        fn remove_entire_image_node() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("a"), image_node(), Node::text_from_str("b")];
+            state.set_caret_position(1, 1 + image_node().html_size());
+            assert!(state.remove_selection());
+            assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::text_from_str("b")]);  // TODO: Normalize
+        }
+
+        #[test]
+        fn remove_partial_image_node() {
+            // If the caret end is shorter than the node, remove the entire
+            // node and adjust the caret end.
+            let mut state = State::new();
+            state.nodes = vec![image_node(), Node::text_from_str("a")];
+            state.set_caret_position(0, image_node().html_size() - 5);
+            assert!(state.remove_selection());
+            assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
+            assert_eq!(state.caret_position(), (0, 0));
+        }
     }
 }
