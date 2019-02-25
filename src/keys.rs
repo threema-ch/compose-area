@@ -5,13 +5,16 @@ pub enum Key<'a> {
     Character(&'a str),
     Enter,
     Backspace,
+    Delete,
 }
 
 impl<'a> Key<'a> {
     pub fn from_str(val: &str) -> Option<Key> {
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
         Some(match val {
             "Enter" => Key::Enter,
             "Backspace" => Key::Backspace,
+            "Delete" => Key::Delete,
             val if is_key_string(val) => Key::Character(val),
             _ => return None,
         })
@@ -54,6 +57,7 @@ mod tests {
         assert!(!is_key_string("Enter"));
         assert!(!is_key_string("Shift"));
         assert!(!is_key_string("F1"));
+        assert!(!is_key_string("Delete"));
 
         assert!(is_key_string("a"));
         assert!(is_key_string("Ö"));
@@ -65,6 +69,7 @@ mod tests {
     fn test_key_from_str() {
         assert_eq!(Key::from_str("Enter"), Some(Key::Enter));
         assert_eq!(Key::from_str("Backspace"), Some(Key::Backspace));
+        assert_eq!(Key::from_str("Delete"), Some(Key::Delete));
         assert_eq!(Key::from_str("Q"), Some(Key::Character("Q".into())));
         assert_eq!(Key::from_str("Alt"), None);
         assert_eq!(Key::from_str("Shift"), None);

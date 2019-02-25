@@ -278,6 +278,7 @@ impl State {
         match key {
             Key::Enter => self.handle_enter(),
             Key::Backspace => self.handle_backspace(),
+            Key::Delete => self.handle_delete(),
             Key::Character(c) => self.handle_text(c.encode_utf16().collect()),
         }
     }
@@ -322,6 +323,43 @@ impl State {
             let removed_node = self.nodes.remove(index);
             self.caret_start -= removed_node.html_size();
             self.caret_end = self.caret_start;
+
+            // A node has been removed. Re-normalize the state.
+            self.normalize();
+        }
+    }
+
+    fn handle_delete(&mut self) {
+        // If there's a selection, remove it and return
+        if self.remove_selection() {
+            return;
+        }
+
+        // Set if the entire node should be removed
+        // (e.g. because it became empty after the deletion).
+        let mut remove_node: Option<usize> = None;
+
+        if let Some(current_node) = self.find_start_node(Direction::After) {
+            match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
+                // Text node
+                &mut Node::Text(ref mut val) => {
+                    if val.len() <= 1 {
+                        // In case there's only a single character in it, remove the
+                        // entire node.
+                        remove_node = Some(current_node.index);
+                    } else {
+                        // Otherwise, remove last character after the current position
+                        val.remove(current_node.offset);
+                    }
+                },
+
+                // Block nodes, remove it entirely
+                &mut Node::Newline |
+                &mut Node::Image { .. } => remove_node = Some(current_node.index),
+            }
+        }
+        if let Some(index) = remove_node {
+            self.nodes.remove(index);
 
             // A node has been removed. Re-normalize the state.
             self.normalize();
@@ -619,6 +657,64 @@ mod tests {
             state.handle_key(Key::Backspace);
             assert_eq!(state.node_count(), 1);
             assert_eq!(state.nodes, vec![Node::text_from_str("ab")]);
+        }
+    }
+
+    mod handle_delete {
+        use super::*;
+
+        #[test]
+        fn in_text() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("abc")];
+            state.set_caret_position(1, 1);
+            state.handle_key(Key::Delete);
+            assert_eq!(state.nodes, vec![Node::text_from_str("ac")]);
+            assert_eq!(state.caret_start, 1);
+            assert_eq!(state.caret_end, 1);
+        }
+
+        #[test]
+        fn after_text() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("abc")];
+            state.set_caret_position(3, 3);
+            state.handle_key(Key::Delete);
+            assert_eq!(state.nodes, vec![Node::text_from_str("abc")]);
+            assert_eq!(state.caret_start, 3);
+            assert_eq!(state.caret_end, 3);
+        }
+
+        #[test]
+        fn after_newline() {
+            let mut state = State::new();
+            state.nodes = vec![
+                Node::text_from_str("abc"),
+                Node::Newline,
+                Node::Newline,
+                Node::text_from_str("d"),
+            ];
+            let pos = 3 + Node::Newline.html_size();
+            state.set_caret_position(pos, pos);
+            state.handle_key(Key::Delete);
+            assert_eq!(state.nodes, vec![
+                   Node::text_from_str("abc"),
+                   Node::Newline,
+                   Node::text_from_str("d"),
+            ]);
+            assert_eq!(state.caret_start, pos);
+            assert_eq!(state.caret_end, pos);
+        }
+
+        #[test]
+        fn before_newline() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("ab"), Node::Newline];
+            state.set_caret_position(2, 2);
+            state.handle_key(Key::Delete);
+            assert_eq!(state.nodes, vec![Node::text_from_str("ab")]);
+            assert_eq!(state.caret_start, 2);
+            assert_eq!(state.caret_end, 2);
         }
     }
 
