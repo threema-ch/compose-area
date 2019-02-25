@@ -95,15 +95,22 @@ impl State {
         self.nodes.len()
     }
 
+    /// Return the total length of the nodes.
+    pub fn html_size(&self) -> usize {
+        self.nodes.iter().map(|node| node.html_size()).sum()
+    }
+
     /// Return the start and end caret position.
     pub fn caret_position(&self) -> (usize, usize) {
         (self.caret_start, self.caret_end)
     }
 
     /// Update the start and end caret position.
+    ///
+    /// The end position will be clamped to the HTML size.
     pub fn set_caret_position(&mut self, start: usize, end: usize) {
         self.caret_start = start;
-        self.caret_end = end;
+        self.caret_end = min(end, self.html_size());
     }
 
     /// Return the node at the current caret start position and the offset from
