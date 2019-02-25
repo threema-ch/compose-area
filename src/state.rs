@@ -220,7 +220,39 @@ impl State {
             }
         }
 
+        // The nodes have been modified, some might have been removed.
+        // Re-normalize the state.
+        self.normalize();
+
         true
+    }
+
+    /// Normalize the nodes.
+    ///
+    /// For example, if two text nodes follow each other, merge them.
+    fn normalize(&mut self) {
+        // First, use a pairwise iterator to find the text nodes that are
+        // followed by another text node. Store the indexes of those nodes.
+        let mut nodes_to_merge: Vec<usize> = vec![];
+        let mut i = 0;
+        for pair in (&self.nodes).windows(2) {
+            if let [Node::Text(_), Node::Text(_)] = pair {
+                nodes_to_merge.push(i);
+            }
+            i += 1;
+        }
+
+        // Now iterate backwards through the list of indices. Remove the
+        // following node and merge it into the node at `index`.
+        for index in nodes_to_merge.into_iter().rev() {
+            let right = self.nodes.remove(index + 1);
+            let left = self.nodes.get_mut(index).expect("Left node not found");
+            if let (Node::Text(ref mut lval), Node::Text(ref rval)) = (left, right) {
+                lval.extend_from_slice(&rval);
+            } else {
+                unreachable!("Left or right node is not a text node");
+            }
+        }
     }
 
     pub fn handle_key(&mut self, key: Key) {
@@ -266,6 +298,9 @@ impl State {
             let removed_node = self.nodes.remove(index);
             self.caret_start -= removed_node.html_size();
             self.caret_end = self.caret_start;
+
+            // A node has been removed. Re-normalize the state.
+            self.normalize();
         }
     }
 
@@ -483,11 +518,20 @@ mod tests {
         #[test]
         fn after_newline() {
             let mut state = State::new();
-            state.nodes = vec![Node::text_from_str("abc"), Node::Newline, Node::text_from_str("d")];
+            state.nodes = vec![
+                Node::text_from_str("abc"),
+                Node::Newline,
+                Node::Newline,
+                Node::text_from_str("d"),
+            ];
             let pos = 3 + Node::Newline.html_size();
             state.set_caret_position(pos, pos);
             state.handle_key(Key::Backspace);
-            assert_eq!(state.nodes, vec![Node::text_from_str("abc"), Node::text_from_str("d")]);
+            assert_eq!(state.nodes, vec![
+                   Node::text_from_str("abc"),
+                   Node::Newline,
+                   Node::text_from_str("d"),
+            ]);
             assert_eq!(state.caret_start, 3);
             assert_eq!(state.caret_end, 3);
         }
@@ -519,6 +563,24 @@ mod tests {
 
             state.handle_key(Key::Backspace);
             assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
+        }
+
+        /// Re-normalize after deleting nodes.
+        #[test]
+        fn normalize() {
+            let mut state = State::new();
+            state.nodes = vec![
+                Node::text_from_str("a"),
+                image_node(),
+                Node::text_from_str("b"),
+            ];
+            let pos = 1 + image_node().html_size();
+            state.set_caret_position(pos, pos);
+
+            assert_eq!(state.node_count(), 3);
+            state.handle_key(Key::Backspace);
+            assert_eq!(state.node_count(), 1);
+            assert_eq!(state.nodes, vec![Node::text_from_str("ab")]);
         }
     }
 
@@ -759,10 +821,10 @@ mod tests {
         #[test]
         fn remove_partial_text_node_middle() {
             let mut state = State::new();
-            state.nodes = vec![Node::text_from_str("abcde"), Node::text_from_str("f")];
+            state.nodes = vec![Node::text_from_str("abcde")];
             state.set_caret_position(1, 3);
             assert!(state.remove_selection());
-            assert_eq!(state.nodes, vec![Node::text_from_str("ade"), Node::text_from_str("f")]);
+            assert_eq!(state.nodes, vec![Node::text_from_str("ade")]);
         }
 
         #[test]
@@ -771,7 +833,7 @@ mod tests {
             state.nodes = vec![Node::text_from_str("abcde"), Node::text_from_str("f")];
             state.set_caret_position(1, 5);
             assert!(state.remove_selection());
-            assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::text_from_str("f")]);
+            assert_eq!(state.nodes, vec![Node::text_from_str("af")]);
         }
 
         #[test]
@@ -780,7 +842,7 @@ mod tests {
             state.nodes = vec![Node::text_from_str("abcde"), Node::text_from_str("fg")];
             state.set_caret_position(1, 6);
             assert!(state.remove_selection());
-            assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::text_from_str("g")]);
+            assert_eq!(state.nodes, vec![Node::text_from_str("ag")]);
         }
 
         #[test]
@@ -789,7 +851,7 @@ mod tests {
             state.nodes = vec![Node::text_from_str("a"), image_node(), Node::text_from_str("b")];
             state.set_caret_position(1, 1 + image_node().html_size());
             assert!(state.remove_selection());
-            assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::text_from_str("b")]);  // TODO: Normalize
+            assert_eq!(state.nodes, vec![Node::text_from_str("ab")]);
         }
 
         #[test]
@@ -802,6 +864,42 @@ mod tests {
             assert!(state.remove_selection());
             assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
             assert_eq!(state.caret_position(), (0, 0));
+        }
+    }
+
+    mod normalize {
+        use super::*;
+
+        #[test]
+        fn merge_two() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("a"), Node::text_from_str("bc")];
+            state.normalize();
+            assert_eq!(state.nodes, vec![Node::text_from_str("abc")]);
+        }
+
+        #[test]
+        fn merge_three() {
+            let mut state = State::new();
+            state.nodes = vec![
+                Node::text_from_str("a"),
+                Node::text_from_str("b"),
+                Node::text_from_str("c"),
+            ];
+            state.normalize();
+            assert_eq!(state.nodes, vec![Node::text_from_str("abc")]);
+        }
+
+        #[test]
+        fn no_merge() {
+            let mut state = State::new();
+            state.nodes = vec![
+                Node::text_from_str("a"),
+                image_node(),
+                Node::text_from_str("b"),
+            ];
+            state.normalize();
+            assert_eq!(state.nodes.len(), 3);
         }
     }
 }
