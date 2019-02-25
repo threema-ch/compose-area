@@ -1,3 +1,5 @@
+// Selenium docs:
+// https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/
 import { expect } from 'chai';
 import { By, Key, WebDriver } from 'selenium-webdriver';
 
@@ -110,10 +112,75 @@ async function insertTextBetweenEmoji(driver: WebDriver) {
     expect(text).to.equal(emojiStrTongue + 'X' + emojiStrBeers);
 }
 
+/**
+ * Replace selected text.
+ */
+async function replaceSelectedText(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('abcde');
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys('X');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('aXe');
+}
+
+/**
+ * Replace selected text and emoji.
+ */
+async function replaceSelectedTextAndEmoji(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+
+    const wrapperElement = await driver.findElement(wrapper);
+    const emoji = await driver.findElement(emojiTongue);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('abc');
+    emoji.click();
+    await wrapperElement.sendKeys('de');
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys('X');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('abXe');
+}
+
+/**
+ * Replace all text.
+ */
+async function replaceAllText(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('abcde');
+    await wrapperElement.sendKeys(Key.META, 'a');
+    await wrapperElement.sendKeys('X');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('X');
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Get caret position on empty compose area', caretPositionEmpty],
     ['Insert three emoji', insertThreeEmoji],
     ['Insert text between emoji', insertTextBetweenEmoji],
+    ['Replace selected text', replaceSelectedText],
+    ['Replace selected text and emoji', replaceSelectedTextAndEmoji],
+    // Doesn't work in Firefox. Disabled until
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
+    //['Replace all text', replaceAllText],
 ];
-

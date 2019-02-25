@@ -41,7 +41,8 @@ wrapper.addEventListener("keydown", (e) => {
 
 wrapper.addEventListener("keyup", (e) => {
     console.log('keyup:', e);
-    if (isNavigationKey(e.key)) {
+    if (isNavigationKey(e.key) || e.key === 'Control') {
+        // Note: The `ctrlKey` check is there to handle things like "ctrl+a".
         composeArea.update_caret_position();
     }
 });
