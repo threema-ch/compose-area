@@ -206,11 +206,13 @@ fn _setup_get_caret_pos_test() -> (web_sys::Document, web_sys::Element, web_sys:
     let document = window.document().expect("Should have a document on window");
     let body = document.body().expect("Could not find body");
 
-    // Create <div>hello<img></div>
+    // Create <div>hello<img class="emöji" alt="😜"></div>
     let div = document.create_element("div").unwrap();
     div.set_attribute("contenteditable", "true").unwrap();
     let txt = document.create_text_node("hello");
     let img = document.create_element("img").unwrap();
+    img.set_attribute("class", "emöji").unwrap();
+    img.set_attribute("alt", "😜").unwrap();
     div.append_child(&txt).unwrap();
     div.append_child(&img).unwrap();
     body.append_child(&div).unwrap();
@@ -230,7 +232,7 @@ fn _add_range(range: &web_sys::Range) {
 fn get_caret_position_none() {
     setup_test();
 
-    let (document, div, txt, _img) = _setup_get_caret_pos_test();
+    let (_document, div, _txt, _img) = _setup_get_caret_pos_test();
 
     unset_caret_position();
 
@@ -243,7 +245,7 @@ fn get_caret_position_none() {
 fn get_caret_position_outside_wrapper() {
     setup_test();
 
-    let (document, div, txt, _img) = _setup_get_caret_pos_test();
+    let (_document, div, _txt, _img) = _setup_get_caret_pos_test();
 
     // Set caret position relative to body, outside our wrapper
     let window = web_sys::window().expect("No global `window` exists");
@@ -309,6 +311,6 @@ fn get_caret_position_after_img() {
 
     // Verify caret pos
     let pos = compose_area::get_caret_position(&div);
-    assert_eq!(pos.start, 10);
-    assert_eq!(pos.end, 10);
+    assert_eq!(pos.start, 33);
+    assert_eq!(pos.end, 33);
 }

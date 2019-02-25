@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { By, WebDriver } from 'selenium-webdriver';
+import { By, Key, WebDriver } from 'selenium-webdriver';
 
 interface CaretPosition {
   start: number;
@@ -89,9 +89,31 @@ async function insertThreeEmoji(driver: WebDriver) {
     expect(text).to.equal(emojiStrTongue + emojiStrBeers + emojiStrFacepalm);
 }
 
+/**
+ * Insert text between two emoji.
+ */
+async function insertTextBetweenEmoji(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+    const e1 = await driver.findElement(emojiTongue);
+    const e2 = await driver.findElement(emojiBeers);
+
+    await wrapperElement.click();
+
+    await e1.click();
+    await e2.click();
+
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys('X');
+
+    const text = await extractText(driver);
+    expect(text).to.equal(emojiStrTongue + 'X' + emojiStrBeers);
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Get caret position on empty compose area', caretPositionEmpty],
-    ['Insert three Emoji', insertThreeEmoji],
+    ['Insert three emoji', insertThreeEmoji],
+    ['Insert text between emoji', insertTextBetweenEmoji],
 ];
 
