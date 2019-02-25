@@ -179,6 +179,7 @@ impl State {
         // General approach: We get the node at the current start position. We
         // then start removing nodes after the start position until nodes with
         // length (end - start) have been removed.
+        let mut removed = false;
         while self.caret_end > self.caret_start {
             let mut remove_node = None;
             let difference = self.caret_end - self.caret_start;
@@ -212,6 +213,9 @@ impl State {
                     &mut Node::Newline |
                     &mut Node::Image { .. } => remove_node = Some(start_node.index),
                 }
+            } else {
+                error!("remove_selection: Start node not found");
+                return removed;
             }
 
             // Remove node, deduce its length from the end pos.
@@ -224,13 +228,15 @@ impl State {
                     self.caret_start = self.caret_end;
                 }
             }
+
+            removed = true;
         }
 
         // The nodes have been modified, some might have been removed.
         // Re-normalize the state.
         self.normalize();
 
-        true
+        removed
     }
 
     /// Normalize the nodes.
