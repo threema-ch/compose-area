@@ -166,7 +166,7 @@ async function replaceAllText(driver: WebDriver) {
     await wrapperElement.click();
 
     await wrapperElement.sendKeys('abcde');
-    await wrapperElement.sendKeys(Key.CONTROL + 'a');
+    await wrapperElement.sendKeys(Key.META, 'a');
     await wrapperElement.sendKeys('X');
 
     const text = await extractText(driver);
@@ -180,6 +180,7 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Insert text between emoji', insertTextBetweenEmoji],
     ['Replace selected text', replaceSelectedText],
     ['Replace selected text and emoji', replaceSelectedTextAndEmoji],
-    ['Replace all text', replaceAllText],
+    // Doesn't work in Firefox. Disabled until
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
+    //['Replace all text', replaceAllText],
 ];
-
