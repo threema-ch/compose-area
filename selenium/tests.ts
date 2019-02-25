@@ -156,6 +156,23 @@ async function replaceSelectedTextAndEmoji(driver: WebDriver) {
     expect(text).to.equal('abXe');
 }
 
+/**
+ * Replace all text.
+ */
+async function replaceAllText(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('abcde');
+    await wrapperElement.sendKeys(Key.CONTROL + 'a');
+    await wrapperElement.sendKeys('X');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('X');
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Get caret position on empty compose area', caretPositionEmpty],
@@ -163,5 +180,6 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Insert text between emoji', insertTextBetweenEmoji],
     ['Replace selected text', replaceSelectedText],
     ['Replace selected text and emoji', replaceSelectedTextAndEmoji],
+    ['Replace all text', replaceAllText],
 ];
 
