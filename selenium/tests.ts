@@ -173,6 +173,32 @@ async function replaceAllText(driver: WebDriver) {
     expect(text).to.equal('X');
 }
 
+/**
+ * Using the delete key.
+ */
+async function deleteKey(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+    const emoji = await driver.findElement(emojiTongue);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('abcd');
+    await wrapperElement.sendKeys(Key.ENTER);
+    await emoji.click();
+
+    expect(await extractText(driver)).to.equal('abcd\n' + emojiStrTongue);
+
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.ARROW_LEFT); // Between c and d
+    await wrapperElement.sendKeys(Key.DELETE);
+    await wrapperElement.sendKeys(Key.DELETE);
+    await wrapperElement.sendKeys('x');
+
+    expect(await extractText(driver)).to.equal('abcx' + emojiStrTongue);
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Get caret position on empty compose area', caretPositionEmpty],
@@ -183,4 +209,5 @@ export const TESTS: Array<[string, Testfunc]> = [
     // Doesn't work in Firefox. Disabled until
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
     //['Replace all text', replaceAllText],
+    ['Use the delete key', deleteKey],
 ];
