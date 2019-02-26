@@ -113,9 +113,9 @@ async function insertTextBetweenEmoji(driver: WebDriver) {
 }
 
 /**
- * Replace selected text.
+ * Replace selected text with text.
  */
-async function replaceSelectedText(driver: WebDriver) {
+async function replaceSelectedTextWithText(driver: WebDriver) {
     await driver.sleep(100); // Wait for compose area init
     const wrapperElement = await driver.findElement(wrapper);
 
@@ -130,6 +130,27 @@ async function replaceSelectedText(driver: WebDriver) {
 
     const text = await extractText(driver);
     expect(text).to.equal('aXe');
+}
+
+/**
+ * Replace selected text with emoji.
+ */
+async function replaceSelectedTextWithEmoji(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+    const emoji = await driver.findElement(emojiTongue);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('abcde');
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await emoji.click();
+
+    const text = await extractText(driver);
+    expect(text).to.equal('a' + emojiStrTongue + 'e');
 }
 
 /**
@@ -204,7 +225,8 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Get caret position on empty compose area', caretPositionEmpty],
     ['Insert three emoji', insertThreeEmoji],
     ['Insert text between emoji', insertTextBetweenEmoji],
-    ['Replace selected text', replaceSelectedText],
+    ['Replace selected text with text', replaceSelectedTextWithText],
+    ['Replace selected text with emoji', replaceSelectedTextWithEmoji],
     ['Replace selected text and emoji', replaceSelectedTextAndEmoji],
     // Doesn't work in Firefox. Disabled until
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
