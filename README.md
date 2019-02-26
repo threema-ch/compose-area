@@ -5,6 +5,8 @@
 
 A compose area with support for Emoji, written with Rust + Webassembly.
 
+Demo: https://threema-ch.github.io/compose-area/
+
 
 ## Setup
 

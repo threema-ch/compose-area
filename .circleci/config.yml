@@ -87,7 +87,7 @@ jobs:
       # Build
       - run:
           name: Build compose-area
-          command: wasm-pack build
+          command: wasm-pack build --release -t browser
       - persist_to_workspace:
           root: .
           paths:
@@ -222,6 +222,68 @@ jobs:
     environment:
       BROWSER: chrome
 
+  deploy-demo:
+    docker:
+      - image: circleci/node:10
+    environment:
+      OUT: html
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+
+      # Load npm cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v1-npm-cache-demo-{{ arch }}-{{ .Branch }}
+            - v1-npm-cache-demo-{{ arch }}
+
+      # Prepare demo
+      - run:
+          name: Build demo page
+          command: >
+            cd www
+            && echo "Installing dependencies..."
+            && npm ci
+            && echo "Copying npm package..."
+            && cp -Rv ../pkg node_modules/compose-area
+            && echo "Build..."
+            && npm run build
+            && cd ..
+      - run:
+          name: Prepare dist files
+          command: >
+            mkdir $OUT
+            && touch $OUT/.nojekyll
+            && cp -Rv www/dist/* $OUT/
+
+      # Deploy
+      - run:
+          name: Install and configure deployment dependencies
+          command: >
+            npm install gh-pages@2
+            && git config user.email "ci-build@circleci"
+            && git config user.name "ci-build"
+      - add_ssh_keys:
+          fingerprints:
+            - "93:e7:f2:d8:7b:a5:e9:a6:c9:4d:1d:83:33:3f:01:07"
+      - run:
+          name: Deploy demo to gh-pages branch
+          command: node_modules/.bin/gh-pages --dotfiles --message "[skip ci] Updates" --dist $OUT
+
+      # Save cache
+      - save_cache:
+          key: v1-npm-cache-demo-{{ arch }}-{{ .Branch }}
+          paths:
+            - www/node_modules
+            - selenium/node_modules
+      - save_cache:
+          key: v1-npm-cache-demo-{{ arch }}
+          paths:
+            - www/node_modules
+            - selenium/node_modules
+
 workflows:
   version: 2
   build-and-test:
@@ -235,3 +297,11 @@ workflows:
       - test-integration-chrome:
           requires:
             - build
+      - deploy-demo:
+          requires:
+            - build
+            - test-integration-firefox
+            - test-integration-chrome
+          filters:
+            branches:
+              only: master
