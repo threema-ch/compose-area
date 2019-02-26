@@ -170,8 +170,6 @@ impl ComposeArea {
     ///
     /// Return whether the default keyup event handler should be prevented from running.
     pub fn process_key(&mut self, key_val: &str) -> bool {
-        debug!("\n# Process key: {}", &key_val);
-
         // Validate and parse key value
         if key_val.len() == 0 {
             warn!("process_key: No key value provided");
@@ -212,8 +210,6 @@ impl ComposeArea {
 
     /// Insert an image.
     pub fn insert_image(&mut self, src: String, alt: String, cls: String) {
-        debug!("\n# Insert image: {}", &alt);
-
         // Get access to wrapper element
         let window = web_sys::window().expect("no global `window` exists");
         let document = window.document().expect("should have a document on window");

@@ -402,7 +402,6 @@ impl State {
     }
 
     fn handle_enter(&mut self) {
-        self.remove_selection();
         self.insert_block_element(Node::Newline);
     }
 
@@ -419,6 +418,8 @@ impl State {
     }
 
     fn insert_block_element(&mut self, new_node: Node) {
+        self.remove_selection();
+
         // Find the current node we're at
         if let Some(current_node) = self.find_start_node(Direction::After) {
             // If we're between two nodes, insert node
