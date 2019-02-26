@@ -178,7 +178,7 @@ impl State {
 
     /// If some elements are selected (caret_start != caret_end),
     /// remove those elements and return `true`. Otherwise, return `false`.
-    fn remove_selection(&mut self) -> bool {
+    pub fn remove_selection(&mut self) -> bool {
         if self.caret_start >= self.caret_end {
             return false;
         }

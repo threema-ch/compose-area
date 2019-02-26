@@ -166,10 +166,21 @@ pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
 #[wasm_bindgen]
 impl ComposeArea {
 
+    /**
+     * Return a reference to the wrapper element.
+     */
+    fn get_wrapper(&self) -> Element {
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        document.get_element_by_id(&self.wrapper_id).expect("did not find element")
+    }
+
     /// Handle the specified key.
     ///
     /// Return whether the default keyup event handler should be prevented from running.
     pub fn process_key(&mut self, key_val: &str) -> bool {
+        debug!("WASM: process_key ({})", key_val);
+
         // Validate and parse key value
         if key_val.len() == 0 {
             warn!("process_key: No key value provided");
@@ -179,11 +190,6 @@ impl ComposeArea {
             Some(key) => key,
             None => return false,
         };
-
-        // Get access to wrapper element
-        let window = web_sys::window().expect("no global `window` exists");
-        let document = window.document().expect("should have a document on window");
-        let wrapper = document.get_element_by_id(&self.wrapper_id).expect("did not find element");
 
         // Get old virtual DOM
         let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
@@ -198,6 +204,7 @@ impl ComposeArea {
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
         // Patch the current DOM
+        let wrapper = self.get_wrapper();
         virtual_dom_rs::patch(wrapper.clone(), &patches)
             .expect("Patching the DOM failed!");
 
@@ -210,10 +217,7 @@ impl ComposeArea {
 
     /// Insert an image.
     pub fn insert_image(&mut self, src: String, alt: String, cls: String) {
-        // Get access to wrapper element
-        let window = web_sys::window().expect("no global `window` exists");
-        let document = window.document().expect("should have a document on window");
-        let wrapper = document.get_element_by_id(&self.wrapper_id).expect("did not find element");
+        debug!("WASM: insert_image ({})", &alt);
 
         // Get old virtual DOM
         let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
@@ -228,6 +232,7 @@ impl ComposeArea {
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
         // Patch the current DOM
+        let wrapper = self.get_wrapper();
         virtual_dom_rs::patch(wrapper.clone(), &patches)
             .expect("Patching the DOM failed!");
 
@@ -235,16 +240,42 @@ impl ComposeArea {
         _set_caret_position_from_state(&wrapper, &self.state);
     }
 
+    /// Remove the current selection from the state.
+    ///
+    /// If the `patch_dom` parameter is set to `true`, then the DOM is also
+    /// updated (followed by a caret position refresh), otherwise it's not modified.
+    pub fn remove_selection(&mut self, patch_dom: bool) {
+        debug!("WASM: remove_selection");
+
+        // Make sure that we really know the current selection.
+        self.update_caret_position();
+
+        // Update state and - depending on the arguments - the DOM.
+        if patch_dom {
+            let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+            self.state.remove_selection();
+            let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+            let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
+            let wrapper = self.get_wrapper();
+            virtual_dom_rs::patch(wrapper.clone(), &patches)
+                .expect("Patching the DOM failed!");
+            _set_caret_position_from_state(&wrapper, &self.state);
+        } else {
+            self.state.remove_selection();
+        }
+    }
+
     /// Update the caret position.
+    ///
+    /// Read the actual position from the DOM using the selection API and then
+    /// overwrite the caret position in the state object.
     ///
     /// Call this after every action that might have modified the DOM.
     pub fn update_caret_position(&mut self) {
-        // Get access to wrapper element
-        let window = web_sys::window().expect("no global `window` exists");
-        let document = window.document().expect("should have a document on window");
-        let wrapper = document.get_element_by_id(&self.wrapper_id).expect("did not find element");
+        debug!("WASM: update_caret_position");
 
         // Refresh caret pos
+        let wrapper = self.get_wrapper();
         let pos = get_caret_position(&wrapper);
         assert!(pos.start <= pos.end);
         self.state.set_caret_position(pos.start as usize, pos.end as usize);
