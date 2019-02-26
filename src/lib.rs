@@ -200,7 +200,8 @@ impl ComposeArea {
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
         // Patch the current DOM
-        virtual_dom_rs::patch(wrapper.clone(), &patches);
+        virtual_dom_rs::patch(wrapper.clone(), &patches)
+            .expect("Patching the DOM failed!");
 
         // Update the caret position in the browser
         _set_caret_position_from_state(&wrapper, &self.state);
@@ -231,7 +232,8 @@ impl ComposeArea {
         let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
 
         // Patch the current DOM
-        virtual_dom_rs::patch(wrapper.clone(), &patches);
+        virtual_dom_rs::patch(wrapper.clone(), &patches)
+            .expect("Patching the DOM failed!");
 
         // Update the caret position in the browser
         _set_caret_position_from_state(&wrapper, &self.state);
