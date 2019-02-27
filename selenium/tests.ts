@@ -220,6 +220,34 @@ async function deleteKey(driver: WebDriver) {
     expect(await extractText(driver)).to.equal('abcx' + emojiStrTongue);
 }
 
+/**
+ * Cutting and pasting
+ */
+async function cutAndPaste(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+    const emoji = await driver.findElement(emojiTongue);
+
+    await wrapperElement.click();
+
+    // Add text
+    await wrapperElement.sendKeys('1234');
+
+    // Highlight "23"
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT, Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT, Key.ARROW_LEFT);
+
+    // Cut
+    await wrapperElement.sendKeys(Key.CONTROL, 'x');
+
+    // Paste at end
+    await wrapperElement.sendKeys(Key.ARROW_RIGHT);
+    await wrapperElement.sendKeys(Key.CONTROL, 'v');
+
+    expect(await extractText(driver)).to.equal('1423');
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Get caret position on empty compose area', caretPositionEmpty],
@@ -232,4 +260,5 @@ export const TESTS: Array<[string, Testfunc]> = [
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
     //['Replace all text', replaceAllText],
     ['Use the delete key', deleteKey],
+    ['Cut and paste', cutAndPaste],
 ];
