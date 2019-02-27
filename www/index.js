@@ -25,9 +25,20 @@ function isNavigationKey(key) {
     }
 }
 
-// Add wrapper event listeners
+// Add event listeners
 
 const wrapper = document.getElementById('wrapper');
+
+/**
+ * When the selection changes, update the caret position.
+ *
+ * Note: Unfortunately this can only be set on document level, not on the
+ * wrapper itself.
+ */
+document.addEventListener('selectionchange', (e) => {
+    console.log('selectionchange', e);
+    composeArea.update_caret_position();
+});
 
 /**
  * On keydown, process the key.
@@ -40,25 +51,6 @@ wrapper.addEventListener('keydown', (e) => {
             e.preventDefault();
         }
     }
-});
-
-/**
- * On keyup, update the caret position.
- */
-wrapper.addEventListener('keyup', (e) => {
-    console.log('keyup:', e);
-    if (isNavigationKey(e.key) || e.key === 'Control') {
-        // Note: The `ctrlKey` check is there to handle things like 'ctrl+a'.
-        composeArea.update_caret_position();
-    }
-});
-
-/**
- * On mouseup, update the caret position.
- */
-wrapper.addEventListener('mouseup', (e) => {
-    console.log('mouseup', e);
-    composeArea.update_caret_position();
 });
 
 /**
@@ -92,7 +84,6 @@ wrapper.addEventListener('paste', (e) => {
 function insertEmoji(e) {
     const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
     composeArea.insert_image(img.src, img.alt, 'emoji');
-    composeArea.update_caret_position();
 }
 document.getElementById('tongue').addEventListener('click', insertEmoji);
 document.getElementById('beers').addEventListener('click', insertEmoji);
