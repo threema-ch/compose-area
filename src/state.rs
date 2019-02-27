@@ -276,7 +276,7 @@ impl State {
 
     pub fn handle_key(&mut self, key: Key) {
         match key {
-            Key::Enter => self.handle_enter(),
+            Key::Enter => self.insert_block_element(Node::Newline),
             Key::Backspace => self.handle_backspace(),
             Key::Delete => self.handle_delete(),
             Key::Character(c) => self.handle_text(c.encode_utf16().collect()),
@@ -366,6 +366,7 @@ impl State {
         }
     }
 
+    /// Insert UTF-16 encoded text at the current caret position.
     fn handle_text(&mut self, text: Vec<u16>) {
         self.remove_selection();
 
@@ -401,10 +402,7 @@ impl State {
         self.nodes.push(Node::Text(text));
     }
 
-    fn handle_enter(&mut self) {
-        self.insert_block_element(Node::Newline);
-    }
-
+    /// Insert an image node at the current caret position.
     pub fn insert_image<S, A, C>(&mut self, src: S, alt: A, cls: C)
         where S: Into<String>,
               A: Into<String>,
@@ -415,6 +413,11 @@ impl State {
             alt: alt.into(),
             cls: cls.into(),
         });
+    }
+
+    /// Insert text at the current caret position.
+    pub fn insert_text(&mut self, text: &str) {
+        self.handle_text(text.encode_utf16().collect());
     }
 
     fn insert_block_element(&mut self, new_node: Node) {

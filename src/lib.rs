@@ -227,6 +227,14 @@ impl ComposeArea {
         });
     }
 
+    /// Insert plain text.
+    pub fn insert_text(&mut self, text: String) {
+        debug!("WASM: insert_text ({})", &text);
+        self.update_state(|state| {
+            state.insert_text(&text);
+        });
+    }
+
     /// Remove the current selection from the state.
     ///
     /// If the `patch_dom` parameter is set to `true`, then the DOM is also

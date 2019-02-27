@@ -62,26 +62,29 @@ wrapper.addEventListener('mouseup', (e) => {
 });
 
 /**
- * On cut, TODO
+ * On cut, remove the current selection from the internal state.
  *
  * This event is fired before the DOM is modified, before the text-to-be-cut is
  * removed from the input field.
  */
 wrapper.addEventListener('cut', (e) => {
     console.log('cut', e);
-    const pos = window.wasm.get_caret_position(document.getElementById("wrapper"));
-    console.log('pre caretpos: ', pos.start, pos.end);
-
     composeArea.remove_selection(false);
-
-    setTimeout(() => {
-        const pos = window.wasm.get_caret_position(document.getElementById("wrapper"));
-        console.log('post caretpos: ', pos.start, pos.end);
-    }, 0);
 });
 
+/**
+ * On paste, override the default paste handler.
+ *
+ * Instead, insert the clipboard contents into the compose area at the current
+ * selection and update the DOM.
+ */
 wrapper.addEventListener('paste', (e) => {
     console.log('paste', e);
+    const clipboardData = e.clipboardData.getData('text/plain');
+    if (clipboardData) {
+        composeArea.insert_text(clipboardData);
+        e.preventDefault();
+    }
 });
 
 // Emoji handling
