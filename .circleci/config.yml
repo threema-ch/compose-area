@@ -257,6 +257,8 @@ jobs:
             mkdir $OUT
             && touch $OUT/.nojekyll
             && cp -Rv www/dist/* $OUT/
+            && export VERSION=$(git show -s --format="Version: %h (%ci)")
+            && sed -i "s/[[VERSION]]/${VERSION}/" $OUT/index.html
 
       # Deploy
       - run:
