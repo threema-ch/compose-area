@@ -166,13 +166,33 @@ pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
 #[wasm_bindgen]
 impl ComposeArea {
 
-    /**
-     * Return a reference to the wrapper element.
-     */
+    /// Return a reference to the wrapper element.
     fn get_wrapper(&self) -> Element {
         let window = web_sys::window().expect("no global `window` exists");
         let document = window.document().expect("should have a document on window");
         document.get_element_by_id(&self.wrapper_id).expect("did not find element")
+    }
+
+    /// Update the internal state and patch the DOM with the changes.
+    fn update_state<F>(&mut self, mutate_state: F) where F: FnOnce(&mut State) {
+        // Get old virtual DOM
+        let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+
+        mutate_state(&mut self.state);
+
+        // Get new virtual DOM
+        let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
+
+        // Do the DOM diffing
+        let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
+
+        // Patch the current DOM
+        let wrapper = self.get_wrapper();
+        virtual_dom_rs::patch(wrapper.clone(), &patches)
+            .expect("Patching the DOM failed!");
+
+        // Update the caret position in the browser
+        _set_caret_position_from_state(&wrapper, &self.state);
     }
 
     /// Handle the specified key.
@@ -191,25 +211,9 @@ impl ComposeArea {
             None => return false,
         };
 
-        // Get old virtual DOM
-        let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
-
-        // Handle input
-        self.state.handle_key(key);
-
-        // Get new virtual DOM
-        let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
-
-        // Do the DOM diffing
-        let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
-
-        // Patch the current DOM
-        let wrapper = self.get_wrapper();
-        virtual_dom_rs::patch(wrapper.clone(), &patches)
-            .expect("Patching the DOM failed!");
-
-        // Update the caret position in the browser
-        _set_caret_position_from_state(&wrapper, &self.state);
+        self.update_state(|state| {
+            state.handle_key(key);
+        });
 
         // We handled the event, so prevent the default event from being handled.
         true
@@ -218,26 +222,9 @@ impl ComposeArea {
     /// Insert an image.
     pub fn insert_image(&mut self, src: String, alt: String, cls: String) {
         debug!("WASM: insert_image ({})", &alt);
-
-        // Get old virtual DOM
-        let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
-
-        // Handle image
-        self.state.insert_image(src, alt, cls);
-
-        // Get new virtual DOM
-        let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
-
-        // Do the DOM diffing
-        let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
-
-        // Patch the current DOM
-        let wrapper = self.get_wrapper();
-        virtual_dom_rs::patch(wrapper.clone(), &patches)
-            .expect("Patching the DOM failed!");
-
-        // Update the caret position in the browser
-        _set_caret_position_from_state(&wrapper, &self.state);
+        self.update_state(|state| {
+            state.insert_image(src, alt, cls);
+        });
     }
 
     /// Remove the current selection from the state.
@@ -252,14 +239,9 @@ impl ComposeArea {
 
         // Update state and - depending on the arguments - the DOM.
         if patch_dom {
-            let old_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
-            self.state.remove_selection();
-            let new_vdom = wrap(self.state.to_virtual_nodes(), &self.wrapper_id);
-            let patches = virtual_dom_rs::diff(&old_vdom, &new_vdom);
-            let wrapper = self.get_wrapper();
-            virtual_dom_rs::patch(wrapper.clone(), &patches)
-                .expect("Patching the DOM failed!");
-            _set_caret_position_from_state(&wrapper, &self.state);
+            self.update_state(|state| {
+                state.remove_selection();
+            });
         } else {
             self.state.remove_selection();
         }
