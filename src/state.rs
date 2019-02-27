@@ -501,37 +501,31 @@ mod tests {
 
         #[test]
         fn handle_key_simple() {
-            eprint!("a");
             let mut state = State::new();
             assert!(state.nodes.is_empty());
             assert_eq!(state.caret_start, 0);
             assert_eq!(state.caret_end, 0);
 
-            eprint!("b");
             state.handle_key(Key::Character("a"));
             assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
             assert_eq!(state.caret_start, 1);
             assert_eq!(state.caret_end, 1);
 
-            eprint!("c");
             state.handle_key(Key::Character("b"));
             assert_eq!(state.nodes, vec![Node::text_from_str("ab")]);
             assert_eq!(state.caret_start, 2);
             assert_eq!(state.caret_end, 2);
 
-            eprint!("d");
             state.handle_key(Key::Backspace);
             assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
             assert_eq!(state.caret_start, 1);
             assert_eq!(state.caret_end, 1);
 
-            eprint!("e");
             state.handle_key(Key::Enter);
             assert_eq!(state.nodes, vec![Node::text_from_str("a"), Node::Newline]);
             assert_eq!(state.caret_start, 5);
             assert_eq!(state.caret_end, 5);
 
-            eprint!("f");
             state.handle_key(Key::Backspace);
             assert_eq!(state.nodes, vec![Node::text_from_str("a")]);
             assert_eq!(state.caret_start, 1);
@@ -849,6 +843,37 @@ mod tests {
             // Use the last element but fix the offset
             assert_eq!(state.find_start_node(Direction::Before),
                        Some(NodeIndexOffset { offset: 3, index: 1 }));
+        }
+    }
+
+    mod insert_text {
+        use super::*;
+
+        #[test]
+        fn at_end() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("hello ")];
+            state.set_caret_position(6, 6);
+            state.insert_text("world");
+            assert_eq!(state.nodes, vec![Node::text_from_str("hello world")]);
+        }
+
+        #[test]
+        fn in_the_middle() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("ab")];
+            state.set_caret_position(1, 1);
+            state.insert_text("XY");
+            assert_eq!(state.nodes, vec![Node::text_from_str("aXYb")]);
+        }
+
+        #[test]
+        fn replace_nodes() {
+            let mut state = State::new();
+            state.nodes = vec![Node::text_from_str("ab"), image_node()];
+            state.set_caret_position(1, 1 + image_node().html_size());
+            state.insert_text("z");
+            assert_eq!(state.nodes, vec![Node::text_from_str("az")]);
         }
     }
 
