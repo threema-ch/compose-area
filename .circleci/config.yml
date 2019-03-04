@@ -259,6 +259,7 @@ jobs:
             && cp -Rv www/dist/* $OUT/
             && export VERSION=$(git show -s --format="Version: %h (%ci)")
             && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/index.html
+            && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/benchmark.html
 
       # Deploy
       - run:
