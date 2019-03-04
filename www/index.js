@@ -6,25 +6,6 @@ window.wasm = wasm;
 // Initialize compose area
 const composeArea = wasm.bind_to('wrapper');
 
-/**
- * Navigation keys according to https://www.w3.org/TR/uievents-key/
- */
-function isNavigationKey(key) {
-    switch (key) {
-        case 'ArrowDown':
-        case 'ArrowLeft':
-        case 'ArrowRight':
-        case 'ArrowUp':
-        case 'End':
-        case 'Home':
-        case 'PageDown':
-        case 'PageUp':
-            return true;
-        default:
-            return false;
-    }
-}
-
 // Add event listeners
 
 const wrapper = document.getElementById('wrapper');

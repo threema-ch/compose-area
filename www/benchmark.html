@@ -13,6 +13,17 @@
             margin: 0 auto;
             padding: 0 8px;
         }
+        .wrapper {
+            border: 1px solid red;
+            padding: 2px;
+            white-space: pre-wrap;
+        }
+        .wrapper img.emoji {
+            height: 1em;
+            width: 1em;
+            margin: 0 .05em 0 .1em;
+            vertical-align: -0.1em;
+        }
         #version {
             font-size: 0.8em;
             color: #777;
@@ -21,7 +32,11 @@
   </head>
   <body>
     <h2>Compose Area: Benchmarks</h2>
-    <button id="start">Start</button>
+    <div>
+        <button id="start">Start</button>
+    </div>
+    <div id="wrapper"></div>
+    <p id="results"></p>
     <p id="version">[[VERSION]]</p>
     <script src="./bootstrap.benchmark.bundle.js"></script>
   </body>

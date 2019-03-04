@@ -287,4 +287,20 @@ impl ComposeArea {
             self.state.set_caret_position(pos.start as usize, pos.end as usize);
         }
     }
+
+    /// Extract the text in the compose area.
+    ///
+    /// Convert elements like images to alt text.
+    pub fn get_text(&self, no_trim: bool) -> String {
+        let wrapper =self.get_wrapper();
+        extract_text(&wrapper, no_trim)
+    }
+
+    /// Reset the internal state and clear the wrapper element.
+    pub fn reset(&mut self) {
+        debug!("WASM: reset");
+        self.state.reset();
+        let wrapper = self.get_wrapper();
+        wrapper.set_inner_html("");
+    }
 }
