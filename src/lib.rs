@@ -282,7 +282,9 @@ impl ComposeArea {
         // Refresh caret pos
         let wrapper = self.get_wrapper();
         let pos = get_caret_position(&wrapper);
-        assert!(pos.start <= pos.end);
-        self.state.set_caret_position(pos.start as usize, pos.end as usize);
+        if pos.success {
+            assert!(pos.start <= pos.end);
+            self.state.set_caret_position(pos.start as usize, pos.end as usize);
+        }
     }
 }
