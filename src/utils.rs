@@ -122,24 +122,33 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
 pub struct CaretPosition {
     pub start: u32,
     pub end: u32,
+    pub success: bool,
 }
 
 impl CaretPosition {
     pub fn new(start: u32, end: u32) -> Self {
-        CaretPosition { start, end }
+        CaretPosition { start, end, success: true }
+    }
+
+    pub fn unknown() -> Self {
+        CaretPosition { start: 0, end: 0, success: false }
     }
 }
 
 impl fmt::Display for CaretPosition {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(start={}, end={})", self.start, self.end)
+        if self.success {
+            write!(f, "(start={}, end={})", self.start, self.end)
+        } else {
+            write!(f, "(unknown)")
+        }
     }
 }
 
 macro_rules! unknown_caret_position {
     ($errmsg:expr) => {{
         warn!("Could not determine caret position: {}", $errmsg);
-        return CaretPosition::new(0, 0);
+        return CaretPosition::unknown();
     }}
 }
 
