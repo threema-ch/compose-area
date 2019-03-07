@@ -7,6 +7,40 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
 Demo: https://threema-ch.github.io/compose-area/
 
+Project status: Alpha, still working out initial bugs.
+
+
+## Concepts
+
+This project provides a simple text editor with support for media content (e.g.
+emoji), implemented on top of a content editable div.
+
+If you've ever done any cross-browser editor implementation using
+content-editable elements, then you know that content-editable elements are
+terrible. They behave differently in every browser and the transformations
+resulting from input events are not well-defined. Please read [this blogpost by
+Medium Engineering](https://medium.engineering/why-contenteditable-is-terrible-122d8a40e480)
+for some more background information.
+
+This project uses DOM event listeners, WebAssembly (through Rust) and a virtual
+DOM to implement a text editor that reacts predictably to input events:
+
+ 1. We initialize and maintain an internal state on the WebAssembly side. It's
+    a simple linear list of (non-DOM) nodes of different types, e.g. text
+    nodes, newline nodes or image nodes.
+ 2. We bind to a wrapper element in the DOM. All relevant events that would
+    change the state of that element (e.g. typing, selection changes, pasting,
+    etc) are sent to WebAssembly and processed there. All events have
+    well-defined effects on the internal state.
+ 3. Every time the state changes, the old and the new state are translated to a
+    virtual DOM. The two versions of that virtual DOM are diffed, resulting in
+    a set of patches that can translate the old DOM state to a version that
+    matches the new state. By applying those patches to the DOM, we can sync
+    the two states.
+
+This gives us reliable, well-defined and testable behavior for a simple text
+editor.
+
 
 ## Setup
 
