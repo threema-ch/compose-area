@@ -1,1 +1,430 @@
-!function(_){function e(e){for(var t,r,o=e[0],i=e[1],f=0,d=[];f<o.length;f++)r=o[f],n[r]&&d.push(n[r][0]),n[r]=0;for(t in i)Object.prototype.hasOwnProperty.call(i,t)&&(_[t]=i[t]);for(u&&u(e);d.length;)d.shift()()}var t={},n={1:0};var r={};var o={5:function(){return{"./compose_area":{__wbindgen_object_drop_ref:function(_){return t[4].exports.__wbindgen_object_drop_ref(_)},__wbindgen_string_new:function(_,e){return t[4].exports.__wbindgen_string_new(_,e)},__wbg_error_cc95a3d302735ca3:function(_,e){return t[4].exports.__wbg_error_cc95a3d302735ca3(_,e)},__widl_f_debug_1_:function(_){return t[4].exports.__widl_f_debug_1_(_)},__widl_f_error_1_:function(_){return t[4].exports.__widl_f_error_1_(_)},__widl_f_info_1_:function(_){return t[4].exports.__widl_f_info_1_(_)},__widl_f_log_1_:function(_){return t[4].exports.__widl_f_log_1_(_)},__widl_f_warn_1_:function(_){return t[4].exports.__widl_f_warn_1_(_)},__widl_instanceof_Window:function(_){return t[4].exports.__widl_instanceof_Window(_)},__widl_f_replace_with_with_node_1_CharacterData:function(_,e,n){return t[4].exports.__widl_f_replace_with_with_node_1_CharacterData(_,e,n)},__widl_f_create_comment_Document:function(_,e,n){return t[4].exports.__widl_f_create_comment_Document(_,e,n)},__widl_f_create_element_Document:function(_,e,n,r){return t[4].exports.__widl_f_create_element_Document(_,e,n,r)},__widl_f_create_range_Document:function(_,e){return t[4].exports.__widl_f_create_range_Document(_,e)},__widl_f_create_text_node_Document:function(_,e,n){return t[4].exports.__widl_f_create_text_node_Document(_,e,n)},__widl_f_get_element_by_id_Document:function(_,e,n){return t[4].exports.__widl_f_get_element_by_id_Document(_,e,n)},__widl_f_remove_attribute_Element:function(_,e,n,r){return t[4].exports.__widl_f_remove_attribute_Element(_,e,n,r)},__widl_f_set_attribute_Element:function(_,e,n,r,o,i){return t[4].exports.__widl_f_set_attribute_Element(_,e,n,r,o,i)},__widl_f_tag_name_Element:function(_,e){return t[4].exports.__widl_f_tag_name_Element(_,e)},__widl_f_inner_html_Element:function(_,e){return t[4].exports.__widl_f_inner_html_Element(_,e)},__widl_f_set_inner_html_Element:function(_,e,n){return t[4].exports.__widl_f_set_inner_html_Element(_,e,n)},__widl_f_outer_html_Element:function(_,e){return t[4].exports.__widl_f_outer_html_Element(_,e)},__widl_f_replace_with_with_node_1_Element:function(_,e,n){return t[4].exports.__widl_f_replace_with_with_node_1_Element(_,e,n)},__widl_instanceof_EventTarget:function(_){return t[4].exports.__widl_instanceof_EventTarget(_)},__widl_f_add_event_listener_with_callback_EventTarget:function(_,e,n,r,o){return t[4].exports.__widl_f_add_event_listener_with_callback_EventTarget(_,e,n,r,o)},__widl_f_alt_HTMLImageElement:function(_,e){return t[4].exports.__widl_f_alt_HTMLImageElement(_,e)},__widl_f_append_child_Node:function(_,e,n){return t[4].exports.__widl_f_append_child_Node(_,e,n)},__widl_f_contains_Node:function(_,e){return t[4].exports.__widl_f_contains_Node(_,e)},__widl_f_is_same_node_Node:function(_,e){return t[4].exports.__widl_f_is_same_node_Node(_,e)},__widl_f_remove_child_Node:function(_,e,n){return t[4].exports.__widl_f_remove_child_Node(_,e,n)},__widl_f_node_type_Node:function(_){return t[4].exports.__widl_f_node_type_Node(_)},__widl_f_node_name_Node:function(_,e){return t[4].exports.__widl_f_node_name_Node(_,e)},__widl_f_child_nodes_Node:function(_){return t[4].exports.__widl_f_child_nodes_Node(_)},__widl_f_node_value_Node:function(_,e){return t[4].exports.__widl_f_node_value_Node(_,e)},__widl_f_set_node_value_Node:function(_,e,n){return t[4].exports.__widl_f_set_node_value_Node(_,e,n)},__widl_f_text_content_Node:function(_,e){return t[4].exports.__widl_f_text_content_Node(_,e)},__widl_f_item_NodeList:function(_,e){return t[4].exports.__widl_f_item_NodeList(_,e)},__widl_f_get_NodeList:function(_,e){return t[4].exports.__widl_f_get_NodeList(_,e)},__widl_f_length_NodeList:function(_){return t[4].exports.__widl_f_length_NodeList(_)},__widl_f_collapse_Range:function(_){return t[4].exports.__widl_f_collapse_Range(_)},__widl_f_set_start_Range:function(_,e,n,r){return t[4].exports.__widl_f_set_start_Range(_,e,n,r)},__widl_f_set_start_after_Range:function(_,e,n){return t[4].exports.__widl_f_set_start_after_Range(_,e,n)},__widl_f_set_start_before_Range:function(_,e,n){return t[4].exports.__widl_f_set_start_before_Range(_,e,n)},__widl_f_start_container_Range:function(_,e){return t[4].exports.__widl_f_start_container_Range(_,e)},__widl_f_start_offset_Range:function(_,e){return t[4].exports.__widl_f_start_offset_Range(_,e)},__widl_f_end_container_Range:function(_,e){return t[4].exports.__widl_f_end_container_Range(_,e)},__widl_f_end_offset_Range:function(_,e){return t[4].exports.__widl_f_end_offset_Range(_,e)},__widl_f_add_range_Selection:function(_,e,n){return t[4].exports.__widl_f_add_range_Selection(_,e,n)},__widl_f_get_range_at_Selection:function(_,e,n){return t[4].exports.__widl_f_get_range_at_Selection(_,e,n)},__widl_f_range_count_Selection:function(_){return t[4].exports.__widl_f_range_count_Selection(_)},__widl_f_get_selection_Window:function(_,e){return t[4].exports.__widl_f_get_selection_Window(_,e)},__widl_f_document_Window:function(_){return t[4].exports.__widl_f_document_Window(_)},__wbg_newnoargs_862ffd91d0c97e88:function(_,e){return t[4].exports.__wbg_newnoargs_862ffd91d0c97e88(_,e)},__wbg_call_8d65200c7bc9d2d9:function(_,e,n){return t[4].exports.__wbg_call_8d65200c7bc9d2d9(_,e,n)},__wbindgen_object_clone_ref:function(_){return t[4].exports.__wbindgen_object_clone_ref(_)},__wbindgen_debug_string:function(_,e){return t[4].exports.__wbindgen_debug_string(_,e)},__wbindgen_throw:function(_,e){return t[4].exports.__wbindgen_throw(_,e)}}}}};function i(e){if(t[e])return t[e].exports;var n=t[e]={i:e,l:!1,exports:{}};return _[e].call(n.exports,n,n.exports,i),n.l=!0,n.exports}i.e=function(_){var e=[],t=n[_];if(0!==t)if(t)e.push(t[2]);else{var f=new Promise(function(e,r){t=n[_]=[e,r]});e.push(t[2]=f);var d,l=document.createElement("script");l.charset="utf-8",l.timeout=120,i.nc&&l.setAttribute("nonce",i.nc),l.src=function(_){return i.p+"bootstrap."+({}[_]||_)+".bundle.js"}(_),d=function(e){l.onerror=l.onload=null,clearTimeout(u);var t=n[_];if(0!==t){if(t){var r=e&&("load"===e.type?"missing":e.type),o=e&&e.target&&e.target.src,i=new Error("Loading chunk "+_+" failed.\n("+r+": "+o+")");i.type=r,i.request=o,t[1](i)}n[_]=void 0}};var u=setTimeout(function(){d({type:"timeout",target:l})},12e4);l.onerror=l.onload=d,document.head.appendChild(l)}return({0:[5]}[_]||[]).forEach(function(_){var t=r[_];if(t)e.push(t);else{var n,f=o[_](),d=fetch(i.p+""+{5:"8490b6f7bf05429abb8f"}[_]+".module.wasm");if(f instanceof Promise&&"function"==typeof WebAssembly.compileStreaming)n=Promise.all([WebAssembly.compileStreaming(d),f]).then(function(_){return WebAssembly.instantiate(_[0],_[1])});else if("function"==typeof WebAssembly.instantiateStreaming)n=WebAssembly.instantiateStreaming(d,f);else{n=d.then(function(_){return _.arrayBuffer()}).then(function(_){return WebAssembly.instantiate(_,f)})}e.push(r[_]=n.then(function(e){return i.w[_]=(e.instance||e).exports}))}}),Promise.all(e)},i.m=_,i.c=t,i.d=function(_,e,t){i.o(_,e)||Object.defineProperty(_,e,{enumerable:!0,get:t})},i.r=function(_){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(_,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(_,"__esModule",{value:!0})},i.t=function(_,e){if(1&e&&(_=i(_)),8&e)return _;if(4&e&&"object"==typeof _&&_&&_.__esModule)return _;var t=Object.create(null);if(i.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:_}),2&e&&"string"!=typeof _)for(var n in _)i.d(t,n,function(e){return _[e]}.bind(null,n));return t},i.n=function(_){var e=_&&_.__esModule?function(){return _.default}:function(){return _};return i.d(e,"a",e),e},i.o=function(_,e){return Object.prototype.hasOwnProperty.call(_,e)},i.p="",i.oe=function(_){throw console.error(_),_},i.w={};var f=window.webpackJsonp=window.webpackJsonp||[],d=f.push.bind(f);f.push=e,f=f.slice();for(var l=0;l<f.length;l++)e(f[l]);var u=d;i(i.s=1)}([,function(_,e,t){Promise.all([t.e(0),t.e(3),t.e(4)]).then(t.bind(null,3)).catch(_=>console.error("Error importing `benchmark.js`:",_))}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	function webpackJsonpCallback(data) {
+/******/ 		var chunkIds = data[0];
+/******/ 		var moreModules = data[1];
+/******/
+/******/
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0, resolves = [];
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(installedChunks[chunkId]) {
+/******/ 				resolves.push(installedChunks[chunkId][0]);
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		for(moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				modules[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(parentJsonpFunction) parentJsonpFunction(data);
+/******/
+/******/ 		while(resolves.length) {
+/******/ 			resolves.shift()();
+/******/ 		}
+/******/
+/******/ 	};
+/******/
+/******/
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// Promise = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		1: 0
+/******/ 	};
+/******/
+/******/
+/******/
+/******/ 	// script path function
+/******/ 	function jsonpScriptSrc(chunkId) {
+/******/ 		return __webpack_require__.p + "bootstrap." + ({}[chunkId]||chunkId) + ".bundle.js"
+/******/ 	}
+/******/
+/******/ 	// object to store loaded and loading wasm modules
+/******/ 	var installedWasmModules = {};
+/******/
+/******/ 	function promiseResolve() { return Promise.resolve(); }
+/******/
+/******/ 	var wasmImportObjects = {
+/******/ 		5: function() {
+/******/ 			return {
+/******/ 				"./compose_area": {
+/******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
+/******/ 						return installedModules[4].exports["__wbindgen_object_drop_ref"](p0i32);
+/******/ 					},
+/******/ 					"__wbindgen_string_new": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__wbindgen_string_new"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_error_cc95a3d302735ca3": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__wbg_error_cc95a3d302735ca3"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_debug_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_debug_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_error_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_error_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_info_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_info_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_log_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_log_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_warn_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_warn_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_instanceof_Window": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_instanceof_Window"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_replace_with_with_node_1_CharacterData": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_replace_with_with_node_1_CharacterData"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_create_comment_Document": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_create_comment_Document"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_create_element_Document": function(p0i32,p1i32,p2i32,p3i32) {
+/******/ 						return installedModules[4].exports["__widl_f_create_element_Document"](p0i32,p1i32,p2i32,p3i32);
+/******/ 					},
+/******/ 					"__widl_f_create_range_Document": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_create_range_Document"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_create_text_node_Document": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_create_text_node_Document"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_get_element_by_id_Document": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_get_element_by_id_Document"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_remove_attribute_Element": function(p0i32,p1i32,p2i32,p3i32) {
+/******/ 						return installedModules[4].exports["__widl_f_remove_attribute_Element"](p0i32,p1i32,p2i32,p3i32);
+/******/ 					},
+/******/ 					"__widl_f_set_attribute_Element": function(p0i32,p1i32,p2i32,p3i32,p4i32,p5i32) {
+/******/ 						return installedModules[4].exports["__widl_f_set_attribute_Element"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
+/******/ 					},
+/******/ 					"__widl_f_tag_name_Element": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_tag_name_Element"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_inner_html_Element": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_inner_html_Element"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_set_inner_html_Element": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_set_inner_html_Element"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_outer_html_Element": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_outer_html_Element"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_replace_with_with_node_1_Element": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_replace_with_with_node_1_Element"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_instanceof_EventTarget": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_instanceof_EventTarget"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_add_event_listener_with_callback_EventTarget": function(p0i32,p1i32,p2i32,p3i32,p4i32) {
+/******/ 						return installedModules[4].exports["__widl_f_add_event_listener_with_callback_EventTarget"](p0i32,p1i32,p2i32,p3i32,p4i32);
+/******/ 					},
+/******/ 					"__widl_f_alt_HTMLImageElement": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_alt_HTMLImageElement"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_append_child_Node": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_append_child_Node"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_contains_Node": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_contains_Node"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_is_same_node_Node": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_is_same_node_Node"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_remove_child_Node": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_remove_child_Node"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_node_type_Node": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_node_type_Node"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_node_name_Node": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_node_name_Node"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_child_nodes_Node": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_child_nodes_Node"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_node_value_Node": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_node_value_Node"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_set_node_value_Node": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_set_node_value_Node"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_text_content_Node": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_text_content_Node"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_item_NodeList": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_item_NodeList"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_get_NodeList": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_get_NodeList"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_length_NodeList": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_length_NodeList"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_collapse_Range": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_collapse_Range"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_set_start_Range": function(p0i32,p1i32,p2i32,p3i32) {
+/******/ 						return installedModules[4].exports["__widl_f_set_start_Range"](p0i32,p1i32,p2i32,p3i32);
+/******/ 					},
+/******/ 					"__widl_f_set_start_after_Range": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_set_start_after_Range"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_set_start_before_Range": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_set_start_before_Range"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_start_container_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_start_container_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_start_offset_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_start_offset_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_end_container_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_end_container_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_end_offset_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_end_offset_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_add_range_Selection": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_add_range_Selection"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_get_range_at_Selection": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__widl_f_get_range_at_Selection"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_range_count_Selection": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_range_count_Selection"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_get_selection_Window": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_get_selection_Window"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_document_Window": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_document_Window"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_newnoargs_862ffd91d0c97e88": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__wbg_newnoargs_862ffd91d0c97e88"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_call_8d65200c7bc9d2d9": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["__wbg_call_8d65200c7bc9d2d9"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbindgen_object_clone_ref": function(p0i32) {
+/******/ 						return installedModules[4].exports["__wbindgen_object_clone_ref"](p0i32);
+/******/ 					},
+/******/ 					"__wbindgen_debug_string": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__wbindgen_debug_string"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__wbindgen_throw"](p0i32,p1i32);
+/******/ 					}
+/******/ 				}
+/******/ 			};
+/******/ 		},
+/******/ 	};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/ 	// This file contains only the entry chunk.
+/******/ 	// The chunk loading function for additional chunks
+/******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
+/******/ 		var promises = [];
+/******/
+/******/
+/******/ 		// JSONP chunk loading for javascript
+/******/
+/******/ 		var installedChunkData = installedChunks[chunkId];
+/******/ 		if(installedChunkData !== 0) { // 0 means "already installed".
+/******/
+/******/ 			// a Promise means "currently loading".
+/******/ 			if(installedChunkData) {
+/******/ 				promises.push(installedChunkData[2]);
+/******/ 			} else {
+/******/ 				// setup Promise in chunk cache
+/******/ 				var promise = new Promise(function(resolve, reject) {
+/******/ 					installedChunkData = installedChunks[chunkId] = [resolve, reject];
+/******/ 				});
+/******/ 				promises.push(installedChunkData[2] = promise);
+/******/
+/******/ 				// start chunk loading
+/******/ 				var script = document.createElement('script');
+/******/ 				var onScriptComplete;
+/******/
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.src = jsonpScriptSrc(chunkId);
+/******/
+/******/ 				onScriptComplete = function (event) {
+/******/ 					// avoid mem leaks in IE.
+/******/ 					script.onerror = script.onload = null;
+/******/ 					clearTimeout(timeout);
+/******/ 					var chunk = installedChunks[chunkId];
+/******/ 					if(chunk !== 0) {
+/******/ 						if(chunk) {
+/******/ 							var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 							var realSrc = event && event.target && event.target.src;
+/******/ 							var error = new Error('Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')');
+/******/ 							error.type = errorType;
+/******/ 							error.request = realSrc;
+/******/ 							chunk[1](error);
+/******/ 						}
+/******/ 						installedChunks[chunkId] = undefined;
+/******/ 					}
+/******/ 				};
+/******/ 				var timeout = setTimeout(function(){
+/******/ 					onScriptComplete({ type: 'timeout', target: script });
+/******/ 				}, 120000);
+/******/ 				script.onerror = script.onload = onScriptComplete;
+/******/ 				document.head.appendChild(script);
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Fetch + compile chunk loading for webassembly
+/******/
+/******/ 		var wasmModules = {"0":[5]}[chunkId] || [];
+/******/
+/******/ 		wasmModules.forEach(function(wasmModuleId) {
+/******/ 			var installedWasmModuleData = installedWasmModules[wasmModuleId];
+/******/
+/******/ 			// a Promise means "currently loading" or "already loaded".
+/******/ 			if(installedWasmModuleData)
+/******/ 				promises.push(installedWasmModuleData);
+/******/ 			else {
+/******/ 				var importObject = wasmImportObjects[wasmModuleId]();
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"a8bfe5c3225fafa408b0"}[wasmModuleId] + ".module.wasm");
+/******/ 				var promise;
+/******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
+/******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
+/******/ 						return WebAssembly.instantiate(items[0], items[1]);
+/******/ 					});
+/******/ 				} else if(typeof WebAssembly.instantiateStreaming === 'function') {
+/******/ 					promise = WebAssembly.instantiateStreaming(req, importObject);
+/******/ 				} else {
+/******/ 					var bytesPromise = req.then(function(x) { return x.arrayBuffer(); });
+/******/ 					promise = bytesPromise.then(function(bytes) {
+/******/ 						return WebAssembly.instantiate(bytes, importObject);
+/******/ 					});
+/******/ 				}
+/******/ 				promises.push(installedWasmModules[wasmModuleId] = promise.then(function(res) {
+/******/ 					return __webpack_require__.w[wasmModuleId] = (res.instance || res).exports;
+/******/ 				}));
+/******/ 			}
+/******/ 		});
+/******/ 		return Promise.all(promises);
+/******/ 	};
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// on error function for async loading
+/******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
+/******/
+/******/ 	// object with all WebAssembly.instance exports
+/******/ 	__webpack_require__.w = {};
+/******/
+/******/ 	var jsonpArray = window["webpackJsonp"] = window["webpackJsonp"] || [];
+/******/ 	var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
+/******/ 	jsonpArray.push = webpackJsonpCallback;
+/******/ 	jsonpArray = jsonpArray.slice();
+/******/ 	for(var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
+/******/ 	var parentJsonpFunction = oldJsonpFunction;
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */,
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// A dependency graph that contains any wasm must all be imported
+// asynchronously. This `bootstrap.js` file does the single async import, so
+// that no one else needs to worry about it again.
+Promise.all(/* import() */[__webpack_require__.e(0), __webpack_require__.e(3), __webpack_require__.e(4)]).then(__webpack_require__.bind(null, 3))
+  .catch(e => console.error("Error importing `benchmark.js`:", e));
+
+
+/***/ })
+/******/ ]);
+//# sourceMappingURL=bootstrap.benchmark.bundle.js.map
