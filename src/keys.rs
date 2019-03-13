@@ -32,7 +32,7 @@ impl<'a> Key<'a> {
 /// A combining character is any valid Unicode character in the "Mark, Spacing
 /// Combining" ("Mc") General Category or with a non-zero Combining Class.
 ///
-/// https://www.w3.org/TR/uievents-key/#keys-unicode
+/// <https://www.w3.org/TR/uievents-key/#keys-unicode>
 fn is_key_string(key_val: &str) -> bool {
     let mut chars = key_val.chars();
     match chars.next() {
@@ -45,7 +45,7 @@ fn is_key_string(key_val: &str) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
 #[cfg(test)]
@@ -70,7 +70,7 @@ mod tests {
         assert_eq!(Key::from_str("Enter"), Some(Key::Enter));
         assert_eq!(Key::from_str("Backspace"), Some(Key::Backspace));
         assert_eq!(Key::from_str("Delete"), Some(Key::Delete));
-        assert_eq!(Key::from_str("Q"), Some(Key::Character("Q".into())));
+        assert_eq!(Key::from_str("Q"), Some(Key::Character("Q")));
         assert_eq!(Key::from_str("Alt"), None);
         assert_eq!(Key::from_str("Shift"), None);
         assert_eq!(Key::from_str("Asdf"), None);

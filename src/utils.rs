@@ -45,9 +45,12 @@ fn is_text_node(node: &Node) -> bool {
 /// For a HTML element, return the length of the opening tag.
 ///
 /// E.g. when passing in a div element, the length will be 5 (`<div>`).
-fn get_opening_tag_len(node: &Element) -> usize {
+#[allow(clippy::cast_possible_truncation)]
+fn get_opening_tag_len(node: &Element) -> u32 {
     let name = node.node_name(); // e.g. "div"
-    name.encode_utf16().count() + 2 // e.g. "<div>"
+    let len = name.encode_utf16().count() + 2; // e.g. "<div>"
+    assert!(len <= u32::max_value() as usize, "Tag length does not fit in u32");
+    len as u32
 }
 
 /// Return the node offset from the start of the root element.
@@ -62,7 +65,7 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
     let child_nodes = root.child_nodes();
     for i in 0..child_nodes.length() {
         let child_node = child_nodes.get(i)
-            .expect(&format!("Child node at index {} not found", i));
+            .unwrap_or_else(|| panic!("Child node at index {} not found", i));
 
         if node.is_same_node(Some(root)) && node_count >= node_offset {
             // We have reached the node offset.
@@ -77,7 +80,7 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
                 Node::TEXT_NODE => return pos + text_offset,
                 Node::ELEMENT_NODE => {
                     let element_ref: &Element = child_node.unchecked_ref();
-                    return pos + get_opening_tag_len(element_ref) as u32;
+                    return pos + get_opening_tag_len(element_ref);
                 }
                 other => panic!(format!("Unsupported node type: {}", other)),
             }
@@ -88,17 +91,20 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
             let element_ref: &Element = child_node.unchecked_ref();
 
             let recursed = get_offset_from_start(element_ref, node, offset);
-            return pos + recursed + get_opening_tag_len(element_ref) as u32;
+            return pos + recursed + get_opening_tag_len(element_ref);
         }
 
         // We're at a node previous to the target node. Increase pos.
         match child_node.node_type() {
             Node::TEXT_NODE => {
-                pos += child_node.text_content().expect("Text node without text content").encode_utf16().count() as u32;
+                pos += make_u32!(
+                    child_node.text_content().expect("Text node without text content")
+                        .encode_utf16().count()
+                );
             }
             Node::ELEMENT_NODE => {
                 let element_ref: &Element = child_node.unchecked_ref();
-                pos += element_ref.outer_html().encode_utf16().count() as u32;
+                pos += make_u32!(element_ref.outer_html().encode_utf16().count());
             }
             other => panic!(format!("Unsupported node type: {}", other)),
         }
@@ -127,11 +133,11 @@ pub struct CaretPosition {
 
 impl CaretPosition {
     pub fn new(start: u32, end: u32) -> Self {
-        CaretPosition { start, end, success: true }
+        Self { start, end, success: true }
     }
 
     pub fn unknown() -> Self {
-        CaretPosition { start: 0, end: 0, success: false }
+        Self { start: 0, end: 0, success: false }
     }
 }
 
@@ -170,7 +176,7 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
     let window = web_sys::window().expect("No global `window` exists");
 
     // If the HTML is empty, we're at the start
-    if root_element.inner_html().len() < 1 {
+    if root_element.inner_html().is_empty() {
         return CaretPosition::new(0, 0);
     }
 
@@ -230,7 +236,7 @@ pub fn extract_text(root_element: &Element, no_trim: bool) -> String {
     }
 }
 
-/// Used by extract_text.
+/// Used by `extract_text`.
 ///
 /// TODO: This could be optimized by avoiding copies and re-allocations.
 fn visit_child_nodes(parent_node: &Element, text: &mut String) {
@@ -254,14 +260,14 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                 text.push_str(
                     // Append text, but strip leading and trailing newlines
                     node.node_value()
-                        .unwrap_or("".into())
+                        .unwrap_or_else(|| "".into())
                         .trim_matches(|c| c == '\n' || c == '\r')
                 );
             }
             Node::ELEMENT_NODE => {
                 let element: &Element = node.unchecked_ref();
                 let tag = element.tag_name().to_lowercase();
-                let _last_node_type = last_node_type.clone();
+                let last_node_type_clone = last_node_type.clone();
                 last_node_type = tag.clone();
                 match &*tag {
                     "span" => {
@@ -272,7 +278,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                         visit_child_nodes(element, text);
                     }
                     "img" => {
-                        if _last_node_type == "div" {
+                        if last_node_type_clone == "div" {
                             // An image following a div should go on a new line
                             text.push('\n');
                         }

@@ -107,6 +107,47 @@ jobs:
             - target
             - /usr/local/cargo
 
+  lint:
+    docker:
+      - image: rust:latest
+    steps:
+      - checkout
+
+      # Load cargo target from cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v1-cargo-cache-lint-{{ arch }}-{{ .Branch }}
+            - v1-cargo-cache-lint-{{ arch }}
+
+      # Install nightly
+      - run:
+          name: Install Rust nightly
+          command: rustup update nightly && rustup default nightly
+      - run:
+          name: Install clippy
+          command: rustup component add clippy
+
+      # Show versions
+      - run:
+          name: Show versions
+          command: rustc --version && cargo --version && cargo clippy --version
+
+      # Run linting checks
+      - run:
+          name: Run clippy
+          command: cargo clean && cargo clippy --all-targets --all-features
+
+      # Save cache
+      - save_cache:
+          key: v1-cargo-cache-lint-{{ arch }}-{{ .Branch }}
+          paths:
+            - /usr/local/cargo
+      - save_cache:
+          key: v1-cargo-cache-lint-{{ arch }}
+          paths:
+            - /usr/local/cargo
+
   test-unit:
     docker:
       - image: rust:latest
@@ -292,6 +333,7 @@ workflows:
   build-and-test:
     jobs:
       - build
+      - lint
       - test-unit
       - test-browser
       - test-integration-firefox:

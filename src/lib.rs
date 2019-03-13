@@ -1,6 +1,12 @@
-//! Note: This library is not thread safe!
+#![deny(clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(clippy::non_ascii_literal, clippy::single_match_else, clippy::if_not_else,
+         clippy::similar_names)]
 
 #[macro_use] extern crate log;
+
+#[macro_use]
+mod macros;
 
 mod keys;
 mod state;
@@ -98,7 +104,7 @@ enum Position<'a> {
 }
 
 /// Update the current selection range to match the specified `Position`.
-fn add_range_at(pos: Position) {
+fn add_range_at(pos: &Position) {
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
 
@@ -128,7 +134,7 @@ fn add_range_at(pos: Position) {
             range.collapse();
         }
         Position::Offset(node, offset) => {
-            range.set_start(node, offset).expect("Could not set_start");
+            range.set_start(node, *offset).expect("Could not set_start");
             range.collapse();
         }
     }
@@ -148,23 +154,23 @@ fn add_range_at(pos: Position) {
 /// Note: This function is only public for testing purposes.
 pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
     let nodes: NodeList = wrapper.child_nodes();
-    let dom_node_count = nodes.length();
+    let dom_node_count: u32 = nodes.length();
 
     // Note: We need to be careful here, because the node list will contain 1
     //       more entry than the nodes in the state object, because a trailing
     //       <br> will always be appended to the DOM nodes.
     let state_node_count = state.node_count();
-    assert_eq!(dom_node_count, state_node_count as u32 + 1, "Unexpected node count");
+    assert_eq!(dom_node_count as usize, state_node_count + 1, "Unexpected node count");
 
     if state_node_count == 0 {
         // No state nodes. Only one DOM node.
         match nodes.get(0) {
-            Some(ref node) => add_range_at(Position::Offset(&node, 0)),
+            Some(ref node) => add_range_at(&Position::Offset(&node, 0)),
             None => unreachable!("Trailing <br> node not found"),
         }
     } else if let Some(pos) = state.find_start_node(Direction::After) {
-        match nodes.get(pos.index as u32) {
-            Some(ref node) => add_range_at(Position::Offset(&node, pos.offset as u32)),
+        match nodes.get(make_u32!(pos.index)) {
+            Some(ref node) => add_range_at(&Position::Offset(&node, make_u32!(pos.offset))),
             None => unreachable!(format!("Node at index {} not found", pos.index)),
         }
     } else {
@@ -172,7 +178,7 @@ pub fn _set_caret_position_from_state(wrapper: &Element, state: &State) {
         // Use the second-to-last node (since the last node is the <br> element.
         let index = dom_node_count - 1 /* 0 based indexing */ - 1 /* <br> element */;
         match nodes.get(index) {
-            Some(ref node) => add_range_at(Position::After(&node)),
+            Some(ref node) => add_range_at(&Position::After(&node)),
             None => unreachable!(format!("Node at index {} not found", index)),
         }
     }
@@ -217,7 +223,7 @@ impl ComposeArea {
         debug!("WASM: process_key ({})", key_val);
 
         // Validate and parse key value
-        if key_val.len() == 0 {
+        if key_val.is_empty() {
             warn!("process_key: No key value provided");
             return false;
         }
@@ -227,7 +233,7 @@ impl ComposeArea {
         };
 
         self.update_state(|state| {
-            state.handle_key(key);
+            state.handle_key(&key);
         });
 
         // We handled the event, so prevent the default event from being handled.
@@ -243,7 +249,7 @@ impl ComposeArea {
     }
 
     /// Insert plain text.
-    pub fn insert_text(&mut self, text: String) {
+    pub fn insert_text(&mut self, text: &str) {
         debug!("WASM: insert_text ({})", &text);
         self.update_state(|state| {
             state.insert_text(&text);
