@@ -62,7 +62,7 @@ fn get_offset_from_start(root: &Element, node: &Node, offset: u32) -> u32 {
     let child_nodes = root.child_nodes();
     for i in 0..child_nodes.length() {
         let child_node = child_nodes.get(i)
-            .expect(&format!("Child node at index {} not found", i));
+            .unwrap_or_else(|| panic!("Child node at index {} not found", i));
 
         if node.is_same_node(Some(root)) && node_count >= node_offset {
             // We have reached the node offset.
@@ -170,7 +170,7 @@ pub fn get_caret_position(root_element: &Element) -> CaretPosition {
     let window = web_sys::window().expect("No global `window` exists");
 
     // If the HTML is empty, we're at the start
-    if root_element.inner_html().len() < 1 {
+    if root_element.inner_html().is_empty() {
         return CaretPosition::new(0, 0);
     }
 
@@ -254,7 +254,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                 text.push_str(
                     // Append text, but strip leading and trailing newlines
                     node.node_value()
-                        .unwrap_or("".into())
+                        .unwrap_or_else(|| "".into())
                         .trim_matches(|c| c == '\n' || c == '\r')
                 );
             }

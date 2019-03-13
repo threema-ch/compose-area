@@ -76,11 +76,7 @@ pub struct State {
 
 impl State {
     pub fn new() -> Self {
-        State {
-            nodes: vec![],
-            caret_start: 0,
-            caret_end: 0,
-        }
+        Default::default()
     }
 
     /// Reset / clear internal state.
@@ -195,7 +191,7 @@ impl State {
             if let Some(start_node) = self.find_start_node(Direction::After) {
                 match self.nodes.get_mut(start_node.index).expect("No node at the specified index!") {
                     // Text node
-                    &mut Node::Text(ref mut val) => {
+                    Node::Text(ref mut val) => {
                         if start_node.offset == 0 && val.len() <= difference {
                             // In case we're at the start of the text and if the length
                             // of the text is less than the amount of characters we have
@@ -217,8 +213,8 @@ impl State {
                     },
 
                     // Block nodes, remove them entirely
-                    &mut Node::Newline |
-                    &mut Node::Image { .. } => remove_node = Some(start_node.index),
+                    Node::Newline |
+                    Node::Image { .. } => remove_node = Some(start_node.index),
                 }
             } else {
                 error!("remove_selection: Start node not found");
@@ -253,12 +249,10 @@ impl State {
         // First, use a pairwise iterator to find the text nodes that are
         // followed by another text node. Store the indexes of those nodes.
         let mut nodes_to_merge: Vec<usize> = vec![];
-        let mut i = 0;
-        for pair in (&self.nodes).windows(2) {
+        for (i, pair) in (&self.nodes).windows(2).enumerate() {
             if let [Node::Text(_), Node::Text(_)] = pair {
                 nodes_to_merge.push(i);
             }
-            i += 1;
         }
 
         // Now iterate backwards through the list of indices. Remove the
@@ -301,7 +295,7 @@ impl State {
         if let Some(current_node) = self.find_start_node(Direction::Before) {
             match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
                 // Text node
-                &mut Node::Text(ref mut val) => {
+                Node::Text(ref mut val) => {
                     if val.len() <= 1 {
                         // In case there's only a single character in it, remove the
                         // entire node.
@@ -315,8 +309,8 @@ impl State {
                 },
 
                 // Block nodes, remove it entirely
-                &mut Node::Newline |
-                &mut Node::Image { .. } => remove_node = Some(current_node.index),
+                Node::Newline |
+                Node::Image { .. } => remove_node = Some(current_node.index),
             }
         }
         if let Some(index) = remove_node {
@@ -342,7 +336,7 @@ impl State {
         if let Some(current_node) = self.find_start_node(Direction::After) {
             match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
                 // Text node
-                &mut Node::Text(ref mut val) => {
+                Node::Text(ref mut val) => {
                     if val.len() <= 1 {
                         // In case there's only a single character in it, remove the
                         // entire node.
@@ -354,8 +348,8 @@ impl State {
                 },
 
                 // Block nodes, remove it entirely
-                &mut Node::Newline |
-                &mut Node::Image { .. } => remove_node = Some(current_node.index),
+                Node::Newline |
+                Node::Image { .. } => remove_node = Some(current_node.index),
             }
         }
         if let Some(index) = remove_node {
@@ -373,16 +367,14 @@ impl State {
         // Find the current node we're at
         if let Some(current_node) = self.find_start_node(Direction::After) {
             // If we're already at or in a text node, update existing text.
-            match self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
-                &mut Node::Text(ref mut val) => {
-                    self.caret_start += text.len();
-                    self.caret_end = self.caret_start;
-                    for (i, unit) in text.into_iter().enumerate() {
-                        val.insert(current_node.offset + i, unit);
-                    }
-                    return;
-                },
-                _ => {},
+            if let Node::Text(ref mut val)
+                    = self.nodes.get_mut(current_node.index).expect("No node at the specified index!") {
+                self.caret_start += text.len();
+                self.caret_end = self.caret_start;
+                for (i, unit) in text.into_iter().enumerate() {
+                    val.insert(current_node.offset + i, unit);
+                }
+                return;
             }
 
             // Otherwise, create new text node.
@@ -436,7 +428,7 @@ impl State {
             // Otherwise, if we're at a text node, split it and insert newline between.
             let split_node = {
                 match self.nodes.get_mut(current_node.index).expect("No node at the specified index") {
-                    &mut Node::Text(ref mut val) => {
+                    Node::Text(ref mut val) => {
                         Some(Node::Text(val.split_off(current_node.offset)))
                     }
                     _ => None
@@ -481,6 +473,16 @@ impl State {
         virtual_nodes.push(VirtualNode::element("br"));
 
         virtual_nodes
+    }
+}
+
+impl Default for State {
+    fn default() -> Self {
+        State {
+            nodes: vec![],
+            caret_start: 0,
+            caret_end: 0,
+        }
     }
 }
 

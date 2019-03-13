@@ -45,7 +45,7 @@ fn is_key_string(key_val: &str) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
 #[cfg(test)]
@@ -70,7 +70,7 @@ mod tests {
         assert_eq!(Key::from_str("Enter"), Some(Key::Enter));
         assert_eq!(Key::from_str("Backspace"), Some(Key::Backspace));
         assert_eq!(Key::from_str("Delete"), Some(Key::Delete));
-        assert_eq!(Key::from_str("Q"), Some(Key::Character("Q".into())));
+        assert_eq!(Key::from_str("Q"), Some(Key::Character("Q")));
         assert_eq!(Key::from_str("Alt"), None);
         assert_eq!(Key::from_str("Shift"), None);
         assert_eq!(Key::from_str("Asdf"), None);

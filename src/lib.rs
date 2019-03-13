@@ -217,7 +217,7 @@ impl ComposeArea {
         debug!("WASM: process_key ({})", key_val);
 
         // Validate and parse key value
-        if key_val.len() == 0 {
+        if key_val.is_empty() {
             warn!("process_key: No key value provided");
             return false;
         }
