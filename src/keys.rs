@@ -32,7 +32,7 @@ impl<'a> Key<'a> {
 /// A combining character is any valid Unicode character in the "Mark, Spacing
 /// Combining" ("Mc") General Category or with a non-zero Combining Class.
 ///
-/// https://www.w3.org/TR/uievents-key/#keys-unicode
+/// <https://www.w3.org/TR/uievents-key/#keys-unicode>
 fn is_key_string(key_val: &str) -> bool {
     let mut chars = key_val.chars();
     match chars.next() {
