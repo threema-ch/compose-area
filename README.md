@@ -71,6 +71,15 @@ editor.
     npm test firefox
 
 
+## Linting
+
+    # Setup
+    rustup component add clippy
+
+    # Run linting checks
+    cargo clean && cargo clippy --all-targets --all-features
+
+
 ## Running the testproject
 
     # Setup npm
