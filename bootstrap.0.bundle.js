@@ -63,8 +63,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_object_drop_ref", function() { return __wbindgen_object_drop_ref; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_string_new", function() { return __wbindgen_string_new; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_debug_string", function() { return __wbindgen_debug_string; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComposeArea", function() { return ComposeArea; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CaretPosition", function() { return CaretPosition; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComposeArea", function() { return ComposeArea; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_throw", function() { return __wbindgen_throw; });
 /* harmony import */ var _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* tslint:disable */
@@ -669,6 +669,66 @@ getUint32Memory()[len_ptr / 4] = WASM_VECTOR_LEN;
 return ptr;
 }
 
+function freeCaretPosition(ptr) {
+
+    _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_caretposition_free */ "a"](ptr);
+}
+/**
+* A caret position specifies the offset in the HTML source code relative to
+* the start of the wrapper element.
+*
+* Example: If the caret is at the end of this wrapper element:
+*
+* ```html
+* <div id=\"wrapper\">hi<br></div>
+* ```
+*
+* ...then the offset will be 6.
+*/
+class CaretPosition {
+
+    static __wrap(ptr) {
+        const obj = Object.create(CaretPosition.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    free() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+        freeCaretPosition(ptr);
+    }
+
+    /**
+    * @returns {number}
+    */
+    get start() {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_start */ "d"](this.ptr);
+    }
+    set start(arg0) {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_start */ "g"](this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get end() {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_end */ "c"](this.ptr);
+    }
+    set end(arg0) {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_end */ "f"](this.ptr, arg0);
+    }
+    /**
+    * @returns {boolean}
+    */
+    get success() {
+        return (_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_success */ "e"](this.ptr)) !== 0;
+    }
+    set success(arg0) {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_success */ "h"](this.ptr, arg0);
+    }
+}
+
 function freeComposeArea(ptr) {
 
     _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_composearea_free */ "b"](ptr);
@@ -734,7 +794,14 @@ class ComposeArea {
     insert_text(arg0) {
         const ptr0 = passStringToWasm(arg0);
         const len0 = WASM_VECTOR_LEN;
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_text */ "o"](this.ptr, ptr0, len0);
+        try {
+            return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_text */ "o"](this.ptr, ptr0, len0);
+
+        } finally {
+            _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_free */ "i"](ptr0, len0 * 1);
+
+        }
+
     }
     /**
     * Remove the current selection from the state.
@@ -784,66 +851,6 @@ class ComposeArea {
     */
     reset() {
         return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_reset */ "r"](this.ptr);
-    }
-}
-
-function freeCaretPosition(ptr) {
-
-    _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_caretposition_free */ "a"](ptr);
-}
-/**
-* A caret position specifies the offset in the HTML source code relative to
-* the start of the wrapper element.
-*
-* Example: If the caret is at the end of this wrapper element:
-*
-* ```html
-* <div id=\"wrapper\">hi<br></div>
-* ```
-*
-* ...then the offset will be 6.
-*/
-class CaretPosition {
-
-    static __wrap(ptr) {
-        const obj = Object.create(CaretPosition.prototype);
-        obj.ptr = ptr;
-
-        return obj;
-    }
-
-    free() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-        freeCaretPosition(ptr);
-    }
-
-    /**
-    * @returns {number}
-    */
-    get start() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_start */ "d"](this.ptr);
-    }
-    set start(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_start */ "g"](this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get end() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_end */ "c"](this.ptr);
-    }
-    set end(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_end */ "f"](this.ptr, arg0);
-    }
-    /**
-    * @returns {boolean}
-    */
-    get success() {
-        return (_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_success */ "e"](this.ptr)) !== 0;
-    }
-    set success(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_success */ "h"](this.ptr, arg0);
     }
 }
 
