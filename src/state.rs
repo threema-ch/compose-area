@@ -461,9 +461,9 @@ impl State {
                 Node::Newline => virtual_nodes.push(VirtualNode::element("br")),
                 Node::Image { src, alt, cls } => {
                     let mut element = VElement::new("img");
-                    element.props.insert("src".into(), src.clone());
-                    element.props.insert("alt".into(), alt.clone());
-                    element.props.insert("class".into(), cls.clone());
+                    element.attrs.insert("src".into(), src.clone());
+                    element.attrs.insert("alt".into(), alt.clone());
+                    element.attrs.insert("class".into(), cls.clone());
                     virtual_nodes.push(element.into())
                 },
             }
