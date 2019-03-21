@@ -21,17 +21,48 @@ document.addEventListener('selectionchange', (e) => {
     composeArea.update_caret_position();
 });
 
+// Composition state
+const compositionState = {
+    composing: false,
+};
+
 /**
  * On keydown, process the key.
  */
+wrapper.addEventListener('compositionstart', (e) => {
+    console.log('compositionstart:', e);
+    compositionState.composing = true;
+});
+wrapper.addEventListener('compositionupdate', (e) => {
+    console.log('compositionupdate:', e);
+});
+wrapper.addEventListener('compositionend', (e) => {
+    console.log('compositionend:', e);
+    compositionState.composing = false;
+
+    composeArea.insert_text(e.data);
+});
+wrapper.addEventListener('change', (e) => {
+    console.log('change:', e);
+});
 wrapper.addEventListener('keydown', (e) => {
     console.log('keydown:', e);
-    if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (compositionState.composing) {
+        // Ignore key events while composing
+        e.preventDefault();
+        return;
+    } else if (!e.ctrlKey && !e.altKey && !e.metaKey) {
         const preventDefault = composeArea.process_key(e.key);
         if (preventDefault) {
             e.preventDefault();
         }
     }
+});
+wrapper.addEventListener('keyup', (e) => {
+    console.log('keyup:', e);
+});
+wrapper.addEventListener('keypress', (e) => {
+    console.log('keypress:', e);
 });
 
 /**
