@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "start": "webpack-dev-server --config webpack.dev.js --host 0.0.0.0"
+    "start": "webpack-dev-server --config webpack.dev.js --host 0.0.0.0 --disable-host-check"
   },
   "author": "",
   "devDependencies": {
