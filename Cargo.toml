@@ -14,7 +14,7 @@ default = ["console_error_panic_hook", "console_log"]
 
 [dependencies]
 cfg-if = "0.1.2"
-wasm-bindgen = "=0.2.34"
+wasm-bindgen = "=0.2.39"
 virtual-dom-rs = "0.6"
 unicode-normalization = "0.1"
 

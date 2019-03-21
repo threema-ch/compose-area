@@ -54,9 +54,9 @@ impl ComposeArea {
 /// wrapper element.
 fn wrap(virtual_nodes: Vec<VirtualNode>, wrapper_id: &str) -> VirtualNode {
     let mut wrapper = VElement::new("div");
-    wrapper.props.insert("id".into(), wrapper_id.to_string());
-    wrapper.props.insert("class".into(), "cawrapper initialized".into());
-    wrapper.props.insert("contenteditable".into(), "true".into());
+    wrapper.attrs.insert("id".into(), wrapper_id.to_string());
+    wrapper.attrs.insert("class".into(), "cawrapper initialized".into());
+    wrapper.attrs.insert("contenteditable".into(), "true".into());
     wrapper.children = virtual_nodes;
     wrapper.into()
 }

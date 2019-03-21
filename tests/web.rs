@@ -4,7 +4,7 @@
 
 use wasm_bindgen_test::*;
 
-use virtual_dom_rs::{html, text, VirtualNode};
+use virtual_dom_rs::prelude::*;
 
 mod helpers;
 
@@ -146,7 +146,7 @@ fn extract_text_simple() {
 #[wasm_bindgen_test]
 fn extract_text_single_div() {
     ExtractTextTest {
-        html: html! { <div> Hello World </div> },
+        html: html! { <div>Hello World</div> },
         expected: "Hello World",
     }.test();
 }
@@ -154,16 +154,15 @@ fn extract_text_single_div() {
 #[wasm_bindgen_test]
 fn extract_text_single_span() {
     ExtractTextTest {
-        html: html! { <span> Hello World </span> },
+        html: html! { <span>Hello World</span> },
         expected: "Hello World",
     }.test();
 }
 
 #[wasm_bindgen_test]
 fn extract_text_image() {
-    let hello = text!("Hello ");
     ExtractTextTest {
-        html: html! { <div> {hello} <img src="#" alt="Big"> World </div> },
+        html: html! { <div>Hello <img src="#" alt="Big">World</div> },
         expected: "Hello BigWorld",
     }.test();
 }
@@ -171,7 +170,7 @@ fn extract_text_image() {
 #[wasm_bindgen_test]
 fn extract_text_newline_br() {
     ExtractTextTest {
-        html: html! { <div> Hello <br> World </div> },
+        html: html! { <div>Hello<br>World</div> },
         expected: "Hello\nWorld",
     }.test();
 }
@@ -179,7 +178,7 @@ fn extract_text_newline_br() {
 #[wasm_bindgen_test]
 fn extract_text_newline_single_div_first() {
     ExtractTextTest {
-        html: html! { <div> <div>Hello</div> World </div> },
+        html: html! { <div><div>Hello</div>World</div> },
         expected: "Hello\nWorld",
     }.test();
 }
@@ -187,7 +186,7 @@ fn extract_text_newline_single_div_first() {
 #[wasm_bindgen_test]
 fn extract_text_newline_single_div_second() {
     ExtractTextTest {
-        html: html! { <div> Hello <div>World</div> </div> },
+        html: html! { <div>Hello<div>World</div></div> },
         expected: "Hello\nWorld",
     }.test();
 }
@@ -195,7 +194,7 @@ fn extract_text_newline_single_div_second() {
 #[wasm_bindgen_test]
 fn extract_text_newline_double_div() {
     ExtractTextTest {
-        html: html! { <div> <div>Hello</div> <div>World</div> </div> },
+        html: html! { <div><div>Hello</div><div>World</div></div> },
         expected: "Hello\nWorld",
     }.test();
 }

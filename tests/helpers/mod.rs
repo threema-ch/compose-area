@@ -33,7 +33,7 @@ pub(crate) fn setup_compose_area_test(wrapper_id: &str) -> web_sys::Document {
     // Insert wrapper element into DOM
     let wrapper = {
         let mut div = VirtualNode::element("div");
-        div.as_velement_mut().unwrap().props.insert("id".to_string(), wrapper_id.to_string());
+        div.as_velement_mut().unwrap().attrs.insert("id".to_string(), wrapper_id.to_string());
         div
     };
     body.append_child(&wrapper.create_dom_node()).expect("Could not append node to body");
