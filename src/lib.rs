@@ -1,3 +1,5 @@
+#![cfg_attr(test, feature(proc_macro_hygiene))]
+
 #![deny(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::non_ascii_literal, clippy::single_match_else, clippy::if_not_else,

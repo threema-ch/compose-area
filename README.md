@@ -17,9 +17,10 @@ emoji), implemented on top of a content editable div.
 
 If you've ever done any cross-browser editor implementation using
 content-editable elements, then you know that content-editable elements are
-terrible. They behave differently in every browser and the transformations
-resulting from input events are not well-defined. Please read [this blogpost by
-Medium Engineering](https://medium.engineering/why-contenteditable-is-terrible-122d8a40e480)
+terrible. They [behave differently](https://www.dhs.state.il.us/accessibility/tests/contenteditabletest.html)
+in every browser and the transformations resulting from input events are not
+well-defined. Please read [this blogpost by Medium
+Engineering](https://medium.engineering/why-contenteditable-is-terrible-122d8a40e480)
 for some more background information.
 
 This project uses DOM event listeners, WebAssembly (through Rust) and a virtual

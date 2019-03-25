@@ -1,6 +1,8 @@
 use std::cmp::min;
 
 use virtual_dom_rs::{VirtualNode, VElement};
+use wasm_bindgen::JsCast;
+use web_sys::{self, Element as DomElement, Node as DomNode};
 
 use crate::keys::Key;
 
@@ -75,8 +77,110 @@ pub struct State {
 }
 
 impl State {
+    /// Create a new empty state.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Initialize a state from the current DOM.
+    pub fn from_dom(element: &DomElement) -> Self {
+        // Traverse the DOM tree in depth-first order.
+        let mut nodes = vec![];
+        let mut global_last_node_type = "".to_string();
+        Self::dom_to_nodes(element, 0, &mut nodes, &mut global_last_node_type);
+
+        // Firefox appends a trailing newline to the DOM.
+        // If that's the case, ignore it.
+        if nodes.last() == Some(&Node::Newline) && global_last_node_type == "br" {
+            nodes.pop();
+        }
+
+        Self {
+            nodes,
+            caret_start: 0,  // TODO: Actual pos
+            caret_end: 0,
+        }
+    }
+
+    /// Used by `from_dom`.
+    ///
+    /// Note: There are two "last node type" variables. One of them (local) is
+    /// just used on the same hierarchy level in the tree, while the other
+    /// (global) is used across hierarchy levels (depth first).
+    fn dom_to_nodes(
+        parent_node: &DomElement,
+        depth: u8,
+        nodes: &mut Vec<Node>,
+        global_last_node_type: &mut String,
+    ) {
+        trace!("dom_to_nodes ({})", depth);
+
+        let mut local_last_node_type = "".to_string();
+        let children = parent_node.child_nodes();
+        for i in 0..children.length() {
+            let node: DomNode = match children.item(i) {
+                Some(n) => n,
+                None => {
+                    warn!("dom_to_nodes: Index out of bounds");
+                    return;
+                },
+            };
+            match node.node_type() {
+                DomNode::TEXT_NODE => {
+                    trace!("dom_to_nodes ({}): Text", depth);
+                    if local_last_node_type == "div" {
+                        // A text node following a div should go on a new line
+                        nodes.push(Node::Newline);
+                    }
+                    local_last_node_type = "text".to_string();
+                    *global_last_node_type = "text".to_string();
+                    nodes.push(Node::Text(
+                        // Append text, but strip leading and trailing newlines
+                        node.node_value()
+                            .unwrap_or_else(|| "".into())
+                            .trim_matches(|c| c == '\n' || c == '\r')
+                            .encode_utf16()
+                            .collect()
+                    ));
+                }
+                DomNode::ELEMENT_NODE => {
+                    let element: &DomElement = node.unchecked_ref();
+                    let tag = element.tag_name().to_lowercase();
+                    trace!("dom_to_nodes ({}): Element {}", depth, tag);
+                    let local_last_node_type_clone = local_last_node_type.clone();
+                    local_last_node_type = tag.clone();
+                    *global_last_node_type = tag.clone();
+                    match &*tag {
+                        "span" => {
+                            Self::dom_to_nodes(element, depth + 1, nodes, global_last_node_type);
+                        }
+                        "div" => {
+                            if !local_last_node_type_clone.is_empty() {
+                                nodes.push(Node::Newline);
+                            }
+                            Self::dom_to_nodes(element, depth + 1, nodes, global_last_node_type);
+                        }
+                        "img" => {
+                            if local_last_node_type_clone == "div" {
+                                // An image following a div should go on a new line
+                                nodes.push(Node::Newline);
+                            }
+                            let img = node.unchecked_ref::<web_sys::HtmlImageElement>();
+                            nodes.push(Node::Image {
+                                src: img.src(),
+                                alt: img.alt(),
+                                cls: element.class_name(),
+                            });
+                        }
+                        "br" => {
+                            nodes.push(Node::Newline);
+                        }
+                        _other => {}
+                    }
+                }
+                other => warn!("dom_to_nodes: Unhandled node type: {}", other),
+            }
+        }
     }
 
     /// Reset / clear internal state.
@@ -1065,6 +1169,73 @@ mod tests {
             ];
             state.normalize();
             assert_eq!(state.nodes.len(), 3);
+        }
+    }
+
+    mod from_dom {
+        use log::Level;
+        use virtual_dom_rs::html;
+        use wasm_bindgen_test::*;
+
+        use super::*;
+
+        wasm_bindgen_test_configure!(run_in_browser);
+
+        struct FromDomTest {
+            html: VirtualNode,
+            nodes: &'static str,
+        }
+
+        impl FromDomTest {
+            fn test(&self) {
+                // Set up console logging
+                let _ = console_log::init_with_level(Level::Trace);
+
+                // Create div
+                let div_node = self.html.create_dom_node();
+
+                // Create state from div
+                let state = State::from_dom(div_node.node.unchecked_ref());
+                assert_eq!(
+                    format!("State {{ nodes: [{}], caret_start: 0, caret_end: 0 }}", self.nodes),
+                    format!("{:?}", state),
+                );
+            }
+        }
+
+        #[wasm_bindgen_test]
+        fn simple() {
+            FromDomTest {
+                html: html! {
+                    <div>Hello<br>World!</div>
+                },
+                nodes: "Text([72, 101, 108, 108, 111]), \
+                        Newline, \
+                        Text([87, 111, 114, 108, 100, 33])",
+            }.test();
+        }
+
+        /// Firefox adds trailing newlines
+        #[wasm_bindgen_test]
+        fn trailing_newline() {
+            FromDomTest {
+                html: html! {
+                    <div>Hello<br></div>
+                },
+                nodes: "Text([72, 101, 108, 108, 111])",
+            }.test();
+        }
+
+        /// Steps to reproduce (Firefox):
+        /// Enter "hello", press enter key.
+        #[wasm_bindgen_test]
+        fn press_enter() {
+            FromDomTest {
+                html: html! {
+                    <div><div>Hello</div><div><br></div></div>
+                },
+                nodes: "Text([72, 101, 108, 108, 111]), Newline",
+            }.test();
         }
     }
 }
