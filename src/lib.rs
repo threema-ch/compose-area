@@ -311,4 +311,11 @@ impl ComposeArea {
         let wrapper = self.get_wrapper();
         wrapper.set_inner_html("");
     }
+
+    /// Reload internal state from DOM.
+    pub fn reload_from_dom(&mut self) {
+        debug!("WASM: reload_from_dom");
+        let wrapper = self.get_wrapper();
+        self.state = State::from_dom(&wrapper);
+    }
 }
