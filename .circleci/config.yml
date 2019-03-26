@@ -123,7 +123,7 @@ jobs:
       # Install nightly
       - run:
           name: Install Rust nightly
-          command: rustup update nightly && rustup default nightly
+          command: rustup update nightly-2019-03-12 && rustup default nightly-2019-03-12
       - run:
           name: Install clippy
           command: rustup component add clippy
