@@ -178,6 +178,29 @@ async function replaceSelectedTextAndEmoji(driver: WebDriver) {
 }
 
 /**
+ * Cursor position after replacing emoji.
+ */
+async function replaceEmojiWithText(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+
+    const wrapperElement = await driver.findElement(wrapper);
+    const emoji = await driver.findElement(emojiTongue);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('a');
+    emoji.click();
+    await wrapperElement.sendKeys('b');
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
+    await wrapperElement.sendKeys('A');
+    await wrapperElement.sendKeys('B');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('aABb');
+}
+
+/**
  * Replace all text.
  */
 async function replaceAllText(driver: WebDriver) {
@@ -256,6 +279,7 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Replace selected text with text', replaceSelectedTextWithText],
     ['Replace selected text with emoji', replaceSelectedTextWithEmoji],
     ['Replace selected text and emoji', replaceSelectedTextAndEmoji],
+    ['Replace emoji with text', replaceEmojiWithText],
     // Doesn't work in Firefox. Disabled until
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
     //['Replace all text', replaceAllText],

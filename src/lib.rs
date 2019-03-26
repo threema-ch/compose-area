@@ -127,15 +127,15 @@ fn add_range_at(pos: &Position) {
     match pos {
         Position::After(node) => {
             range.set_start_after(node).expect("Could not set_start_after");
-            range.collapse();
+            range.set_end_after(node).expect("Could not set_end_after");
         }
         Position::Offset(node, 0) => {
-            range.set_start_before(node).expect("Could not set_range_before");
-            range.collapse();
+            range.set_start_before(node).expect("Could not set_start_before");
+            range.set_end_before(node).expect("Could not set_end_before");
         }
         Position::Offset(node, offset) => {
             range.set_start(node, *offset).expect("Could not set_start");
-            range.collapse();
+            range.set_end(node, *offset).expect("Could not set_end");
         }
     }
 
