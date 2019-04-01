@@ -84,7 +84,9 @@ wrapper.addEventListener('keypress', (e) => {
  */
 wrapper.addEventListener('input', (e) => {
     log('input:', e.inputType, e);
-    composeArea.reload_from_dom();
+    if (!compositionState.composing) {
+        composeArea.reload_from_dom();
+    }
 });
 
 /**
