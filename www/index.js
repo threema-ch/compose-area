@@ -29,6 +29,7 @@ function log() {
  */
 document.addEventListener('selectionchange', (e) => {
     log('selectionchange', e);
+    log('--update_caret_position');
     composeArea.update_caret_position();
 });
 
@@ -50,8 +51,6 @@ wrapper.addEventListener('compositionupdate', (e) => {
 wrapper.addEventListener('compositionend', (e) => {
     log('compositionend:', e);
     compositionState.composing = false;
-
-    composeArea.insert_text(e.data);
 });
 wrapper.addEventListener('change', (e) => {
     log('change:', e);
@@ -63,6 +62,7 @@ wrapper.addEventListener('keydown', (e) => {
         e.preventDefault();
         return;
     } else if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+        log('--process_key: ' + e.key);
         const preventDefault = composeArea.process_key(e.key);
         if (preventDefault) {
             e.preventDefault();
@@ -85,6 +85,7 @@ wrapper.addEventListener('keypress', (e) => {
 wrapper.addEventListener('input', (e) => {
     log('input:', e.inputType, e);
     if (!compositionState.composing) {
+        log('--reload_from_dom');
         composeArea.reload_from_dom();
     }
 });
@@ -97,6 +98,7 @@ wrapper.addEventListener('input', (e) => {
  */
 wrapper.addEventListener('cut', (e) => {
     log('cut', e);
+    log('--remove_selection');
     composeArea.remove_selection(false);
 });
 
@@ -110,6 +112,7 @@ wrapper.addEventListener('paste', (e) => {
     log('paste', e);
     const clipboardData = e.clipboardData.getData('text/plain');
     if (clipboardData) {
+        log('--insert_text: ' + clipboardData);
         composeArea.insert_text(clipboardData);
         e.preventDefault();
     }
@@ -120,6 +123,7 @@ wrapper.addEventListener('paste', (e) => {
 function insertEmoji(e) {
     log('insertEmoji');
     const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
+    log('--insert_image');
     composeArea.insert_image(img.src, img.alt, 'emoji');
 }
 document.getElementById('tongue').addEventListener('click', insertEmoji);
