@@ -39,8 +39,13 @@ DOM to implement a text editor that reacts predictably to input events:
     matches the new state. By applying those patches to the DOM, we can sync
     the two states.
 
-This gives us reliable, well-defined and testable behavior for a simple text
-editor.
+This gives us mostly reliable, well-defined and testable behavior for a simple
+text editor.
+
+Unfortunately there are situations where input events are not clearly defined
+by web standards. For example when using an IME to input Japanese text, or when
+using autocompletion on a touch device. In those cases, we simply re-parse the
+DOM and convert it back into the internal state representation.
 
 
 ## Setup
