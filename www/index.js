@@ -12,6 +12,14 @@ window.composeArea = composeArea;
 const wrapper = document.getElementById('wrapper');
 const logDiv = document.getElementById('log');
 
+const state = {
+    // True when a composition is in progress
+    composing: false,
+
+    // Re-parse the div for every input event.
+    aggressiveMode: false,
+};
+
 function log() {
     console.log(...arguments);
     let text = '';
@@ -33,41 +41,50 @@ document.addEventListener('selectionchange', (e) => {
     composeArea.update_caret_position();
 });
 
-// Composition state
-const compositionState = {
-    composing: false,
-};
-
 /**
  * On keydown, process the key.
  */
 wrapper.addEventListener('compositionstart', (e) => {
     log('compositionstart:', e);
-    compositionState.composing = true;
+    state.composing = true;
+
+    // When an Firefox on Android user types "a" and presses enter, this
+    // results in *both* a composition event and a key event. Unfortunately we
+    // can't really know the difference between a key event following a
+    // composition, and a regular key event. Thus, we enable aggressive mode
+    // when compositions are used.
+    state.aggressiveMode = true;
 });
 wrapper.addEventListener('compositionupdate', (e) => {
     log('compositionupdate:', e);
 });
 wrapper.addEventListener('compositionend', (e) => {
-    log('compositionend:', e);
-    compositionState.composing = false;
+    log('compositionend:', e.data);
+    state.composing = false;
 });
 wrapper.addEventListener('change', (e) => {
     log('change:', e);
 });
 wrapper.addEventListener('keydown', (e) => {
-    log('keydown:', e);
-    if (compositionState.composing) {
+    if (state.composing) {
         // Ignore key events while composing
+        log('keydown[suppressed]:', e);
         e.preventDefault();
         return;
+    } else if (state.aggressiveMode) {
+        // Process keys as usual, handle them with the input event.
+        log('keydown[aggressive]:', e);
+        return;
     } else if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+        log('keydown[process]:', e);
         log('--process_key: ' + e.key);
         const preventDefault = composeArea.process_key(e.key);
         if (preventDefault) {
             e.preventDefault();
         }
+        return;
     }
+    log('keydown[default]:', e);
 });
 wrapper.addEventListener('keyup', (e) => {
     log('keyup:', e);
@@ -84,7 +101,7 @@ wrapper.addEventListener('keypress', (e) => {
  */
 wrapper.addEventListener('input', (e) => {
     log('input:', e.inputType, e);
-    if (!compositionState.composing) {
+    if (!state.composing) {
         log('--reload_from_dom');
         composeArea.reload_from_dom();
     }
