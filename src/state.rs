@@ -5,6 +5,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Element as DomElement, Node as DomNode};
 
 use crate::keys::Key;
+use crate::utils::{CaretPosition, get_caret_position};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Node {
@@ -95,10 +96,21 @@ impl State {
             nodes.pop();
         }
 
-        Self {
-            nodes,
-            caret_start: 0,  // TODO: Actual pos
-            caret_end: 0,
+        // Determine caret position
+        let pos: CaretPosition = get_caret_position(element);
+        if pos.success {
+            assert!(pos.start <= pos.end);
+            Self {
+                nodes,
+                caret_start: pos.start as usize,
+                caret_end: pos.end as usize,
+            }
+        } else {
+            Self {
+                nodes,
+                caret_start: 0,
+                caret_end: 0,
+            }
         }
     }
 
