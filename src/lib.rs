@@ -1,3 +1,5 @@
+#![cfg_attr(test, feature(proc_macro_hygiene))]
+
 #![deny(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::non_ascii_literal, clippy::single_match_else, clippy::if_not_else,
@@ -308,5 +310,12 @@ impl ComposeArea {
         self.state.reset();
         let wrapper = self.get_wrapper();
         wrapper.set_inner_html("");
+    }
+
+    /// Reload internal state from DOM.
+    pub fn reload_from_dom(&mut self) {
+        debug!("WASM: reload_from_dom");
+        let wrapper = self.get_wrapper();
+        self.state = State::from_dom(&wrapper);
     }
 }

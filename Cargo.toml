@@ -1,5 +1,6 @@
 [package]
 name = "compose-area"
+description = "A compose area with support for Emoji, written with Rust + Webassembly."
 version = "0.1.0"
 authors = ["Danilo Bargen <danilo.bargen@threema.ch>"]
 license = "MIT OR Apache-2.0"
