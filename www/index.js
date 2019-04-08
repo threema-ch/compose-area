@@ -51,6 +51,8 @@ wrapper.addEventListener('compositionupdate', (e) => {
 wrapper.addEventListener('compositionend', (e) => {
     log('compositionend:', e);
     compositionState.composing = false;
+    log('--reload_from_dom');
+    composeArea.reload_from_dom();
 });
 wrapper.addEventListener('change', (e) => {
     log('change:', e);
