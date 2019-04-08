@@ -25,6 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_remove_attribute_Element", function() { return __widl_f_remove_attribute_Element; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_set_attribute_Element", function() { return __widl_f_set_attribute_Element; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_tag_name_Element", function() { return __widl_f_tag_name_Element; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_class_name_Element", function() { return __widl_f_class_name_Element; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_inner_html_Element", function() { return __widl_f_inner_html_Element; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_set_inner_html_Element", function() { return __widl_f_set_inner_html_Element; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_outer_html_Element", function() { return __widl_f_outer_html_Element; });
@@ -32,6 +33,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_instanceof_EventTarget", function() { return __widl_instanceof_EventTarget; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_add_event_listener_with_callback_EventTarget", function() { return __widl_f_add_event_listener_with_callback_EventTarget; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_alt_HTMLImageElement", function() { return __widl_f_alt_HTMLImageElement; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_src_HTMLImageElement", function() { return __widl_f_src_HTMLImageElement; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_append_child_Node", function() { return __widl_f_append_child_Node; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_contains_Node", function() { return __widl_f_contains_Node; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_is_same_node_Node", function() { return __widl_f_is_same_node_Node; });
@@ -66,8 +68,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_string_new", function() { return __wbindgen_string_new; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_debug_string", function() { return __wbindgen_debug_string; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_throw", function() { return __wbindgen_throw; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComposeArea", function() { return ComposeArea; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CaretPosition", function() { return CaretPosition; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComposeArea", function() { return ComposeArea; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_object_clone_ref", function() { return __wbindgen_object_clone_ref; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_object_drop_ref", function() { return __wbindgen_object_drop_ref; });
 /* harmony import */ var _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
@@ -77,8 +79,8 @@ let cachedTextEncoder = new TextEncoder('utf-8');
 
 let cachegetUint8Memory = null;
 function getUint8Memory() {
-    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "w"].buffer) {
-        cachegetUint8Memory = new Uint8Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "w"].buffer);
+    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "x"].buffer) {
+        cachegetUint8Memory = new Uint8Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "x"].buffer);
     }
     return cachegetUint8Memory;
 }
@@ -150,8 +152,8 @@ function globalArgumentPtr() {
 
 let cachegetUint32Memory = null;
 function getUint32Memory() {
-    if (cachegetUint32Memory === null || cachegetUint32Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "w"].buffer) {
-        cachegetUint32Memory = new Uint32Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "w"].buffer);
+    if (cachegetUint32Memory === null || cachegetUint32Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "x"].buffer) {
+        cachegetUint32Memory = new Uint32Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "x"].buffer);
     }
     return cachegetUint32Memory;
 }
@@ -188,7 +190,7 @@ function addBorrowedObject(obj) {
 */
 function get_caret_position(arg0) {
     try {
-        return CaretPosition.__wrap(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* get_caret_position */ "v"](addBorrowedObject(arg0)));
+        return CaretPosition.__wrap(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* get_caret_position */ "w"](addBorrowedObject(arg0)));
 
     } finally {
         heap[stack_pointer++] = undefined;
@@ -208,7 +210,7 @@ function get_caret_position(arg0) {
 function extract_text(arg0, arg1) {
     const retptr = globalArgumentPtr();
     try {
-        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* extract_text */ "u"](retptr, addBorrowedObject(arg0), arg1);
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* extract_text */ "v"](retptr, addBorrowedObject(arg0), arg1);
         const mem = getUint32Memory();
         const rustptr = mem[retptr / 4];
         const rustlen = mem[retptr / 4 + 1];
@@ -363,6 +365,16 @@ function __widl_f_tag_name_Element(ret, arg0) {
 
 }
 
+function __widl_f_class_name_Element(ret, arg0) {
+
+    const retptr = passStringToWasm(getObject(arg0).className);
+    const retlen = WASM_VECTOR_LEN;
+    const mem = getUint32Memory();
+    mem[ret / 4] = retptr;
+    mem[ret / 4 + 1] = retlen;
+
+}
+
 function __widl_f_inner_html_Element(ret, arg0) {
 
     const retptr = passStringToWasm(getObject(arg0).innerHTML);
@@ -410,6 +422,16 @@ function __widl_f_add_event_listener_with_callback_EventTarget(arg0, arg1, arg2,
 function __widl_f_alt_HTMLImageElement(ret, arg0) {
 
     const retptr = passStringToWasm(getObject(arg0).alt);
+    const retlen = WASM_VECTOR_LEN;
+    const mem = getUint32Memory();
+    mem[ret / 4] = retptr;
+    mem[ret / 4 + 1] = retlen;
+
+}
+
+function __widl_f_src_HTMLImageElement(ret, arg0) {
+
+    const retptr = passStringToWasm(getObject(arg0).src);
     const retlen = WASM_VECTOR_LEN;
     const mem = getUint32Memory();
     mem[ret / 4] = retptr;
@@ -717,6 +739,66 @@ function __wbindgen_throw(ptr, len) {
     throw new Error(getStringFromWasm(ptr, len));
 }
 
+function freeCaretPosition(ptr) {
+
+    _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_caretposition_free */ "a"](ptr);
+}
+/**
+* A caret position specifies the offset in the HTML source code relative to
+* the start of the wrapper element.
+*
+* Example: If the caret is at the end of this wrapper element:
+*
+* ```html
+* <div id=\"wrapper\">hi<br></div>
+* ```
+*
+* ...then the offset will be 6.
+*/
+class CaretPosition {
+
+    static __wrap(ptr) {
+        const obj = Object.create(CaretPosition.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    free() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+        freeCaretPosition(ptr);
+    }
+
+    /**
+    * @returns {number}
+    */
+    get start() {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_start */ "d"](this.ptr);
+    }
+    set start(arg0) {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_start */ "g"](this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get end() {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_end */ "c"](this.ptr);
+    }
+    set end(arg0) {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_end */ "f"](this.ptr, arg0);
+    }
+    /**
+    * @returns {boolean}
+    */
+    get success() {
+        return (_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_success */ "e"](this.ptr)) !== 0;
+    }
+    set success(arg0) {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_success */ "h"](this.ptr, arg0);
+    }
+}
+
 function freeComposeArea(ptr) {
 
     _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_composearea_free */ "b"](ptr);
@@ -800,7 +882,7 @@ class ComposeArea {
     * @returns {void}
     */
     remove_selection(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_remove_selection */ "r"](this.ptr, arg0);
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_remove_selection */ "s"](this.ptr, arg0);
     }
     /**
     * Update the caret position.
@@ -812,7 +894,7 @@ class ComposeArea {
     * @returns {void}
     */
     update_caret_position() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_update_caret_position */ "t"](this.ptr);
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_update_caret_position */ "u"](this.ptr);
     }
     /**
     * Extract the text in the compose area.
@@ -838,67 +920,14 @@ class ComposeArea {
     * @returns {void}
     */
     reset() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_reset */ "s"](this.ptr);
-    }
-}
-
-function freeCaretPosition(ptr) {
-
-    _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_caretposition_free */ "a"](ptr);
-}
-/**
-* A caret position specifies the offset in the HTML source code relative to
-* the start of the wrapper element.
-*
-* Example: If the caret is at the end of this wrapper element:
-*
-* ```html
-* <div id=\"wrapper\">hi<br></div>
-* ```
-*
-* ...then the offset will be 6.
-*/
-class CaretPosition {
-
-    static __wrap(ptr) {
-        const obj = Object.create(CaretPosition.prototype);
-        obj.ptr = ptr;
-
-        return obj;
-    }
-
-    free() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-        freeCaretPosition(ptr);
-    }
-
-    /**
-    * @returns {number}
-    */
-    get start() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_start */ "d"](this.ptr);
-    }
-    set start(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_start */ "g"](this.ptr, arg0);
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_reset */ "t"](this.ptr);
     }
     /**
-    * @returns {number}
+    * Reload internal state from DOM.
+    * @returns {void}
     */
-    get end() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_end */ "c"](this.ptr);
-    }
-    set end(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_end */ "f"](this.ptr, arg0);
-    }
-    /**
-    * @returns {boolean}
-    */
-    get success() {
-        return (_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_get_caretposition_success */ "e"](this.ptr)) !== 0;
-    }
-    set success(arg0) {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbg_set_caretposition_success */ "h"](this.ptr, arg0);
+    reload_from_dom() {
+        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_reload_from_dom */ "r"](this.ptr);
     }
 }
 
@@ -932,7 +961,7 @@ module.exports = wasmExports;
 
 
 // exec wasm module
-wasmExports["x"]()
+wasmExports["y"]()
 
 /***/ })
 

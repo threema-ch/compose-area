@@ -118,6 +118,9 @@
 /******/ 					"__widl_f_tag_name_Element": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_tag_name_Element"](p0i32,p1i32);
 /******/ 					},
+/******/ 					"__widl_f_class_name_Element": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_class_name_Element"](p0i32,p1i32);
+/******/ 					},
 /******/ 					"__widl_f_inner_html_Element": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_inner_html_Element"](p0i32,p1i32);
 /******/ 					},
@@ -138,6 +141,9 @@
 /******/ 					},
 /******/ 					"__widl_f_alt_HTMLImageElement": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_alt_HTMLImageElement"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_src_HTMLImageElement": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_src_HTMLImageElement"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_append_child_Node": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["__widl_f_append_child_Node"](p0i32,p1i32,p2i32);
@@ -333,7 +339,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"f86b90f8e449cf377533"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"0789e08177f8847fa010"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
