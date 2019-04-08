@@ -63,7 +63,7 @@ wrapper.addEventListener('keydown', (e) => {
         // Ignore key events while composing
         e.preventDefault();
         return;
-    } else if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+    } else if (!e.ctrlKey && !e.altKey && !e.metaKey && e.key !== 'Unidentified') {
         log('--process_key: ' + e.key);
         const preventDefault = composeArea.process_key(e.key);
         if (preventDefault) {
