@@ -30,12 +30,18 @@ function onKeyDown(e) {
 
 function onKeyUp(e) {
     log('keyup', e);
+    extractText();
 }
 
 function updateCaretPosition(e) {
     log('updateCaretPosition()', e);
     log('--update_caret_position');
     composeArea.update_caret_position();
+}
+
+function extractText() {
+    const text = composeArea.get_text();
+    document.getElementById('extracted').innerText = text.replace(/\n/g, '↵\n');
 }
 
 wrapper.addEventListener('keydown', onKeyDown);
@@ -54,6 +60,7 @@ function insertEmoji(e) {
     const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
     log('--insert_image');
     composeArea.insert_image(img.src, img.alt, 'emoji');
+    extractText();
 }
 document.getElementById('tongue').addEventListener('click', insertEmoji);
 document.getElementById('beers').addEventListener('click', insertEmoji);

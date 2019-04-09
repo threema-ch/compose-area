@@ -24,7 +24,16 @@
             margin: 0 .05em 0 .1em;
             vertical-align: -0.1em;
         }
-        #emoji {
+        #extracted {
+            border: 1px solid green;
+            padding: 2px;
+            margin-top: 8px;
+            white-space: pre-wrap;
+            background-color: #efe;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        #buttons {
             margin-top: 16px;
         }
         #version {
@@ -34,23 +43,27 @@
         #log {
             font-size: 0.5em;
         }
+        button img {
+            height: 32px;
+        }
     </style>
   </head>
   <body>
     <h2>Crazy Wasm Compose Area</h2>
     <p>Compose some content, if you dare!</p>
     <div id="wrapper"></div>
-    <div id="emoji">
+    <div id="buttons">
       <button id="tongue">
-        <img height="32" alt="😜" width="32" src="https://abs.twimg.com/emoji/v2/72x72/1f61c.png">
+        <img alt="😜" src="https://abs.twimg.com/emoji/v2/72x72/1f61c.png">
       </button>
       <button id="beers">
-        <img height="32" alt="🍻" width="32" src="https://abs.twimg.com/emoji/v2/72x72/1f37b.png">
+        <img alt="🍻" src="https://abs.twimg.com/emoji/v2/72x72/1f37b.png">
       </button>
       <button id="facepalm">
-        <img height="32" alt="🤦‍♀️" width="32" src="https://abs.twimg.com/emoji/v2/72x72/1f926-200d-2640-fe0f.png">
+        <img alt="🤦‍♀️" src="https://abs.twimg.com/emoji/v2/72x72/1f926-200d-2640-fe0f.png">
       </button>
     </div>
+    <div id="extracted">&nbsp;</div>
     <div id="log"></div>
     <p id="version">[[VERSION]]</p>
     <p>Links: <a href="benchmark.html">Benchmarks</a> | <a href="https://github.com/threema-ch/compose-area">GitHub</a></p>

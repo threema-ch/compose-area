@@ -28,7 +28,7 @@ pub use crate::caret_pos::{
     set_caret_position,
     unset_caret_position,
 };
-pub use crate::extract::extract_text;
+use crate::extract::extract_text;
 use crate::utils::is_text_node;
 
 cfg_if! {
@@ -424,7 +424,7 @@ impl ComposeArea {
     ///
     /// Convert elements like images to alt text.
     pub fn get_text(&self, no_trim: bool) -> String {
-        let wrapper =self.get_wrapper();
+        let wrapper = self.get_wrapper();
         extract_text(&wrapper, no_trim)
     }
 }
