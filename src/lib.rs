@@ -154,6 +154,9 @@ impl ComposeArea {
     /// Read the actual position from the DOM using the selection API and then
     /// overwrite the caret position in the state object.
     ///
+    /// If the caret position is not within the wrapper element, then the
+    /// internal state is not changed.
+    ///
     /// Call this after every action that might have modified the DOM.
     pub fn update_caret_position_from_dom(&mut self) {
         debug!("WASM: update_caret_position");
@@ -500,9 +503,21 @@ mod tests {
         ca.get_wrapper().child_nodes().get(n).unwrap()
     }
 
-    /// Return the nth child node, casted into an Element.
-    fn nth_child_element(ca: &ComposeArea, n: u32) -> Element {
-        ca.get_wrapper().child_nodes().get(n).unwrap().dyn_into().expect("Node is not an element")
+    #[derive(Copy, Clone, Debug)]
+    struct Img {
+        src: &'static str,
+        alt: &'static str,
+        cls: &'static str,
+    }
+
+    impl Img {
+        fn html(&self) -> String {
+            format!(r#"<img src="{}" alt="{}" class="{}">"#, self.src, self.alt, self.cls)
+        }
+
+        fn html_size(&self) -> u32 {
+            self.html().encode_utf16().count() as u32
+        }
     }
 
     mod find_start_node {
@@ -754,17 +769,12 @@ mod tests {
     mod insert_node {
         use super::*;
 
-        struct State {
-            start: u32,
-            end: u32,
-            nodes: u32,
-        }
-
         struct InsertNodeTest<N> {
-            children: Vec<Node>,
-            before: State,
+            html: String,
+            caret_before: (u32, u32),
             node: N,
-            after: State,
+            caret_after: (u32, u32),
+            final_html: String,
         }
 
         mod text {
@@ -772,20 +782,18 @@ mod tests {
 
             impl InsertNodeTest<&'static str> {
                 fn test(&self, ca: &mut ComposeArea) {
-                    for child in self.children.iter() {
-                        ca.get_wrapper().append_child(child).unwrap();
-                    }
-                    ca.set_caret_position(self.before.start, self.before.end);
+                    ca.get_wrapper().set_inner_html(&self.html);
+                    ca.set_caret_position(self.caret_before.0, self.caret_before.1);
 
-                    assert_eq!(ca.caret_start, self.before.start);
-                    assert_eq!(ca.caret_end, self.before.end);
-                    assert_eq!(ca.get_wrapper().child_nodes().length(), self.before.nodes);
+                    assert_eq!(ca.caret_start, self.caret_before.0);
+                    assert_eq!(ca.caret_end, self.caret_before.1);
 
                     ca.insert_text(self.node);
 
-                    assert_eq!(ca.caret_start, self.after.start);
-                    assert_eq!(ca.caret_end, self.after.end);
-                    assert_eq!(ca.get_wrapper().child_nodes().length(), self.after.nodes);
+                    assert_eq!(ca.caret_start, self.caret_after.0);
+                    assert_eq!(ca.caret_end, self.caret_after.1);
+
+                    assert_eq!(ca.get_wrapper().inner_html(), self.final_html);
                 }
             }
 
@@ -793,75 +801,57 @@ mod tests {
             fn at_end() {
                 let mut ca = init(true);
                 InsertNodeTest {
-                    children: vec![text_node(&ca, "hello ")],
-                    before: State { start: 6, end: 6, nodes: 1 },
+                    html: "hello ".into(),
+                    caret_before: (6, 6),
                     node: "world",
-                    after: State { start: 11, end: 11, nodes: 1 },
+                    caret_after: (11, 11),
+                    final_html: "hello world".into(),
                 }.test(&mut ca);
-                assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "hello world");
             }
 
             #[wasm_bindgen_test]
             fn in_the_middle() {
                 let mut ca = init(true);
                 InsertNodeTest {
-                    children: vec![text_node(&ca, "ab")],
-                    before: State { start: 1, end: 1, nodes: 1 },
+                    html: "ab".into(),
+                    caret_before: (1, 1),
                     node: "XY",
-                    after: State { start: 3, end: 3, nodes: 1 },
+                    caret_after: (3, 3),
+                    final_html: "aXYb".into(),
                 }.test(&mut ca);
-                assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "aXYb");
             }
 
             #[wasm_bindgen_test]
             fn replace_nodes() {
                 let mut ca = init(true);
+                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
-                    children: vec![text_node(&ca, "ab"), image_node(&ca)],
-                    before: State { start: 1, end: 1 + image_node(&ca).html_size(), nodes: 2 },
+                    html: format!("ab{}", img.html()),
+                    caret_before: (1, 1 + img.html_size()),
                     node: "z",
-                    after: State { start: 2, end: 2, nodes: 1 },
+                    caret_after: (2, 2),
+                    final_html: "az".into(),
                 }.test(&mut ca);
-                assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "az");
             }
         }
 
         mod image {
             use super::*;
 
-            #[derive(Copy, Clone, Debug)]
-            struct Img {
-                src: &'static str,
-                alt: &'static str,
-                cls: &'static str,
-            }
-
-            impl Img {
-                fn html_size(&self) -> u32 {
-                    // <img src="..." alt="..." class="...">
-                    28
-                        + self.src.encode_utf16().count() as u32
-                        + self.alt.encode_utf16().count() as u32
-                        + self.cls.encode_utf16().count() as u32
-                }
-            }
-
             impl InsertNodeTest<Img> {
                 fn test(&self, ca: &mut ComposeArea) {
-                    for child in self.children.iter() {
-                        ca.get_wrapper().append_child(child).unwrap();
-                    }
-                    ca.set_caret_position(self.before.start, self.before.end);
+                    ca.get_wrapper().set_inner_html(&self.html);
+                    ca.set_caret_position(self.caret_before.0, self.caret_before.1);
 
-                    assert_eq!(ca.caret_start, self.before.start);
-                    assert_eq!(ca.caret_end, self.before.end);
-                    assert_eq!(ca.get_wrapper().child_nodes().length(), self.before.nodes);
+                    assert_eq!(ca.caret_start, self.caret_before.0);
+                    assert_eq!(ca.caret_end, self.caret_before.1);
 
                     ca.insert_image(self.node.src, self.node.alt, self.node.cls);
 
-                    assert_eq!(ca.caret_start, self.after.start);
-                    assert_eq!(ca.caret_end, self.after.end);
-                    assert_eq!(ca.get_wrapper().child_nodes().length(), self.after.nodes);
+                    assert_eq!(ca.caret_start, self.caret_after.0);
+                    assert_eq!(ca.caret_end, self.caret_after.1);
+
+                    assert_eq!(ca.get_wrapper().inner_html(), self.final_html);
                 }
             }
 
@@ -870,13 +860,12 @@ mod tests {
                 let mut ca = init(true);
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
-                    children: vec![text_node(&ca, "hi ")],
-                    before: State { start: 3, end: 3, nodes: 1 },
+                    html: "hi ".into(),
+                    caret_before: (3, 3),
                     node: img,
-                    after: State { start: 3 + img.html_size(), end: 3 + img.html_size(), nodes: 2 },
+                    caret_after: (3 + img.html_size(), 3 + img.html_size()),
+                    final_html: format!("hi {}", img.html()),
                 }.test(&mut ca);
-                assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "hi ");
-                assert_eq!(nth_child_element(&ca, 1).get_attribute("src").unwrap(), "img.jpg");
             }
 
             #[wasm_bindgen_test]
@@ -884,14 +873,12 @@ mod tests {
                 let mut ca = init(true);
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
-                    children: vec![text_node(&ca, "bonjour")],
-                    before: State { start: 3, end: 3, nodes: 1 },
+                    html: "bonjour".into(),
+                    caret_before: (3, 3),
                     node: img,
-                    after: State { start: 3 + img.html_size(), end: 3 + img.html_size(), nodes: 3 },
+                    caret_after: (3 + img.html_size(), 3 + img.html_size()),
+                    final_html: format!("bon{}jour", img.html()),
                 }.test(&mut ca);
-                assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "bon");
-                assert_eq!(nth_child_element(&ca, 1).get_attribute("src").unwrap(), "img.jpg");
-                assert_eq!(nth_child(&ca, 2).text_content().unwrap(), "jour");
             }
         }
     }
