@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, Node};
 
-use crate::utils::is_text_node;
+use crate::utils::{is_text_node, is_character_data_node};
 
 /// For a HTML element, return the length of the opening tag.
 ///
@@ -195,7 +195,9 @@ pub enum Position<'a> {
 }
 
 /// Update the current selection range to match the specified `Position`.
-pub fn set_caret_position(pos: &Position) {
+///
+/// If the `end` parameter is `None`, then the selection range is collapsed.
+pub fn set_caret_position(start: &Position, end: Option<&Position>) {
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
 
@@ -215,19 +217,39 @@ pub fn set_caret_position(pos: &Position) {
         (selection.get_range_at(0).expect("Could not get range at index 0"), false)
     };
 
-    match pos {
+    // Set range start
+    match start {
         Position::After(node) => {
             range.set_start_after(node).expect("Could not set_start_after");
-            range.set_end_after(node).expect("Could not set_end_after");
         }
         Position::Offset(node, 0) => {
             range.set_start_before(node).expect("Could not set_start_before");
-            range.set_end_before(node).expect("Could not set_end_before");
         }
         Position::Offset(node, offset) => {
-            range.set_start(node, *offset).expect("Could not set_start");
-            range.set_end(node, *offset).expect("Could not set_end");
+            if is_character_data_node(&node) {
+                range.set_start(node, *offset).expect("Could not set_start");
+            } else {
+                range.set_start_after(node).expect("Could not set_start_after");
+            }
         }
+    }
+
+    // Set range end
+    match end {
+        Some(Position::After(node)) => {
+            range.set_end_after(node).expect("Could not set_end_after");
+        }
+        Some(Position::Offset(node, 0)) => {
+            range.set_end_before(node).expect("Could not set_end_before");
+        }
+        Some(Position::Offset(node, offset)) => {
+            if is_character_data_node(&node) {
+                range.set_end(node, *offset).expect("Could not set_start");
+            } else {
+                range.set_end_after(node).expect("Could not set_end_after");
+            }
+        }
+        None => range.collapse_with_to_start(true),
     }
 
     if created {

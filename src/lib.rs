@@ -14,12 +14,11 @@ mod caret_pos;
 mod extract;
 mod utils;
 
-use std::cmp::min;
 use std::mem;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, CharacterData, Text};
+use web_sys::{self, Element, Node, CharacterData, Text, Range};
 
 pub use crate::caret_pos::{
     CaretPosition,
@@ -44,6 +43,7 @@ cfg_if! {
 /// The context object containing the state.
 #[wasm_bindgen]
 pub struct ComposeArea {
+    window: web_sys::Window,
     document: web_sys::Document,
     wrapper_id: String,
     caret_start: u32,
@@ -94,6 +94,7 @@ pub fn bind_to(id: &str) -> ComposeArea {
     info!("Initialized #{}", id);
 
     ComposeArea {
+        window: window,
         document: document,
         caret_start: 0,
         caret_end: 0,
@@ -183,7 +184,7 @@ impl ComposeArea {
 
         self.insert_node(img.unchecked_into());
 
-        self.set_caret_position_from_state();
+        self.set_dom_caret_position_from_state();
         self.normalize();
     }
 
@@ -195,7 +196,7 @@ impl ComposeArea {
 
         self.insert_node(text_node.unchecked_into());
 
-        self.set_caret_position_from_state();
+        self.set_dom_caret_position_from_state();
         self.normalize();
     }
 
@@ -212,9 +213,21 @@ impl ComposeArea {
         self.get_wrapper().normalize();
     }
 
+    /// Return the last range of the selection (if any).
+    fn get_range(&self) -> Option<Range> {
+        let selection = match self.window.get_selection().expect("Could not get selection from window") {
+            Some(sel) => sel,
+            None => {
+                error!("Could not find selection");
+                return None;
+            },
+        };
+        selection.get_range_at(selection.range_count() - 1).ok()
+    }
+
     /// Insert the specified node at the current caret position and
     /// increment the internal caret position.
-    /// 
+    ///
     /// Note: The caret position is *not* written to the DOM!
     fn insert_node(&mut self, node: Node) {
         debug!("WASM: insert_node");
@@ -334,102 +347,72 @@ impl ComposeArea {
         }
     }
 
-    /// If some elements are selected (caret_start != caret_end),
-    /// remove those elements and return `true`. Otherwise, return `false`.
+    /// If a selection range is present in the wrapper, remove its contents,
+    /// update the caret position and return `true`. Otherwise, return `false`.
+    ///
+    /// TODO: Make sure that selection is within the wrapper!
     pub fn remove_selection(&mut self) -> bool {
-        if self.caret_start >= self.caret_end {
+        // Get the current selection range
+        let range = match self.get_range() {
+            Some(range) => range,
+            None => return false,
+        };
+
+        // If range is collapsed, nothing needs to be removoed
+        if range.collapsed() {
             return false;
         }
 
-        // Query nodes
-        let wrapper = self.get_wrapper();
-        let nodes = wrapper.child_nodes();
-
-        // General approach: We get the node at the current start position. We
-        // then start removing nodes after the start position until nodes with
-        // length (end - start) have been removed.
-        let mut removed = false;
-        while self.caret_end > self.caret_start {
-            let mut remove_node: Option<Node> = None;
-            let difference = self.caret_end - self.caret_start;
-
-            // Find the node right of the start pos.
-            if let Some(start_node) = self.find_node_at(self.caret_start, Direction::After) {
-                let node = nodes.get(start_node.index).expect("No node at the specified index!");
-                match node.node_type() {
-                    // Text node
-                    Node::TEXT_NODE => {
-                        let char_data = node.unchecked_ref::<CharacterData>();
-                        if start_node.offset == 0 && char_data.length() <= difference {
-                            // In case we're at the start of the text and if the length
-                            // of the text is less than the amount of characters we have
-                            // to remove, remove the entire node.
-                            remove_node = Some(node);
-                        } else {
-                            // Otherwise, remove characters from the text.
-                            let chars_available = char_data.length() - start_node.offset;
-                            let chars_to_remove = min(chars_available, difference);
-                            char_data.delete_data(start_node.offset, chars_to_remove)
-                                .expect("Error while shortening text");
-                            self.caret_end -= chars_to_remove;
-                            if self.caret_end < self.caret_start {
-                                warn!("caret_start > caret_end after shortening text");
-                                self.caret_start = self.caret_end;
-                            }
-                        }
-                    },
-
-                    // Block nodes, remove them entirely
-                    Node::ELEMENT_NODE => {
-                        remove_node = Some(node);
-                    },
-
-                    other => warn!("Unhandled node type: {}", other),
-                }
-            } else {
-                error!("remove_selection: Start node not found");
-                return removed;
+        // Remove contents
+        match range.delete_contents() {
+            Ok(()) => {
+                self.update_caret_position_from_dom();
+                self.normalize();
+                true
+            },
+            Err(_) => {
+                error!("Could not delete range contents");
+                false
             }
-
-            // Remove node, deduce its length from the end pos.
-            // If necessary, adjust the start pos (although that shouldn't happen).
-            if let Some(node) = remove_node {
-                let parent_node = node.parent_node().expect("Node has no parent node");
-                let removed_node = parent_node.remove_child(&node).expect("Could not remove node");
-                self.caret_end -= min(removed_node.html_size(), difference);
-                if self.caret_end < self.caret_start {
-                    warn!("caret_start > caret_end after removing node");
-                    self.caret_start = self.caret_end;
-                }
-            }
-
-            removed = true;
         }
-
-        // The nodes have been modified, some might have been removed.
-        // Re-normalize the state.
-        wrapper.normalize();
-
-        removed
     }
 
-    /// Set the caret position in the browser using the current state.
-    fn set_caret_position_from_state(&self) {
+    /// Set the caret position in the DOM using the current state.
+    fn set_dom_caret_position_from_state(&self) {
         // Query nodes
         let wrapper = self.get_wrapper();
         let nodes = wrapper.child_nodes();
-    
-        if let Some(pos) = self.find_node_at(self.caret_start, Direction::After) {
-            match nodes.get(pos.index) {
-                Some(ref node) => set_caret_position(&Position::Offset(&node, pos.offset)),
-                None => unreachable!(format!("Node at index {} not found", pos.index)),
-            }
+
+        let start_opt = self.find_node_at(self.caret_start, Direction::After);
+        let end_opt = if self.caret_end > self.caret_start {
+            self.find_node_at(self.caret_end, Direction::Before)
         } else {
-            // We're at the end of the node list.
-            let index = nodes.length() - 1;
-            match nodes.get(index) {
-                Some(ref node) => set_caret_position(&Position::After(&node)),
-                None => unreachable!(format!("Node at index {} not found", index)),
+            None
+        };
+
+        match (start_opt, end_opt) {
+            (Some(start), Some(end)) => {
+                let start_node = nodes.get(start.index)
+                    .expect(&format!("Node at index {} not found", start.index));
+                let end_node = nodes.get(end.index)
+                    .expect(&format!("Node at index {} not found", end.index));
+                set_caret_position(
+                    &Position::Offset(&start_node, start.offset),
+                    Some(&Position::Offset(&end_node, end.offset)),
+                );
+            }
+            (Some(start), None) => {
+                let start_node = nodes.get(start.index)
+                    .expect(&format!("Node at index {} not found", start.index));
+                set_caret_position(&Position::Offset(&start_node, start.offset), None);
+            }
+            (None, _) => {
+                // We're at the end of the node list.
+                let index = nodes.length() - 1;
+                match nodes.get(index) {
+                    Some(ref node) => set_caret_position(&Position::After(&node), None),
+                    None => unreachable!(format!("Node at index {} not found", index)),
+                }
             }
         }
     }
@@ -456,7 +439,7 @@ mod tests {
         // Get references
         let window = web_sys::window().expect("No global `window` exists");
         let document = window.document().expect("Should have a document on window");
-        
+
         // Create wrapper element
         let wrapper = document.create_element("div").expect("Could not create wrapper div");
         let id = format!(
@@ -569,9 +552,7 @@ mod tests {
         fn in_text() {
             let ca = init(true);
             FindStartNodeTest {
-                children: vec![
-                    ca.document.create_text_node("ab").unchecked_into(),
-                ],
+                children: vec![text_node(&ca, "ab")],
                 caret_pos: 1,
                 before: Some(NodeIndexOffset { offset: 1, index: 0 }),
                 after: Some(NodeIndexOffset { offset: 1, index: 0 }),
@@ -583,9 +564,7 @@ mod tests {
         fn at_end() {
             let ca = init(true);
             FindStartNodeTest {
-                children: vec![
-                    ca.document.create_text_node("ab").unchecked_into(),
-                ],
+                children: vec![text_node(&ca, "ab")],
                 caret_pos: 2,
                 before: Some(NodeIndexOffset { offset: 2, index: 0 }),
                 after: None,
@@ -613,10 +592,7 @@ mod tests {
             // Caret position cannot be negative, but it can be larger than the
             // total length. Set it to 1 position *after* the end.
             FindStartNodeTest {
-                children: vec![
-                    ca.document.create_text_node("ab").unchecked_into(),
-                    ca.document.create_text_node("cde").unchecked_into(),
-                ],
+                children: vec![text_node(&ca, "ab"), text_node(&ca, "cde")],
                 caret_pos: 6,
                 before: Some(NodeIndexOffset { index: 1, offset: 3 }),
                 after: None,
@@ -646,6 +622,7 @@ mod tests {
                     ca.get_wrapper().append_child(child).unwrap();
                 }
                 ca.set_caret_position(self.before.start, self.before.end);
+                ca.set_dom_caret_position_from_state();
 
                 assert_eq!(ca.caret_start, self.before.start);
                 assert_eq!(ca.caret_end, self.before.end);
@@ -713,12 +690,12 @@ mod tests {
         fn remove_partial_text_node_past_end() {
             let mut ca = init(true);
             RemoveSelectionTest {
-                children: vec![text_node(&ca, "abcde"), text_node(&ca, "fg")],
-                before: State { start: 1, end: 6, nodes: 2 },
+                children: vec![text_node(&ca, "abcde"), text_node(&ca, "fgh")],
+                before: State { start: 1, end: 7, nodes: 2 },
                 after: State { start: 1, end: 1, nodes: 1 },
                 removed: true,
             }.test(&mut ca);
-            assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "ag");
+            assert_eq!(nth_child(&ca, 0).text_content().unwrap(), "ah");
         }
 
         #[wasm_bindgen_test]
@@ -782,6 +759,7 @@ mod tests {
                 fn test(&self, ca: &mut ComposeArea) {
                     ca.get_wrapper().set_inner_html(&self.html);
                     ca.set_caret_position(self.caret_before.0, self.caret_before.1);
+                    ca.set_dom_caret_position_from_state();
 
                     assert_eq!(ca.caret_start, self.caret_before.0);
                     assert_eq!(ca.caret_end, self.caret_before.1);
@@ -840,6 +818,7 @@ mod tests {
                 fn test(&self, ca: &mut ComposeArea) {
                     ca.get_wrapper().set_inner_html(&self.html);
                     ca.set_caret_position(self.caret_before.0, self.caret_before.1);
+                    ca.set_dom_caret_position_from_state();
 
                     assert_eq!(ca.caret_start, self.caret_before.0);
                     assert_eq!(ca.caret_end, self.caret_before.1);
@@ -876,6 +855,19 @@ mod tests {
                     node: img,
                     caret_after: (3 + img.html_size(), 3 + img.html_size()),
                     final_html: format!("bon{}jour", img.html()),
+                }.test(&mut ca);
+            }
+
+            #[wasm_bindgen_test]
+            fn between_nodes_br() {
+                let mut ca = init(true);
+                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                InsertNodeTest {
+                    html: "a<br>b".into(),
+                    caret_before: (1, 1),
+                    node: img,
+                    caret_after: (1 + img.html_size(), 1 + img.html_size()),
+                    final_html: format!("a{}<br>b", img.html()),
                 }.test(&mut ca);
             }
         }

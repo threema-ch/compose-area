@@ -1,5 +1,6 @@
 use cfg_if::cfg_if;
-use web_sys::Node;
+use wasm_bindgen::JsCast;
+use web_sys::{CharacterData, Node};
 
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -42,7 +43,14 @@ pub(crate) fn setup_test() {
     let _ = console_log::init_with_level(Level::Trace);
 }
 
+/// Return whether the node is a text node.
 #[inline]
 pub(crate) fn is_text_node(node: &Node) -> bool {
     node.node_type() == Node::TEXT_NODE
+}
+
+/// Return whether the node is a character data node.
+#[inline]
+pub(crate) fn is_character_data_node(node: &Node) -> bool {
+    node.is_instance_of::<CharacterData>()
 }
