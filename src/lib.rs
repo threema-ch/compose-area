@@ -10,8 +10,8 @@
 #[macro_use]
 mod macros;
 
-mod caret_pos;
 mod extract;
+mod selection;
 mod utils;
 
 use std::mem;
@@ -20,7 +20,7 @@ use cfg_if::cfg_if;
 use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{self, Element, Node, CharacterData, Text, Range};
 
-pub use crate::caret_pos::{
+pub use crate::selection::{
     CaretPosition,
     Position,
     get_caret_position,
