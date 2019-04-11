@@ -197,7 +197,7 @@ pub enum Position<'a> {
 /// Update the current selection range to match the specified `Position`.
 ///
 /// If the `end` parameter is `None`, then the selection range is collapsed.
-pub fn set_caret_position(start: &Position, end: Option<&Position>) {
+pub fn set_selection_range(start: &Position, end: Option<&Position>) {
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
 
@@ -260,7 +260,7 @@ pub fn set_caret_position(start: &Position, end: Option<&Position>) {
 }
 
 /// Remove all selection ranges from the DOM.
-pub fn unset_caret_position() {
+pub fn unset_selection_range() {
     let window = web_sys::window().expect("No global `window` exists");
     let sel = window.get_selection().unwrap().unwrap();
     sel.remove_all_ranges().unwrap();
@@ -315,7 +315,7 @@ mod tests {
 
             let (_document, div, _txt, _img) = _setup_get_caret_pos_test();
 
-            unset_caret_position();
+            unset_selection_range();
 
             let pos = get_caret_position(&div);
             assert_eq!(pos.start, 0);

@@ -18,14 +18,14 @@ use std::mem;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, CharacterData, Text, Range};
+use web_sys::{self, Element, Node, CharacterData, Text, Selection, Range};
 
 pub use crate::selection::{
     CaretPosition,
     Position,
     get_caret_position,
-    set_caret_position,
-    unset_caret_position,
+    set_selection_range,
+    unset_selection_range,
 };
 use crate::extract::extract_text;
 use crate::utils::is_text_node;
@@ -46,6 +46,7 @@ pub struct ComposeArea {
     window: web_sys::Window,
     document: web_sys::Document,
     wrapper_id: String,
+    selection_range: Option<Range>,
     caret_start: u32,
     caret_end: u32,
 }
@@ -96,9 +97,10 @@ pub fn bind_to(id: &str) -> ComposeArea {
     ComposeArea {
         window: window,
         document: document,
+        wrapper_id: id.to_owned(),
+        selection_range: None,
         caret_start: 0,
         caret_end: 0,
-        wrapper_id: id.to_owned(),
     }
 }
 
@@ -148,6 +150,46 @@ impl ComposeArea {
     pub fn set_caret_position(&mut self, start: u32, end: u32) {
         self.caret_start = start;
         self.caret_end = end;
+    }
+
+    /// Store the current selection range.
+    pub fn store_selection_range(&mut self) {
+        // Note: We need to clone the range object. Otherwise, changes to the
+        // range in the DOM will be reflected in our stored reference.
+        self.selection_range = self
+            .dom_get_range()
+            .map(|range| range.clone_range());
+    }
+
+    /// Restore the stored selection range.
+    ///
+    /// Return a boolean indicating whether a selection range was stored (and
+    /// thus restored).
+    pub fn restore_selection_range(&self) -> bool {
+        if let Some(ref range) = self.selection_range {
+            // Get the current selection
+            let selection = match self.dom_get_selection() {
+                Some(selection) => selection,
+                None => {
+                    error!("No selection found");
+                    return false;
+                }
+            };
+
+            // Restore the range
+            if let Err(_) = selection.remove_all_ranges() {
+                error!("Removing all ranges failed");
+            }
+            match selection.add_range(range) {
+                Ok(_) => true,
+                Err(_) => {
+                    error!("Adding range failed");
+                    false
+                }
+            }
+        } else {
+            false
+        }
     }
 
     /// Update the caret position from DOM.
@@ -213,9 +255,16 @@ impl ComposeArea {
         self.get_wrapper().normalize();
     }
 
+    /// Return the DOM selection.
+    fn dom_get_selection(&self) -> Option<Selection> {
+        self.window.get_selection().expect("Could not get selection from window")
+    }
+
     /// Return the last range of the selection (if any).
-    fn get_range(&self) -> Option<Range> {
-        let selection = match self.window.get_selection().expect("Could not get selection from window") {
+    ///
+    /// TODO: Make sure that selection is within the wrapper!
+    fn dom_get_range(&self) -> Option<Range> {
+        let selection = match self.dom_get_selection() {
             Some(sel) => sel,
             None => {
                 error!("Could not find selection");
@@ -349,11 +398,9 @@ impl ComposeArea {
 
     /// If a selection range is present in the wrapper, remove its contents,
     /// update the caret position and return `true`. Otherwise, return `false`.
-    ///
-    /// TODO: Make sure that selection is within the wrapper!
     pub fn remove_selection(&mut self) -> bool {
         // Get the current selection range
-        let range = match self.get_range() {
+        let range = match self.dom_get_range() {
             Some(range) => range,
             None => return false,
         };
@@ -396,7 +443,7 @@ impl ComposeArea {
                     .expect(&format!("Node at index {} not found", start.index));
                 let end_node = nodes.get(end.index)
                     .expect(&format!("Node at index {} not found", end.index));
-                set_caret_position(
+                set_selection_range(
                     &Position::Offset(&start_node, start.offset),
                     Some(&Position::Offset(&end_node, end.offset)),
                 );
@@ -404,13 +451,13 @@ impl ComposeArea {
             (Some(start), None) => {
                 let start_node = nodes.get(start.index)
                     .expect(&format!("Node at index {} not found", start.index));
-                set_caret_position(&Position::Offset(&start_node, start.offset), None);
+                set_selection_range(&Position::Offset(&start_node, start.offset), None);
             }
             (None, _) => {
                 // We're at the end of the node list.
                 let index = nodes.length() - 1;
                 match nodes.get(index) {
-                    Some(ref node) => set_caret_position(&Position::After(&node), None),
+                    Some(ref node) => set_selection_range(&Position::After(&node), None),
                     None => unreachable!(format!("Node at index {} not found", index)),
                 }
             }
@@ -870,6 +917,44 @@ mod tests {
                     final_html: format!("a{}<br>b", img.html()),
                 }.test(&mut ca);
             }
+        }
+    }
+
+    mod selection_range {
+        use super::*;
+
+        #[wasm_bindgen_test]
+        fn restore_selection_range() {
+            let mut ca = init(true);
+            let node = text_node(&ca, "abc");
+            ca.get_wrapper().append_child(&node).unwrap();
+
+            // Highlight "b"
+            set_selection_range(
+                &Position::Offset(&node, 1),
+                Some(&Position::Offset(&node, 2)),
+            );
+            let range = ca.dom_get_range().expect("Could not get range");
+            assert_eq!(range.start_offset().unwrap(), 1);
+            assert_eq!(range.end_offset().unwrap(), 2);
+
+            // Store range
+            ca.store_selection_range();
+
+            // Change range, highlight "a"
+            set_selection_range(
+                &Position::Offset(&node, 0),
+                Some(&Position::Offset(&node, 1)),
+            );
+            let range = ca.dom_get_range().expect("Could not get range");
+            assert_eq!(range.start_offset().unwrap(), 0);
+            assert_eq!(range.end_offset().unwrap(), 1);
+
+            // Retore range
+            ca.restore_selection_range();
+            let range = ca.dom_get_range().expect("Could not get range");
+            assert_eq!(range.start_offset().unwrap(), 1);
+            assert_eq!(range.end_offset().unwrap(), 2);
         }
     }
 
