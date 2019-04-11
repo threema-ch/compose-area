@@ -13,6 +13,10 @@
             margin: 0 auto;
             padding: 0 8px;
         }
+        h3 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
         #wrapper {
             border: 1px solid red;
             padding: 2px;
@@ -24,14 +28,36 @@
             margin: 0 .05em 0 .1em;
             vertical-align: -0.1em;
         }
-        #extracted {
-            border: 1px solid green;
+        #debug {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+        .debug {
             padding: 2px;
-            margin-top: 8px;
             white-space: pre-wrap;
-            background-color: #efe;
             font-family: monospace;
             font-size: 0.9em;
+            min-height: calc(1em + 3px);
+        }
+        #left {
+            flex-grow: 1;
+        }
+        #caretpos div {
+            border: 1px solid red;
+            background-color: #fee;
+        }
+        #extracted div {
+            border: 1px solid green;
+            background-color: #efe;
+        }
+        #log {
+            flex-grow: 1;
+            margin-left: 8px;
+        }
+        #log div {
+            border: 1px solid blue;
+            background-color: #eef;
         }
         #buttons {
             margin-top: 16px;
@@ -39,9 +65,6 @@
         #version {
             font-size: 0.8em;
             color: #777;
-        }
-        #log {
-            font-size: 0.5em;
         }
         button img {
             height: 32px;
@@ -63,8 +86,22 @@
         <img alt="🤦‍♀️" src="https://abs.twimg.com/emoji/v2/72x72/1f926-200d-2640-fe0f.png">
       </button>
     </div>
-    <div id="extracted">&nbsp;</div>
-    <div id="log"></div>
+    <div id="debug">
+        <div id="left">
+            <div id="caretpos">
+                <h3>Caret Position</h3>
+                <div class="debug"></div>
+            </div>
+            <div id="extracted">
+                <h3>Extracted Text</h3>
+                <div class="debug"></div>
+            </div>
+        </div>
+        <div id="log">
+            <h3>Log</h3>
+            <div class="debug"></div>
+        </div>
+    </div>
     <p id="version">[[VERSION]]</p>
     <p>Links: <a href="benchmark.html">Benchmarks</a> | <a href="https://github.com/threema-ch/compose-area">GitHub</a></p>
     <script src="./bootstrap.demo.bundle.js"></script>

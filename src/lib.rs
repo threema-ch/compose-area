@@ -130,6 +130,17 @@ impl ComposeArea {
         self.document.get_element_by_id(&self.wrapper_id).expect("Did not find wrapper element")
     }
 
+    /// Show the current caret position.
+    ///
+    /// Note: This does not query the DOM!
+    pub fn get_caret_position(&self) -> CaretPosition {
+        CaretPosition {
+            start: self.caret_start,
+            end: self.caret_end,
+            success: true,
+        }
+    }
+
     /// Update the caret position.
     ///
     /// Note: This does not query or update the DOM!
@@ -137,6 +148,26 @@ impl ComposeArea {
         self.caret_start = start;
         self.caret_end = end;
     }
+
+    /// Update the caret position from DOM.
+    ///
+    /// Read the actual position from the DOM using the selection API and then
+    /// overwrite the caret position in the state object.
+    ///
+    /// Call this after every action that might have modified the DOM.
+    pub fn update_caret_position_from_dom(&mut self) {
+        debug!("WASM: update_caret_position");
+
+        // Refresh caret pos
+        let wrapper = self.get_wrapper();
+        let pos = get_caret_position(&wrapper);
+        if pos.success {
+            assert!(pos.start <= pos.end);
+            self.caret_start = pos.start;
+            self.caret_end = pos.end;
+        }
+    }
+
 
     /// Insert an image at the current caret position.
     pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) {
@@ -398,25 +429,6 @@ impl ComposeArea {
                 Some(ref node) => set_caret_position(&Position::After(&node)),
                 None => unreachable!(format!("Node at index {} not found", index)),
             }
-        }
-    }
-
-    /// Update the caret position.
-    ///
-    /// Read the actual position from the DOM using the selection API and then
-    /// overwrite the caret position in the state object.
-    ///
-    /// Call this after every action that might have modified the DOM.
-    pub fn update_caret_position(&mut self) {
-        debug!("WASM: update_caret_position");
-
-        // Refresh caret pos
-        let wrapper = self.get_wrapper();
-        let pos = get_caret_position(&wrapper);
-        if pos.success {
-            assert!(pos.start <= pos.end);
-            self.caret_start = pos.start;
-            self.caret_end = pos.end;
         }
     }
 

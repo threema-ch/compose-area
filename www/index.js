@@ -9,58 +9,71 @@ window.composeArea = composeArea;
 
 // Elements
 const wrapper = document.getElementById('wrapper');
-const logDiv = document.getElementById('log');
+const logDiv = document.querySelector('#log div');
+const caretposDiv = document.querySelector('#caretpos div');
+const extractedDiv = document.querySelector('#extracted div');
 
 // Helper functions
 
+let startTime = null;
+
 function log() {
-    console.log(...arguments);
-    let text = '';
-    for (const arg of arguments) {
-        text += arg;
+    if (startTime === null) {
+        startTime = new Date();
     }
-    logDiv.innerHTML += `${text}<br>`;
-}
-
-// Add event listeners
-
-function onKeyDown(e) {
-    log('keydown', e);
-}
-
-function onKeyUp(e) {
-    log('keyup', e);
-    extractText();
+    console.log(...arguments);
+    const ms = (new Date() - startTime).toString();
+    const pad = '      ';
+    const timestamp = `${pad.substring(0, pad.length - ms.length) + ms}`;
+    logDiv.innerHTML += `${timestamp} ${arguments[0]}<br>`;
 }
 
 function updateCaretPosition(e) {
-    log('updateCaretPosition()', e);
-    log('--update_caret_position');
-    composeArea.update_caret_position();
+    log('⚙️ update_caret_position');
+    composeArea.update_caret_position_from_dom();
+    showState();
 }
 
-function extractText() {
+function showState() {
+    // Extract text
     const text = composeArea.get_text();
-    document.getElementById('extracted').innerText = text.replace(/\n/g, '↵\n');
+    extractedDiv.innerText = text.replace(/\n/g, '↵\n');
+
+    // Show caret pos
+    const pos = composeArea.get_caret_position();
+    caretposDiv.innerText = `{start: ${pos.start}, end: ${pos.end}, success: ${pos.success}}`;
 }
 
-wrapper.addEventListener('keydown', onKeyDown);
-wrapper.addEventListener('keyup', onKeyUp);
-wrapper.addEventListener('keyup', updateCaretPosition);
-wrapper.addEventListener('mouseup', updateCaretPosition);
+
+// Add event listeners
+
+wrapper.addEventListener('keydown', (e) => {
+    log('⚡ keydown', e);
+});
+wrapper.addEventListener('keyup', (e) => {
+    log('⚡ keyup', e);
+    updateCaretPosition();
+});
+wrapper.addEventListener('mouseup', (e) => {
+    log('⚡ mouseup', e);
+    updateCaretPosition();
+});
 
 // Note: Unfortunately the selectionchange listener can only be set on document
 // level, not on the wrapper itself.
-document.addEventListener('selectionchange', updateCaretPosition);
+document.addEventListener('selectionchange', (e) => {
+    log('⚡ selectionchange', e);
+    updateCaretPosition();
+});
 
 // Emoji handling
 
 function insertEmoji(e) {
-    log('insertEmoji');
     const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
-    log('--insert_image');
+    const pos = composeArea.get_caret_position();
+    log(`⚙️ insert_image at (${pos.start}, ${pos.end})`);
     composeArea.insert_image(img.src, img.alt, 'emoji');
-    extractText();
+    showState();
 }
 document.getElementById('tongue').addEventListener('click', insertEmoji);
 document.getElementById('beers').addEventListener('click', insertEmoji);
