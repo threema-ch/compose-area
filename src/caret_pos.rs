@@ -1,3 +1,5 @@
+/// Everything related to the caret position and DOM selection ranges.
+
 use std::fmt;
 
 use wasm_bindgen::prelude::*;

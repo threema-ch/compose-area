@@ -226,7 +226,7 @@ impl ComposeArea {
         let wrapper = self.get_wrapper();
 
         // Find the current node we're at
-        if let Some(current_node) = self.find_start_node(Direction::After) {
+        if let Some(current_node) = self.find_node_at(self.caret_start, Direction::After) {
             // Get reference node
             let reference_node = wrapper.child_nodes()
                 .get(current_node.index)
@@ -273,8 +273,7 @@ impl ComposeArea {
     /// If the current caret position is after the end of the last node and the
     /// direction is `Before`, then the last node will be returned, with
     /// corrected offset.
-    fn find_start_node(&self, direction: Direction) -> Option<NodeIndexOffset> {
-        let mut offset: u32 = self.caret_start;
+    fn find_node_at(&self, mut offset: u32, direction: Direction) -> Option<NodeIndexOffset> {
         let mut html_size: u32 = 0;
 
         // Query nodes
@@ -355,7 +354,7 @@ impl ComposeArea {
             let difference = self.caret_end - self.caret_start;
 
             // Find the node right of the start pos.
-            if let Some(start_node) = self.find_start_node(Direction::After) {
+            if let Some(start_node) = self.find_node_at(self.caret_start, Direction::After) {
                 let node = nodes.get(start_node.index).expect("No node at the specified index!");
                 match node.node_type() {
                     // Text node
@@ -420,7 +419,7 @@ impl ComposeArea {
         let wrapper = self.get_wrapper();
         let nodes = wrapper.child_nodes();
     
-        if let Some(pos) = self.find_start_node(Direction::After) {
+        if let Some(pos) = self.find_node_at(self.caret_start, Direction::After) {
             match nodes.get(pos.index) {
                 Some(ref node) => set_caret_position(&Position::Offset(&node, pos.offset)),
                 None => unreachable!(format!("Node at index {} not found", pos.index)),
@@ -520,7 +519,7 @@ mod tests {
         }
     }
 
-    mod find_start_node {
+    mod find_node_at {
         use super::*;
 
         struct FindStartNodeTest {
@@ -531,13 +530,12 @@ mod tests {
         }
 
         impl FindStartNodeTest {
-            fn test(&self, mut ca: ComposeArea) {
+            fn test(&self, ca: ComposeArea) {
                 for child in self.children.iter() {
                     ca.get_wrapper().append_child(child).unwrap();
                 }
-                ca.set_caret_position(self.caret_pos, self.caret_pos);
-                assert_eq!(ca.find_start_node(Direction::Before), self.before);
-                assert_eq!(ca.find_start_node(Direction::After), self.after);
+                assert_eq!(ca.find_node_at(self.caret_pos, Direction::Before), self.before);
+                assert_eq!(ca.find_node_at(self.caret_pos, Direction::After), self.after);
             }
         }
 
