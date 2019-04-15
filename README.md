@@ -21,7 +21,51 @@ internal state. It provides methods to insert text, images or other block
 elements. Selection and caret position are handled automatically.
 
 
-## Setup
+## Usage
+
+First, import the library.
+
+```js
+import * as wasm from 'compose-area';
+```
+
+Next, bind to the wrapper element (a div with the specified `id`):
+
+```js
+const composeArea = wasm.bind_to('wrapper');
+```
+
+Because the insertion should work even when there is no selection / focus
+inside the compose area, the library needs to know about all selection change
+events. Register them using an event listener:
+
+```js
+document.addEventListener('selectionchange', (e) => {
+    composeArea.store_selection_range();
+});
+```
+
+Now you can start typing inside the compose area. It behaves like a regular
+content editable div.
+
+To insert text or images through code, use the following two functions:
+
+```js
+//                       src          alt   class
+composeArea.insert_image("emoji.jpg", "😀", "emoji");
+
+//                      text
+composeArea.insert_text("hello");
+```
+
+To extract the text from the area, there's also a method:
+
+```js
+composeArea.get_text();
+```
+
+
+## Dev Setup
 
     cargo install wasm-pack
 
