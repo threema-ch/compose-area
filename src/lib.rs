@@ -178,7 +178,7 @@ impl ComposeArea {
 
     /// Insert the specified node at the previously stored selection range.
     /// Set the caret position to right after the newly inserted node.
-    fn insert_node(&mut self, node: &Node) {
+    fn insert_node(&mut self, node_ref: &Node) {
         debug!("WASM: insert_node");
 
         // Get wrapper
@@ -187,14 +187,25 @@ impl ComposeArea {
         // Insert the node
         if let Some(ref range) = self.selection_range {
             range.delete_contents().expect("Could not remove selection contents");
-            range.insert_node(node).expect("Could not insert node");
+            range.insert_node(node_ref).expect("Could not insert node");
         } else {
-            // No current selection. Append at end.
-            wrapper.append_child(node).expect("Could not append child");
+            // No current selection. Append at end, unless the last element in
+            // the area is a `<br>` node. This is needed because Firefox always
+            // adds a trailing newline that isn't rendered.
+            let last_child_node = utils::get_last_child(&wrapper);
+            match last_child_node.and_then(|n| n.dyn_into::<Element>().ok()) {
+                Some(ref element) if element.tag_name() == "BR" => {
+                    wrapper.insert_before(node_ref, Some(element))
+                        .expect("Could not insert child");
+                },
+                Some(_) | None => {
+                    wrapper.append_child(node_ref).expect("Could not append child");
+                },
+            };
         }
 
         // Update selection
-        self.selection_range = set_selection_range(&Position::After(node), None);
+        self.selection_range = set_selection_range(&Position::After(node_ref), None);
 
         // Normalize elements
         self.normalize();
@@ -465,6 +476,25 @@ mod tests {
                     node: img,
                     final_html: format!("hi {}", img.html()),
                 }.test(&mut ca);
+            }
+
+            /// If there is no selection but a trailing newline, insert element
+            /// before that trailing newline.
+            #[wasm_bindgen_test]
+            fn at_end_after_br() {
+                let mut ca = init(true);
+                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+
+                // Prepare wrapper
+                let wrapper = ca.get_wrapper();
+                wrapper.set_inner_html("<br>");
+
+                // Ensure that there's no selection left in the DOM
+                selection::unset_selection_range();
+
+                // Insert node and verify
+                ca.insert_image(&img.src, &img.alt, &img.cls);
+                assert_eq!(wrapper.inner_html(), format!("{}<br>", img.html()));
             }
 
             #[wasm_bindgen_test]

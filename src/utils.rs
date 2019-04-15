@@ -1,6 +1,6 @@
 use cfg_if::cfg_if;
 use wasm_bindgen::JsCast;
-use web_sys::{CharacterData, Node};
+use web_sys::{CharacterData, Node, Element};
 
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -38,4 +38,14 @@ cfg_if! {
 #[inline]
 pub(crate) fn is_character_data_node(node: &Node) -> bool {
     node.is_instance_of::<CharacterData>()
+}
+
+/// Return the last child node of the specified parent element (or `None`).
+pub(crate) fn get_last_child(parent: &Element) -> Option<Node> {
+    let child_nodes = parent.child_nodes();
+    let child_count = child_nodes.length();
+    if child_count == 0 {
+        return None;
+    }
+    Some(child_nodes.get(child_count - 1).expect("Could not access last child node"))
 }

@@ -83,3 +83,10 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
 
     Some(range)
 }
+
+#[cfg(test)]
+pub fn unset_selection_range() {
+    let window = web_sys::window().expect("No global `window` exists");
+    let sel = window.get_selection().unwrap().unwrap();
+    sel.remove_all_ranges().unwrap();
+}
