@@ -69,11 +69,9 @@ wrapper.addEventListener('keydown', (e) => {
 });
 wrapper.addEventListener('keyup', (e) => {
     log('⚡ keyup', e);
-    updateSelectionRange();
 });
 wrapper.addEventListener('mouseup', (e) => {
     log('⚡ mouseup', e);
-    updateSelectionRange();
 });
 
 // Note: Unfortunately the selectionchange listener can only be set on document
