@@ -44,37 +44,8 @@ window.teardownTest = function(divId) {
     baseWrapper.removeChild(document.getElementById(divId));
 }
 
-/**
- * Helper: Move the caret using simulated keystrokes.
- * Positive values go to the right, negative values to the left.
- */
-window.moveCaret = function(composeArea, offset) {
-    if (offset < 0) {
-        for (let i = 0; i < -offset; i++) {
-            composeArea.process_key('ArrowLeft');
-        }
-    } else {
-        for (let i = 0; i < offset; i++) {
-            composeArea.process_key('ArrowRight');
-        }
-    }
-}
-
 // Add benchmark tests
-suite.add('1. Process keypresses in "hello world"', {
-    setup: () => {
-        const ctx = setupTest();
-    },
-    fn: function(a, b, c) {
-        for (const key of ['h', 'e', 'l', 'l', 'o', 'Space', 'w', 'o', 'r', 'l', 'd']) {
-            ctx.composeArea.process_key(key);
-        }
-    },
-    teardown: () => {
-        teardownTest(ctx.divId);
-    },
-});
-suite.add('2. Insert text "hello world"', {
+suite.add('1. Insert text "hello world"', {
     setup: () => {
         const ctx = setupTest();
     },
@@ -85,11 +56,9 @@ suite.add('2. Insert text "hello world"', {
         teardownTest(ctx.divId);
     },
 });
-suite.add('3. Insert image between text', {
+suite.add('2. Insert image', {
     setup: () => {
         const ctx = setupTest();
-        ctx.composeArea.insert_text('helloworld');
-        moveCaret(ctx.composeArea, -5);
     },
     fn: () => {
         ctx.composeArea.insert_image('emoji.png', 'smile', 'emoji');
@@ -99,12 +68,12 @@ suite.add('3. Insert image between text', {
     },
     minSamples: 25,
 });
-suite.add('4. Extract text from compose area', {
+suite.add('3. Extract text from compose area', {
     setup: () => {
         const ctx = setupTest();
         ctx.composeArea.insert_text('hello world ');
         ctx.composeArea.insert_image('emoji.png', ':smile:', 'emoji');
-        ctx.composeArea.process_key('Enter');
+        ctx.testDiv.appendChild(document.createElement('br'));
         ctx.composeArea.insert_text('This is a new line and some emoji: ');
         ctx.composeArea.insert_image('emoji1.png', ':smile:', 'emoji');
         ctx.composeArea.insert_image('emoji2.png', ':smil:', 'emoji');
@@ -118,21 +87,13 @@ suite.add('4. Extract text from compose area', {
         teardownTest(ctx.divId);
     },
 });
-suite.add('5. Get caret position', {
+suite.add('4. Get selection range', {
     setup: () => {
         const ctx = setupTest();
-        ctx.composeArea.insert_text('hello world ');
-        ctx.composeArea.insert_image('emoji.png', ':smile:', 'emoji');
-        ctx.composeArea.process_key('Enter');
-        ctx.composeArea.insert_text('This is a new line and some emoji: ');
-        ctx.composeArea.insert_image('emoji1.png', ':smile:', 'emoji');
-        ctx.composeArea.insert_image('emoji2.png', ':smil:', 'emoji');
-        ctx.composeArea.insert_image('emoji3.png', ':smi:', 'emoji');
-        ctx.composeArea.insert_text(' end emoji');
-        moveCaret(ctx.composeArea, -3);
+        ctx.composeArea.insert_text('hello world');
     },
     fn: () => {
-        window.lastPos = window.wasm.get_caret_position(ctx.testDiv);
+        window.lastPos = ctx.composeArea.dom_get_range();
     },
     teardown: () => {
         teardownTest(ctx.divId);

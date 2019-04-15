@@ -15,126 +15,89 @@ window.wasm = compose_area__WEBPACK_IMPORTED_MODULE_0__;
 const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__["bind_to"]('wrapper');
 window.composeArea = composeArea;
 
-// Add event listeners
-
+// Elements
 const wrapper = document.getElementById('wrapper');
-const logDiv = document.getElementById('log');
+const logDiv = document.querySelector('#log div');
+const extractedDiv = document.querySelector('#extracted div');
+const selectionDiv = document.querySelector('#selection div');
+const rawDiv = document.querySelector('#raw div');
+
+// Helper functions
+
+let startTime = null;
 
 function log() {
-    console.log(...arguments);
-    let text = '';
-    for (const arg of arguments) {
-        text += arg;
+    if (startTime === null) {
+        startTime = new Date();
     }
-    logDiv.innerHTML += `${text}<br>`;
+    console.log(...arguments);
+    const ms = (new Date() - startTime).toString();
+    const pad = '      ';
+    const timestamp = `${pad.substring(0, pad.length - ms.length) + ms}`;
+    logDiv.innerHTML += `${timestamp} ${arguments[0]}<br>`;
 }
 
-/**
- * When the selection changes, update the caret position.
- *
- * Note: Unfortunately this can only be set on document level, not on the
- * wrapper itself.
- */
-document.addEventListener('selectionchange', (e) => {
-    log('selectionchange', e);
-    log('--update_caret_position');
-    composeArea.update_caret_position();
-});
+function updateSelectionRange(e) {
+    log('⚙️ store_selection_range');
+    composeArea.store_selection_range();
+    showState();
+}
 
-// Composition state
-const compositionState = {
-    composing: false,
-};
+function formatNode(node) {
+    return `${node.nodeName}#${node.id}`;
+}
 
-/**
- * On keydown, process the key.
- */
-wrapper.addEventListener('compositionstart', (e) => {
-    log('compositionstart:', e);
-    compositionState.composing = true;
-});
-wrapper.addEventListener('compositionupdate', (e) => {
-    log('compositionupdate:', e);
-});
-wrapper.addEventListener('compositionend', (e) => {
-    log('compositionend:', e);
-    compositionState.composing = false;
-    log('--reload_from_dom');
-    composeArea.reload_from_dom();
-});
-wrapper.addEventListener('change', (e) => {
-    log('change:', e);
-});
-wrapper.addEventListener('keydown', (e) => {
-    log('keydown:', e);
-    if (compositionState.composing) {
-        // Ignore key events while composing
-        e.preventDefault();
-        return;
-    } else if (!e.ctrlKey && !e.altKey && !e.metaKey && e.key !== 'Unidentified') {
-        log('--process_key: ' + e.key);
-        const preventDefault = composeArea.process_key(e.key);
-        if (preventDefault) {
-            e.preventDefault();
-        }
+function showState() {
+    // Extract text
+    const text = composeArea.get_text();
+    extractedDiv.innerText = text.replace(/\n/g, '↵\n');
+
+    // Get range
+    const range = composeArea.dom_get_range();
+    console.log('range', range);
+    if (range === undefined || range === null) {
+        selectionDiv.innerText = '-';
+    } else {
+        selectionDiv.innerText =
+            `Range {\n` +
+            `  start: ${formatNode(range.startContainer)} ~ ${range.startOffset}\n` +
+            `  end: ${formatNode(range.endContainer)} ~ ${range.endOffset}\n` +
+            `}`;
     }
+
+    // Get raw HTML
+    rawDiv.innerText = wrapper.innerHTML;
+}
+
+
+// Add event listeners
+
+wrapper.addEventListener('keydown', (e) => {
+    log('⚡ keydown', e);
 });
 wrapper.addEventListener('keyup', (e) => {
-    log('keyup:', e);
+    log('⚡ keyup', e);
+    updateSelectionRange();
 });
-wrapper.addEventListener('keypress', (e) => {
-    log('keypress:', e);
-});
-
-/**
- * This event is fired when an edit event takes place for which we cannot
- * capture the input event.
- *
- * When this happens, reload the internal state from DOM.
- */
-wrapper.addEventListener('input', (e) => {
-    log('input:', e.inputType, e);
-    if (!compositionState.composing) {
-        log('--reload_from_dom');
-        composeArea.reload_from_dom();
-    }
+wrapper.addEventListener('mouseup', (e) => {
+    log('⚡ mouseup', e);
+    updateSelectionRange();
 });
 
-/**
- * On cut, remove the current selection from the internal state.
- *
- * This event is fired before the DOM is modified, before the text-to-be-cut is
- * removed from the input field.
- */
-wrapper.addEventListener('cut', (e) => {
-    log('cut', e);
-    log('--remove_selection');
-    composeArea.remove_selection(false);
-});
-
-/**
- * On paste, override the default paste handler.
- *
- * Instead, insert the clipboard contents into the compose area at the current
- * selection and update the DOM.
- */
-wrapper.addEventListener('paste', (e) => {
-    log('paste', e);
-    const clipboardData = e.clipboardData.getData('text/plain');
-    if (clipboardData) {
-        log('--insert_text: ' + clipboardData);
-        composeArea.insert_text(clipboardData);
-        e.preventDefault();
-    }
+// Note: Unfortunately the selectionchange listener can only be set on document
+// level, not on the wrapper itself.
+document.addEventListener('selectionchange', (e) => {
+    log('⚡ selectionchange', e);
+    updateSelectionRange();
 });
 
 // Emoji handling
 
 function insertEmoji(e) {
-    log('insertEmoji');
     const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
-    log('--insert_image');
+    log(`⚙️ insert_image`);
     composeArea.insert_image(img.src, img.alt, 'emoji');
+    showState();
 }
 document.getElementById('tongue').addEventListener('click', insertEmoji);
 document.getElementById('beers').addEventListener('click', insertEmoji);
