@@ -34,21 +34,6 @@ cfg_if! {
     }
 }
 
-/// Setup function that should be called by all tests.
-#[test]
-pub(crate) fn setup_test() {
-    // Initialize console logger, ignore errors. (Errors occur if the logger is
-    // initialized multiple times, we can ignore that.)
-    use log::Level;
-    let _ = console_log::init_with_level(Level::Trace);
-}
-
-/// Return whether the node is a text node.
-#[inline]
-pub(crate) fn is_text_node(node: &Node) -> bool {
-    node.node_type() == Node::TEXT_NODE
-}
-
 /// Return whether the node is a character data node.
 #[inline]
 pub(crate) fn is_character_data_node(node: &Node) -> bool {

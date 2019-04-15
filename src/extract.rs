@@ -80,8 +80,6 @@ mod tests {
 
     use wasm_bindgen_test::*;
 
-    use crate::utils::setup_test;
-
     wasm_bindgen_test_configure!(run_in_browser);
 
     mod extract_text {
@@ -124,7 +122,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn simple() {
-            setup_test();
             ExtractTextTest {
                 html: html! { Hello World },
                 expected: "Hello World",
@@ -133,7 +130,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn single_div() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <div>Hello World</div> },
                 expected: "Hello World",
@@ -142,7 +138,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn single_span() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <span>Hello World</span> },
                 expected: "Hello World",
@@ -151,7 +146,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn image() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <div>Hello <img src="#" alt="Big">World</div> },
                 expected: "Hello BigWorld",
@@ -160,7 +154,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn newline_br() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <div>Hello<br>World</div> },
                 expected: "Hello\nWorld",
@@ -169,7 +162,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn newline_single_div_first() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <div><div>Hello</div>World</div> },
                 expected: "Hello\nWorld",
@@ -178,7 +170,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn newline_single_div_second() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <div>Hello<div>World</div></div> },
                 expected: "Hello\nWorld",
@@ -187,7 +178,6 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn newline_double_div() {
-            setup_test();
             ExtractTextTest {
                 html: html! { <div><div>Hello</div><div>World</div></div> },
                 expected: "Hello\nWorld",
