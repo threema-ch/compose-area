@@ -10,8 +10,9 @@ window.composeArea = composeArea;
 // Elements
 const wrapper = document.getElementById('wrapper');
 const logDiv = document.querySelector('#log div');
-const selectionDiv = document.querySelector('#selection div');
 const extractedDiv = document.querySelector('#extracted div');
+const selectionDiv = document.querySelector('#selection div');
+const rawDiv = document.querySelector('#raw div');
 
 // Helper functions
 
@@ -55,6 +56,9 @@ function showState() {
             `  end: ${formatNode(range.endContainer)} ~ ${range.endOffset}\n` +
             `}`;
     }
+
+    // Get raw HTML
+    rawDiv.innerText = wrapper.innerHTML;
 }
 
 
