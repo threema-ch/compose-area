@@ -16,6 +16,7 @@ const wrapper = By.css('#wrapper');
 const emojiTongue = By.css('#tongue');
 const emojiBeers = By.css('#beers');
 const emojiFacepalm = By.css('#facepalm');
+const headline = By.css('h2');
 
 // Emoji unicode
 const emojiStrTongue = '\ud83d\ude1c';
@@ -25,10 +26,7 @@ const emojiStrFacepalm = '\ud83e\udd26\u200d\u2640\ufe0f';
 
 async function extractText(driver: WebDriver): Promise<string> {
     const text: string = await driver.executeScript(`
-        const text = window.wasm.extract_text(document.getElementById("wrapper"));
-        console.warn('wrapper:', wrapper);
-        console.warn('texxxt:', text);
-        return text;
+        return window.wasm.extract_text(document.getElementById("wrapper"));
     `);
     return text;
 }
@@ -241,6 +239,24 @@ async function cutAndPaste(driver: WebDriver) {
     expect(await extractText(driver)).to.equal('1423');
 }
 
+/**
+ * No contents should be inserted outside the wrapper (e.g. if the selection is
+ * outside).
+ */
+async function noInsertOutsideWrapper(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+    const headlineElement = await driver.findElement(headline);
+    const e = await driver.findElement(emojiBeers);
+
+    await headlineElement.click();
+    await e.click();
+    await wrapperElement.sendKeys(' yeah');
+
+    const text = await extractText(driver);
+    expect(text).to.equal(`${emojiStrBeers} yeah`);
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Insert three emoji', insertThreeEmoji],
@@ -254,4 +270,5 @@ export const TESTS: Array<[string, Testfunc]> = [
     //['Replace all text', replaceAllText],
     ['Use the delete key', deleteKey],
     ['Cut and paste', cutAndPaste],
+    ['Don\'t insert outside wrapper', noInsertOutsideWrapper],
 ];

@@ -162,10 +162,10 @@ impl ComposeArea {
         self.window.get_selection().expect("Could not get selection from window")
     }
 
-    /// Return the last range of the selection (if any).
-    ///
-    /// TODO: Make sure that selection is within the wrapper!
+    /// Return the last range of the selection that is within the wrapper
+    /// element.
     pub fn dom_get_range(&self) -> Option<Range> {
+        let wrapper = self.get_wrapper();
         let selection = match self.dom_get_selection() {
             Some(sel) => sel,
             None => {
@@ -173,7 +173,16 @@ impl ComposeArea {
                 return None;
             },
         };
-        selection.get_range_at(selection.range_count() - 1).ok()
+        for i in 0..selection.range_count() {
+            let range = selection.get_range_at(i)
+                .expect("Could not get range from selection");
+            let container = range.common_ancestor_container()
+                .expect("Could not get common ancestor container for range");
+            if wrapper.contains(Some(&container)) {
+                return Some(range);
+            }
+        }
+        None
     }
 
     /// Insert the specified node at the previously stored selection range.
@@ -588,6 +597,30 @@ mod tests {
             let range = ca.dom_get_range().expect("Could not get range");
             assert_eq!(range.start_offset().unwrap(), 1);
             assert_eq!(range.end_offset().unwrap(), 2);
+        }
+
+        #[wasm_bindgen_test]
+        fn get_range_only_inside_wrapper() {
+            let ca = init(true);
+            let inner_text_node = text_node(&ca, "abc");
+            ca.get_wrapper().append_child(&inner_text_node).unwrap();
+
+            // No retval if no range is set
+            selection::unset_selection_range();
+            let range = ca.dom_get_range();
+            assert!(range.is_none());
+
+            // No retval if no range is outside
+            let outer_text_node = ca.document.create_text_node("hello");
+            ca.document.body().unwrap().append_child(&outer_text_node).unwrap();
+            set_selection_range(&Position::Offset(&outer_text_node, 0), None);
+            let range = ca.dom_get_range();
+            assert!(range.is_none());
+
+            // Retval as soon as inside wrapper
+            set_selection_range(&Position::Offset(&inner_text_node, 0), None);
+            let range = ca.dom_get_range();
+            assert!(range.is_some());
         }
     }
 
