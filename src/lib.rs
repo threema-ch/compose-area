@@ -82,6 +82,7 @@ pub fn bind_to(id: &str) -> ComposeArea {
 }
 
 #[wasm_bindgen]
+#[derive(Debug, Clone)]
 pub struct RangeResult {
     /// The selection range, if any.
     range: Option<Range>,
@@ -116,10 +117,11 @@ impl RangeResult {
 #[wasm_bindgen]
 impl RangeResult {
     fn format_node(node: &Node) -> String {
-        let id = node
-            .dyn_ref::<Element>()
-            .map_or_else(|| "unknown".to_string(), Element::id);
-        format!("{}#{}", node.node_name(), id)
+        let name = node.node_name();
+        match node.dyn_ref::<Element>().map(Element::id) {
+            Some(id) => format!("{}#{}", name.trim_matches('#'), id),
+            None => format!("{}", name.trim_matches('#')),
+        }
     }
 
     /// Used by JS code to show a string representation of the range.
@@ -139,6 +141,21 @@ impl RangeResult {
             ),
         }
     }
+
+    /// Used by JS code to show a string representation of the range.
+    pub fn to_string_compact(&self) -> String {
+        match (&self.range, self.outside) {
+            (_, true) => "Outside".to_string(),
+            (None, _) => "None".to_string(),
+            (Some(range), false) => format!(
+                "Range({}~{}, {}~{})",
+                Self::format_node(&range.start_container().unwrap()),
+                &range.start_offset().unwrap(),
+                Self::format_node(&range.end_container().unwrap()),
+                &range.end_offset().unwrap(),
+            ),
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -150,7 +167,8 @@ impl ComposeArea {
     }
 
     /// Store the current selection range.
-    pub fn store_selection_range(&mut self) {
+    /// Return the stored range.
+    pub fn store_selection_range(&mut self) -> RangeResult {
         let range_result = self.fetch_range();
 
         // Ignore selections outside the wrapper
@@ -158,9 +176,12 @@ impl ComposeArea {
             // Note: We need to clone the range object. Otherwise, changes to the
             // range in the DOM will be reflected in our stored reference.
             self.selection_range = range_result
+                .clone()
                 .range
                 .map(|range| range.clone_range());
         }
+
+        range_result
     }
 
     /// Restore the stored selection range.

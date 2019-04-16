@@ -31,7 +31,8 @@ function log() {
 
 function updateSelectionRange(e) {
     log('⚙️ store_selection_range');
-    composeArea.store_selection_range();
+    let range_result = composeArea.store_selection_range();
+    log('⚙️ ⤷ ' + range_result.to_string_compact());
     showState();
 }
 
