@@ -57,7 +57,7 @@
         }
         #log {
             flex-grow: 1;
-            min-width: 300px;
+            min-width: 380px;
             margin-left: 8px;
         }
         #log div {
@@ -66,6 +66,13 @@
         }
         #buttons {
             margin-top: 16px;
+            display: flex;
+        }
+        #buttons button:not(:last-child) {
+            margin-right: 8px;
+        }
+        #buttons div.spacer {
+            flex-grow: 1;
         }
         #version {
             font-size: 0.8em;
@@ -90,6 +97,8 @@
       <button id="facepalm">
         <img alt="🤦‍♀️" src="https://abs.twimg.com/emoji/v2/72x72/1f926-200d-2640-fe0f.png">
       </button>
+      <div class="spacer"></div>
+      <button id="clearselection">Clear selection ranges</button>
     </div>
     <div id="debug">
         <div id="left">
@@ -111,7 +120,7 @@
             <div class="debug"></div>
         </div>
     </div>
-    <p id="version">Version: 27bc75e (2019-04-16 17:23:18 +0200)</p>
+    <p id="version">Version: 5de4484 (2019-04-16 18:33:32 +0200)</p>
     <p>Links: <a href="benchmark.html">Benchmarks</a> | <a href="https://github.com/threema-ch/compose-area">GitHub</a></p>
     <script src="./bootstrap.demo.bundle.js"></script>
   </body>

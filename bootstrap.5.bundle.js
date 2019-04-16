@@ -51,7 +51,6 @@ function showState() {
 
     // Get range
     const range_result = composeArea.fetch_range();
-    console.log(range_result);
     selectionDiv.innerText = range_result.to_string();
 
     // Get raw HTML
@@ -98,6 +97,13 @@ function insertEmoji(e) {
 document.getElementById('tongue').addEventListener('click', insertEmoji);
 document.getElementById('beers').addEventListener('click', insertEmoji);
 document.getElementById('facepalm').addEventListener('click', insertEmoji);
+
+// Other buttons
+document.getElementById('clearselection').addEventListener('click', (e) => {
+    const sel = getSelection();
+    sel.removeAllRanges();
+    showState();
+});
 
 
 /***/ })
