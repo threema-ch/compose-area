@@ -64,6 +64,19 @@ To extract the text from the area, there's also a method:
 composeArea.get_text();
 ```
 
+If you want to properly handle pasting of formatted text, intercept the `paste`
+event:
+
+```js
+wrapper.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const clipboardData = e.clipboardData.getData('text/plain');
+    if (clipboardData) {
+        composeArea.insert_text(clipboardData);
+    }
+});
+```
+
 
 ## Dev Setup
 
