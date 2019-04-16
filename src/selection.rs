@@ -34,10 +34,10 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
     };
 
     // Get the current selection range. Create a new range if necessary.
-    let (range, created) = if selection.range_count() == 0 {
-        (document.create_range().expect("Could not create range"), true)
+    let range = if selection.range_count() == 0 {
+        document.create_range().expect("Could not create range")
     } else {
-        (selection.get_range_at(0).expect("Could not get range at index 0"), false)
+        selection.get_range_at(0).expect("Could not get range at index 0")
     };
 
     // Set range start
@@ -75,11 +75,15 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
         None => range.collapse_with_to_start(true),
     }
 
-    if created {
-        // Note: This is only true if the current selection contains no ranges.
-        //       Otherwise, `add_range` would raise a JS exception.
-        selection.add_range(&range).expect("Could not add range");
-    }
+    // Note: In theory we don't need to re-add the range to the document if
+    //       it's already there. Unfortunately, Safari is not spec-compliant
+    //       and returns a copy of the range instead of a reference when using
+    //       selection.getRangeAt(). Thus, we need to remove the existing
+    //       ranges and (re-)add our range to the DOM.
+    //
+    //       See https://bugs.webkit.org/show_bug.cgi?id=145212
+    selection.remove_all_ranges().unwrap();
+    selection.add_range(&range).expect("Could not add range");
 
     Some(range)
 }

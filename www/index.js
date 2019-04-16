@@ -43,7 +43,6 @@ function showState() {
 
     // Get range
     const range_result = composeArea.fetch_range();
-    console.log(range_result);
     selectionDiv.innerText = range_result.to_string();
 
     // Get raw HTML
