@@ -120,7 +120,7 @@ impl RangeResult {
         let name = node.node_name();
         match node.dyn_ref::<Element>().map(Element::id) {
             Some(id) => format!("{}#{}", name.trim_matches('#'), id),
-            None => format!("{}", name.trim_matches('#')),
+            None => name.trim_matches('#').to_string(),
         }
     }
 
