@@ -89,3 +89,10 @@ function insertEmoji(e) {
 document.getElementById('tongue').addEventListener('click', insertEmoji);
 document.getElementById('beers').addEventListener('click', insertEmoji);
 document.getElementById('facepalm').addEventListener('click', insertEmoji);
+
+// Other buttons
+document.getElementById('clearselection').addEventListener('click', (e) => {
+    const sel = getSelection();
+    sel.removeAllRanges();
+    showState();
+});

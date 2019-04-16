@@ -12,10 +12,10 @@ interface CaretPosition {
 type Testfunc = (driver: WebDriver) => void;
 
 // Shared selectors
-const wrapper = By.css('#wrapper');
-const emojiTongue = By.css('#tongue');
-const emojiBeers = By.css('#beers');
-const emojiFacepalm = By.css('#facepalm');
+const wrapper = By.id('wrapper');
+const emojiTongue = By.id('tongue');
+const emojiBeers = By.id('beers');
+const emojiFacepalm = By.id('facepalm');
 const headline = By.css('h2');
 
 // Emoji unicode
@@ -32,7 +32,8 @@ async function extractText(driver: WebDriver): Promise<string> {
 }
 
 async function clearSelectionRange(driver: WebDriver): Promise<void> {
-    await driver.executeScript('window.getSelection().removeAllRanges();');
+    const clearBtn = await driver.findElement(By.id('clearselection'));
+    await clearBtn.click();
 }
 
 /**
