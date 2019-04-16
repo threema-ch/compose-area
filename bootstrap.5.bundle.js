@@ -81,6 +81,15 @@ wrapper.addEventListener('keyup', (e) => {
 wrapper.addEventListener('mouseup', (e) => {
     log('⚡ mouseup', e);
 });
+wrapper.addEventListener('paste', (e) => {
+    log('⚡ paste', e);
+    e.preventDefault();
+    const clipboardData = e.clipboardData.getData('text/plain');
+    if (clipboardData) {
+        log('⚙️ insert_text');
+        composeArea.insert_text(clipboardData);
+    }
+});
 
 // Note: Unfortunately the selectionchange listener can only be set on document
 // level, not on the wrapper itself.
