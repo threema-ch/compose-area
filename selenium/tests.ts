@@ -31,6 +31,10 @@ async function extractText(driver: WebDriver): Promise<string> {
     return text;
 }
 
+async function clearSelectionRange(driver: WebDriver): Promise<void> {
+    await driver.executeScript('window.getSelection().removeAllRanges();');
+}
+
 /**
  * The wrapper element should be found on the test page.
  */
@@ -257,6 +261,51 @@ async function noInsertOutsideWrapper(driver: WebDriver) {
     expect(text).to.equal(`${emojiStrBeers} yeah`);
 }
 
+/**
+ * When no selection range is present, insert at end. If a selection range is
+ * outside the compose area, use the last known range.
+ */
+async function handleSelectionChanges(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+    const headlineElement = await driver.findElement(headline);
+    const e1 = await driver.findElement(emojiBeers);
+    const e2 = await driver.findElement(emojiTongue);
+    const e3 = await driver.findElement(emojiFacepalm);
+
+    // Add initial text
+    await wrapperElement.click();
+    await wrapperElement.sendKeys('1234');
+    expect(await extractText(driver)).to.equal(`1234`);
+
+    // Insert emoji
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await e1.click();
+    expect(await extractText(driver)).to.equal(
+        `12${emojiStrBeers}34`
+    );
+
+    // Clear selection range and insert emoji
+    await clearSelectionRange(driver);
+    await e2.click();
+    expect(await extractText(driver)).to.equal(
+        `12${emojiStrBeers}34${emojiStrTongue}`
+    );
+
+    // Change selection range
+    await wrapperElement.click();
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+
+    // Click outside wrapper, then insert another emoji
+    await headlineElement.click();
+    await e3.click();
+    expect(await extractText(driver)).to.equal(
+        `12${emojiStrBeers}3${emojiStrFacepalm}4${emojiStrTongue}`
+    );
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Insert three emoji', insertThreeEmoji],
@@ -271,4 +320,5 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Use the delete key', deleteKey],
     ['Cut and paste', cutAndPaste],
     ['Don\'t insert outside wrapper', noInsertOutsideWrapper],
+    ['Handle selection changes', handleSelectionChanges],
 ];

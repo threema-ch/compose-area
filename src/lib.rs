@@ -82,6 +82,66 @@ pub fn bind_to(id: &str) -> ComposeArea {
 }
 
 #[wasm_bindgen]
+pub struct RangeResult {
+    /// The selection range, if any.
+    range: Option<Range>,
+    /// Whether the selection range is not fully contained in the wrapper.
+    /// This is set to `false` if no range could be found.
+    outside: bool,
+}
+
+impl RangeResult {
+    fn contained(range: Range) -> Self {
+        Self {
+            range: Some(range),
+            outside: false,
+        }
+    }
+
+    fn outside(range: Range) -> Self {
+        Self {
+            range: Some(range),
+            outside: true,
+        }
+    }
+
+    fn none() -> Self {
+        Self {
+            range: None,
+            outside: false,
+        }
+    }
+}
+
+#[wasm_bindgen]
+impl RangeResult {
+    fn format_node(node: &Node) -> String {
+        let id = node
+            .dyn_ref::<Element>()
+            .map_or_else(|| "unknown".to_string(), Element::id);
+        format!("{}#{}", node.node_name(), id)
+    }
+
+    /// Used by JS code to show a string representation of the range.
+    pub fn to_string(&self) -> String {
+        match (&self.range, self.outside) {
+            (_, true) => "Outside".to_string(),
+            (None, _) => "None".to_string(),
+            (Some(range), false) => format!(
+                "Range {{\n  \
+                  start: {} ~ {}\n  \
+                  end: {} ~ {}\n\
+                }}",
+                Self::format_node(&range.start_container().unwrap()),
+                &range.start_offset().unwrap(),
+                Self::format_node(&range.end_container().unwrap()),
+                &range.end_offset().unwrap(),
+            ),
+        }
+    }
+}
+
+#[wasm_bindgen]
 impl ComposeArea {
 
     /// Return a reference to the wrapper element.
@@ -91,11 +151,16 @@ impl ComposeArea {
 
     /// Store the current selection range.
     pub fn store_selection_range(&mut self) {
-        // Note: We need to clone the range object. Otherwise, changes to the
-        // range in the DOM will be reflected in our stored reference.
-        self.selection_range = self
-            .dom_get_range()
-            .map(|range| range.clone_range());
+        let range_result = self.fetch_range();
+
+        // Ignore selections outside the wrapper
+        if !range_result.outside {
+            // Note: We need to clone the range object. Otherwise, changes to the
+            // range in the DOM will be reflected in our stored reference.
+            self.selection_range = range_result
+                .range
+                .map(|range| range.clone_range());
+        }
     }
 
     /// Restore the stored selection range.
@@ -105,7 +170,7 @@ impl ComposeArea {
     pub fn restore_selection_range(&self) -> bool {
         if let Some(ref range) = self.selection_range {
             // Get the current selection
-            let selection = match self.dom_get_selection() {
+            let selection = match self.fetch_selection() {
                 Some(selection) => selection,
                 None => {
                     error!("No selection found");
@@ -158,31 +223,36 @@ impl ComposeArea {
     }
 
     /// Return the DOM selection.
-    fn dom_get_selection(&self) -> Option<Selection> {
+    fn fetch_selection(&self) -> Option<Selection> {
         self.window.get_selection().expect("Could not get selection from window")
     }
 
     /// Return the last range of the selection that is within the wrapper
     /// element.
-    pub fn dom_get_range(&self) -> Option<Range> {
+    pub fn fetch_range(&self) -> RangeResult {
         let wrapper = self.get_wrapper();
-        let selection = match self.dom_get_selection() {
+        let selection = match self.fetch_selection() {
             Some(sel) => sel,
             None => {
                 error!("Could not find selection");
-                return None;
+                return RangeResult::none();
             },
         };
+        let mut candidate: Option<Range> = None;
         for i in 0..selection.range_count() {
             let range = selection.get_range_at(i)
                 .expect("Could not get range from selection");
+            candidate = Some(range.clone());
             let container = range.common_ancestor_container()
                 .expect("Could not get common ancestor container for range");
             if wrapper.contains(Some(&container)) {
-                return Some(range);
+                return RangeResult::contained(range);
             }
         }
-        None
+        match candidate {
+            Some(range) => RangeResult::outside(range),
+            None => RangeResult::none(),
+        }
     }
 
     /// Insert the specified node at the previously stored selection range.
@@ -576,7 +646,9 @@ mod tests {
                 &Position::Offset(&node, 1),
                 Some(&Position::Offset(&node, 2)),
             );
-            let range = ca.dom_get_range().expect("Could not get range");
+            let range_result = ca.fetch_range();
+            assert!(!range_result.outside);
+            let range = range_result.range.expect("Could not get range");
             assert_eq!(range.start_offset().unwrap(), 1);
             assert_eq!(range.end_offset().unwrap(), 2);
 
@@ -588,39 +660,46 @@ mod tests {
                 &Position::Offset(&node, 0),
                 Some(&Position::Offset(&node, 1)),
             );
-            let range = ca.dom_get_range().expect("Could not get range");
+            let range_result = ca.fetch_range();
+            assert!(!range_result.outside);
+            let range = range_result.range.expect("Could not get range");
             assert_eq!(range.start_offset().unwrap(), 0);
             assert_eq!(range.end_offset().unwrap(), 1);
 
             // Retore range
             ca.restore_selection_range();
-            let range = ca.dom_get_range().expect("Could not get range");
+            let range_result = ca.fetch_range();
+            assert!(!range_result.outside);
+            let range = range_result.range.expect("Could not get range");
             assert_eq!(range.start_offset().unwrap(), 1);
             assert_eq!(range.end_offset().unwrap(), 2);
         }
 
         #[wasm_bindgen_test]
-        fn get_range_only_inside_wrapper() {
+        fn get_range_result() {
             let ca = init(true);
             let inner_text_node = text_node(&ca, "abc");
             ca.get_wrapper().append_child(&inner_text_node).unwrap();
 
-            // No retval if no range is set
+            // No range set
             selection::unset_selection_range();
-            let range = ca.dom_get_range();
-            assert!(range.is_none());
+            let range_result = ca.fetch_range();
+            assert!(range_result.range.is_none());
+            assert!(!range_result.outside);
 
-            // No retval if no range is outside
+            // Range is outside
             let outer_text_node = ca.document.create_text_node("hello");
             ca.document.body().unwrap().append_child(&outer_text_node).unwrap();
             set_selection_range(&Position::Offset(&outer_text_node, 0), None);
-            let range = ca.dom_get_range();
-            assert!(range.is_none());
+            let range_result = ca.fetch_range();
+            assert!(range_result.range.is_some());
+            assert!(range_result.outside);
 
-            // Retval as soon as inside wrapper
+            // Inside wrapper
             set_selection_range(&Position::Offset(&inner_text_node, 0), None);
-            let range = ca.dom_get_range();
-            assert!(range.is_some());
+            let range_result = ca.fetch_range();
+            assert!(range_result.range.is_some());
+            assert!(!range_result.outside);
         }
     }
 
