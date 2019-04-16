@@ -692,10 +692,11 @@ class ComposeArea {
 
     /**
     * Store the current selection range.
-    * @returns {void}
+    * Return the stored range.
+    * @returns {RangeResult}
     */
     store_selection_range() {
-        return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_store_selection_range */ "m"](this.ptr);
+        return RangeResult.__wrap(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_store_selection_range */ "m"](this.ptr));
     }
     /**
     * Restore the stored selection range.
@@ -815,6 +816,22 @@ class RangeResult {
         return realRet;
 
     }
+    /**
+    * Used by JS code to show a string representation of the range.
+    * @returns {string}
+    */
+    to_string_compact() {
+        const retptr = globalArgumentPtr();
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* rangeresult_to_string_compact */ "q"](retptr, this.ptr);
+        const mem = getUint32Memory();
+        const rustptr = mem[retptr / 4];
+        const rustlen = mem[retptr / 4 + 1];
+
+        const realRet = getStringFromWasm(rustptr, rustlen).slice();
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_free */ "c"](rustptr, rustlen * 1);
+        return realRet;
+
+    }
 }
 
 function __wbindgen_object_clone_ref(idx) {
@@ -847,7 +864,7 @@ module.exports = wasmExports;
 
 
 // exec wasm module
-wasmExports["q"]()
+wasmExports["r"]()
 
 /***/ })
 
