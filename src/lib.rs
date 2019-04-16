@@ -118,8 +118,7 @@ impl RangeResult {
     fn format_node(node: &Node) -> String {
         let id = node
             .dyn_ref::<Element>()
-            .map(|e| e.id())
-            .unwrap_or("unknown".to_string());
+            .map_or_else(|| "unknown".to_string(), Element::id);
         format!("{}#{}", node.node_name(), id)
     }
 
