@@ -43,27 +43,15 @@ function updateSelectionRange(e) {
     showState();
 }
 
-function formatNode(node) {
-    return `${node.nodeName}#${node.id}`;
-}
-
 function showState() {
     // Extract text
     const text = composeArea.get_text();
     extractedDiv.innerText = text.replace(/\n/g, '↵\n');
 
     // Get range
-    const range = composeArea.dom_get_range();
-    console.log('range', range);
-    if (range === undefined || range === null) {
-        selectionDiv.innerText = '-';
-    } else {
-        selectionDiv.innerText =
-            `Range {\n` +
-            `  start: ${formatNode(range.startContainer)} ~ ${range.startOffset}\n` +
-            `  end: ${formatNode(range.endContainer)} ~ ${range.endOffset}\n` +
-            `}`;
-    }
+    const range_result = composeArea.fetch_range();
+    console.log(range_result);
+    selectionDiv.innerText = range_result.to_string();
 
     // Get raw HTML
     rawDiv.innerText = wrapper.innerHTML;

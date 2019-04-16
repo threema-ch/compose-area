@@ -58,6 +58,9 @@
 /******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
 /******/ 						return installedModules[4].exports["__wbindgen_object_drop_ref"](p0i32);
 /******/ 					},
+/******/ 					"__wbindgen_object_clone_ref": function(p0i32) {
+/******/ 						return installedModules[4].exports["__wbindgen_object_clone_ref"](p0i32);
+/******/ 					},
 /******/ 					"__wbindgen_string_new": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__wbindgen_string_new"](p0i32,p1i32);
 /******/ 					},
@@ -112,6 +115,9 @@
 /******/ 					"__widl_f_tag_name_Element": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_tag_name_Element"](p0i32,p1i32);
 /******/ 					},
+/******/ 					"__widl_f_id_Element": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_id_Element"](p0i32,p1i32);
+/******/ 					},
 /******/ 					"__widl_f_replace_with_with_node_1_Element": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["__widl_f_replace_with_with_node_1_Element"](p0i32,p1i32,p2i32);
 /******/ 					},
@@ -132,6 +138,9 @@
 /******/ 					},
 /******/ 					"__widl_f_node_type_Node": function(p0i32) {
 /******/ 						return installedModules[4].exports["__widl_f_node_type_Node"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_node_name_Node": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_node_name_Node"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_child_nodes_Node": function(p0i32) {
 /******/ 						return installedModules[4].exports["__widl_f_child_nodes_Node"](p0i32);
@@ -178,6 +187,18 @@
 /******/ 					"__widl_f_set_start_before_Range": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["__widl_f_set_start_before_Range"](p0i32,p1i32,p2i32);
 /******/ 					},
+/******/ 					"__widl_f_start_container_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_start_container_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_start_offset_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_start_offset_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_end_container_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_end_container_Range"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_end_offset_Range": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["__widl_f_end_offset_Range"](p0i32,p1i32);
+/******/ 					},
 /******/ 					"__widl_f_common_ancestor_container_Range": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_common_ancestor_container_Range"](p0i32,p1i32);
 /******/ 					},
@@ -204,9 +225,6 @@
 /******/ 					},
 /******/ 					"__wbg_call_a7a8823c404228ab": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["__wbg_call_a7a8823c404228ab"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__wbindgen_object_clone_ref": function(p0i32) {
-/******/ 						return installedModules[4].exports["__wbindgen_object_clone_ref"](p0i32);
 /******/ 					},
 /******/ 					"__wbindgen_debug_string": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__wbindgen_debug_string"](p0i32,p1i32);
@@ -312,7 +330,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"80b440dd9c8d45abfdf0"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"9bf2b2b7a9ffa4cf947e"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
