@@ -10,11 +10,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_error_4bb6c2a97407129a", function() { return __wbg_error_4bb6c2a97407129a; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_new_59cb74e423758ede", function() { return __wbg_new_59cb74e423758ede; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_stack_558ba5917b466edd", function() { return __wbg_stack_558ba5917b466edd; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_debug_1_", function() { return __widl_f_debug_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_error_1_", function() { return __widl_f_error_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_info_1_", function() { return __widl_f_info_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_log_1_", function() { return __widl_f_log_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_warn_1_", function() { return __widl_f_warn_1_; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_instanceof_CharacterData", function() { return __widl_instanceof_CharacterData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_create_element_Document", function() { return __widl_f_create_element_Document; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_create_range_Document", function() { return __widl_f_create_range_Document; });
@@ -59,6 +54,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_instanceof_Window", function() { return __widl_instanceof_Window; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_get_selection_Window", function() { return __widl_f_get_selection_Window; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_document_Window", function() { return __widl_f_document_Window; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_debug_1_", function() { return __widl_f_debug_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_error_1_", function() { return __widl_f_error_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_info_1_", function() { return __widl_f_info_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_log_1_", function() { return __widl_f_log_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__widl_f_warn_1_", function() { return __widl_f_warn_1_; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_newnoargs_b4526aa2a6db81de", function() { return __wbg_newnoargs_b4526aa2a6db81de; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_call_a7a8823c404228ab", function() { return __wbg_call_a7a8823c404228ab; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_string_new", function() { return __wbindgen_string_new; });
@@ -229,26 +229,6 @@ function __wbg_stack_558ba5917b466edd(ret, arg0) {
     mem[ret / 4] = retptr;
     mem[ret / 4 + 1] = retlen;
 
-}
-
-function __widl_f_debug_1_(arg0) {
-    console.debug(getObject(arg0));
-}
-
-function __widl_f_error_1_(arg0) {
-    console.error(getObject(arg0));
-}
-
-function __widl_f_info_1_(arg0) {
-    console.info(getObject(arg0));
-}
-
-function __widl_f_log_1_(arg0) {
-    console.log(getObject(arg0));
-}
-
-function __widl_f_warn_1_(arg0) {
-    console.warn(getObject(arg0));
 }
 
 function __widl_instanceof_CharacterData(idx) { return getObject(idx) instanceof CharacterData ? 1 : 0; }
@@ -571,6 +551,26 @@ function __widl_f_document_Window(arg0) {
     const val = getObject(arg0).document;
     return isLikeNone(val) ? 0 : addHeapObject(val);
 
+}
+
+function __widl_f_debug_1_(arg0) {
+    console.debug(getObject(arg0));
+}
+
+function __widl_f_error_1_(arg0) {
+    console.error(getObject(arg0));
+}
+
+function __widl_f_info_1_(arg0) {
+    console.info(getObject(arg0));
+}
+
+function __widl_f_log_1_(arg0) {
+    console.log(getObject(arg0));
+}
+
+function __widl_f_warn_1_(arg0) {
+    console.warn(getObject(arg0));
 }
 
 function __wbg_newnoargs_b4526aa2a6db81de(arg0, arg1) {
