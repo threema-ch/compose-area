@@ -24,7 +24,7 @@ elements. Selection and caret position are handled automatically.
 ## Setup
 
 Note: A dependency graph that contains any wasm must all be imported
-asynchronously. This can be done using the
+asynchronously. This can be done using
 [dynamic imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports).
 
 ### Bootstrapping JS
