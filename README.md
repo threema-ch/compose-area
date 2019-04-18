@@ -21,18 +21,51 @@ internal state. It provides methods to insert text, images or other block
 elements. Selection and caret position are handled automatically.
 
 
-## Usage
+## Setup
 
-First, import the library.
+Note: A dependency graph that contains any wasm must all be imported
+asynchronously. This can be done using the
+[dynamic imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports).
+
+### Bootstrapping JS
+
+The simplest way is to use a bootstrapping js as the entry point to your entire application:
 
 ```js
-import * as wasm from 'compose-area';
+// bootstrap.js
+import('./index.js')
+  .catch(e => console.error('Error importing `index.js`:', e));
 ```
+
+```js
+// index.js
+import * as composeArea from '@threema/compose-area';
+```
+
+### Dynamic Import (Promise)
+
+Alternatively, import the library asynchronously:
+
+```js
+import('@threema/compose-area')
+    .then((composeArea) => {
+        // Use the library
+    });
+```
+
+If you're in an asynchronous context, you can also use the `await` keyword.
+
+```js
+const composeArea = await import('@threema/compose-area');
+```
+
+
+## Usage
 
 Next, bind to the wrapper element (a div with the specified `id`):
 
 ```js
-const composeArea = wasm.bind_to('wrapper');
+const area = composeArea.bind_to('wrapper');
 ```
 
 Because the insertion should work even when there is no selection / focus
@@ -41,7 +74,7 @@ events. Register them using an event listener:
 
 ```js
 document.addEventListener('selectionchange', (e) => {
-    composeArea.store_selection_range();
+    area.store_selection_range();
 });
 ```
 
@@ -51,17 +84,17 @@ content editable div.
 To insert text or images through code, use the following two functions:
 
 ```js
-//                       src          alt   class
-composeArea.insert_image("emoji.jpg", "😀", "emoji");
+//                src          alt   class
+area.insert_image("emoji.jpg", "😀", "emoji");
 
-//                      text
-composeArea.insert_text("hello");
+//               text
+area.insert_text("hello");
 ```
 
 To extract the text from the area, there's also a method:
 
 ```js
-composeArea.get_text();
+area.get_text();
 ```
 
 If you want to properly handle pasting of formatted text, intercept the `paste`
@@ -72,7 +105,7 @@ wrapper.addEventListener('paste', (e) => {
     e.preventDefault();
     const clipboardData = e.clipboardData.getData('text/plain');
     if (clipboardData) {
-        composeArea.insert_text(clipboardData);
+        area.insert_text(clipboardData);
     }
 });
 ```
