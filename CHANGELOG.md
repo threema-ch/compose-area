@@ -12,6 +12,12 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.1.1 (2019-04-23)
+
+- [changed] The standalone `bind_to` function was moved to `ComposeArea.bind_to`
+- [changed] The `bind_to` method now accepts an element reference instead of an
+  ID string
+
 ### v0.1.0 (2019-04-17)
 
 Initial release. Might still be a bit buggy.
