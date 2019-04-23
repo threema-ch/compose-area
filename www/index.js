@@ -3,16 +3,16 @@ import * as wasm from 'compose-area';
 // Assign wasm module to window object for testing purposes.
 window.wasm = wasm;
 
-// Initialize compose area
-const composeArea = wasm.bind_to('wrapper');
-window.composeArea = composeArea;
-
 // Elements
 const wrapper = document.getElementById('wrapper');
 const logDiv = document.querySelector('#log div');
 const extractedDiv = document.querySelector('#extracted div');
 const selectionDiv = document.querySelector('#selection div');
 const rawDiv = document.querySelector('#raw div');
+
+// Initialize compose area
+const composeArea = wasm.bind_to(wrapper);
+window.composeArea = composeArea;
 
 // Helper functions
 

@@ -86,7 +86,6 @@ mod tests {
         use super::*;
 
         use virtual_dom_rs::prelude::*;
-        use wbg_rand::{Rng, wasm_rng};
 
         struct ExtractTextTest {
             html: VirtualNode,
@@ -100,15 +99,7 @@ mod tests {
                 let document = window.document().expect("Should have a document on window");
 
                 // Create wrapper element
-                let id = format!(
-                    "extract-text-test-{}",
-                    wasm_rng()
-                        .gen_ascii_chars()
-                        .take(10)
-                        .collect::<String>()
-                );
                 let test_wrapper = document.create_element("div").expect("Could not create test wrapper");
-                test_wrapper.set_attribute("id", &id).unwrap();
 
                 // Write HTML to DOM
                 let node: Node = self.html.create_dom_node().node;

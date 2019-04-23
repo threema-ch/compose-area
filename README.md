@@ -62,10 +62,10 @@ const composeArea = await import('@threema/compose-area');
 
 ## Usage
 
-Next, bind to the wrapper element (a div with the specified `id`):
+Next, bind to the wrapper element:
 
 ```js
-const area = composeArea.bind_to('wrapper');
+const area = composeArea.bind_to(document.getElementById('wrapper'));
 ```
 
 Because the insertion should work even when there is no selection / focus

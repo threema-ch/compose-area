@@ -11,8 +11,6 @@ mod extract;
 mod selection;
 mod utils;
 
-use std::mem;
-
 use cfg_if::cfg_if;
 use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{self, Element, Node, Selection, Range};
@@ -35,7 +33,7 @@ cfg_if! {
 pub struct ComposeArea {
     window: web_sys::Window,
     document: web_sys::Document,
-    wrapper_id: String,
+    wrapper: Element,
     selection_range: Option<Range>,
 }
 
@@ -49,34 +47,31 @@ pub enum Direction {
     After,
 }
 
-/// Initialize a new compose area wrapper with the specified `id`.
+/// Initialize a new compose area wrapper.
 #[wasm_bindgen]
-pub fn bind_to(id: &str) -> ComposeArea {
+pub fn bind_to(wrapper: Element) -> ComposeArea {
     utils::set_panic_hook();
     utils::init_log();
 
-    info!("Bind to #{}", id);
-
     let window = web_sys::window().expect("No global `window` exists");
     let document = window.document().expect("Should have a document on window");
-    let wrapper: Element = document.get_element_by_id(id).expect("Did not find wrapper element");
 
     // Initialize the wrapper element
-    let div = document.create_element("div").expect("Could not create div");
-    div.set_attribute("id", id).expect("Could not set wrapper id");
-    div.set_attribute("class", "cawrapper initialized").expect("Could not set wrapper class");
-    div.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
-    let br = document.create_element("br").expect("Could not create br");
-    div.append_child(&br).expect("Could not append br");
-    wrapper.replace_with_with_node_1(&div).expect("Could not initialize wrapper");
-    mem::forget(wrapper); // Has been replaced, dead DOM reference
+    wrapper.class_list().add_2("cawrapper", "initialized").expect("Could not add wrapper classes");
+    wrapper.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
+    if wrapper.children().length() == 0 {
+        let br = document.create_element("br").expect("Could not create br element");
+        if wrapper.append_child(&br).is_err() {
+            error!("Could not append newline to wrapper");
+        }
+    }
 
-    info!("Initialized #{}", id);
+    info!("Compose area initialized");
 
     ComposeArea {
         window,
         document,
-        wrapper_id: id.to_owned(),
+        wrapper,
         selection_range: None,
     }
 }
@@ -161,11 +156,6 @@ impl RangeResult {
 #[wasm_bindgen]
 impl ComposeArea {
 
-    /// Return a reference to the wrapper element.
-    fn get_wrapper(&self) -> Element {
-        self.document.get_element_by_id(&self.wrapper_id).expect("Did not find wrapper element")
-    }
-
     /// Store the current selection range.
     /// Return the stored range.
     pub fn store_selection_range(&mut self) -> RangeResult {
@@ -240,7 +230,7 @@ impl ComposeArea {
     ///
     /// See https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
     fn normalize(&self) {
-        self.get_wrapper().normalize();
+        self.wrapper.normalize();
     }
 
     /// Return the DOM selection.
@@ -251,7 +241,6 @@ impl ComposeArea {
     /// Return the last range of the selection that is within the wrapper
     /// element.
     pub fn fetch_range(&self) -> RangeResult {
-        let wrapper = self.get_wrapper();
         let selection = match self.fetch_selection() {
             Some(sel) => sel,
             None => {
@@ -266,7 +255,7 @@ impl ComposeArea {
             candidate = Some(range.clone());
             let container = range.common_ancestor_container()
                 .expect("Could not get common ancestor container for range");
-            if wrapper.contains(Some(&container)) {
+            if self.wrapper.contains(Some(&container)) {
                 return RangeResult::contained(range);
             }
         }
@@ -281,9 +270,6 @@ impl ComposeArea {
     fn insert_node(&mut self, node_ref: &Node) {
         debug!("WASM: insert_node");
 
-        // Get wrapper
-        let wrapper = self.get_wrapper();
-
         // Insert the node
         if let Some(ref range) = self.selection_range {
             range.delete_contents().expect("Could not remove selection contents");
@@ -292,14 +278,14 @@ impl ComposeArea {
             // No current selection. Append at end, unless the last element in
             // the area is a `<br>` node. This is needed because Firefox always
             // adds a trailing newline that isn't rendered.
-            let last_child_node = utils::get_last_child(&wrapper);
+            let last_child_node = utils::get_last_child(&self.wrapper);
             match last_child_node.and_then(|n| n.dyn_into::<Element>().ok()) {
                 Some(ref element) if element.tag_name() == "BR" => {
-                    wrapper.insert_before(node_ref, Some(element))
+                    self.wrapper.insert_before(node_ref, Some(element))
                         .expect("Could not insert child");
                 },
                 Some(_) | None => {
-                    wrapper.append_child(node_ref).expect("Could not append child");
+                    self.wrapper.append_child(node_ref).expect("Could not append child");
                 },
             };
         }
@@ -315,8 +301,7 @@ impl ComposeArea {
     ///
     /// Convert elements like images to alt text.
     pub fn get_text(&self, no_trim: bool) -> String {
-        let wrapper = self.get_wrapper();
-        extract_text(&wrapper, no_trim)
+        extract_text(&self.wrapper, no_trim)
     }
 }
 
@@ -325,7 +310,6 @@ mod tests {
     use super::*;
 
     use wasm_bindgen_test::*;
-    use wbg_rand::{Rng, wasm_rng};
 
     wasm_bindgen_test_configure!(run_in_browser);
 
@@ -336,22 +320,13 @@ mod tests {
 
         // Create wrapper element
         let wrapper = document.create_element("div").expect("Could not create wrapper div");
-        let id = format!(
-            "wrapper-{}",
-            wasm_rng()
-                .gen_ascii_chars()
-                .take(10)
-                .collect::<String>()
-        );
-        wrapper.set_attribute("id", &id).unwrap();
         document.body().unwrap().append_child(&wrapper).unwrap();
 
         // Bind to wrapper
-        let ca = bind_to(&id);
+        let ca = bind_to(wrapper.clone());
 
         // Make sure that no nodes are left
         if empty {
-            let wrapper = ca.get_wrapper();
             while wrapper.has_child_nodes() {
                 wrapper.remove_child(&wrapper.last_child().unwrap()).unwrap();
             }
@@ -461,7 +436,7 @@ mod tests {
             {
                 // Add child nodes
                 for child in &self.children {
-                    ca.get_wrapper().append_child(child).unwrap();
+                    ca.wrapper.append_child(child).unwrap();
                 }
 
                 // Add selection
@@ -489,7 +464,7 @@ mod tests {
                 // Insert node and verify
                 ca.store_selection_range();
                 insert_func(&mut ca, &self.node);
-                assert_eq!(ca.get_wrapper().inner_html(), self.final_html);
+                assert_eq!(ca.wrapper.inner_html(), self.final_html);
             }
         }
 
@@ -586,15 +561,14 @@ mod tests {
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
 
                 // Prepare wrapper
-                let wrapper = ca.get_wrapper();
-                wrapper.set_inner_html("<br>");
+                ca.wrapper.set_inner_html("<br>");
 
                 // Ensure that there's no selection left in the DOM
                 selection::unset_selection_range();
 
                 // Insert node and verify
                 ca.insert_image(&img.src, &img.alt, &img.cls);
-                assert_eq!(wrapper.inner_html(), format!("{}<br>", img.html()));
+                assert_eq!(ca.wrapper.inner_html(), format!("{}<br>", img.html()));
             }
 
             #[wasm_bindgen_test]
@@ -660,7 +634,7 @@ mod tests {
         fn restore_selection_range() {
             let mut ca = init(true);
             let node = text_node(&ca, "abc");
-            ca.get_wrapper().append_child(&node).unwrap();
+            ca.wrapper.append_child(&node).unwrap();
 
             // Highlight "b"
             set_selection_range(
@@ -700,7 +674,7 @@ mod tests {
         fn get_range_result() {
             let ca = init(true);
             let inner_text_node = text_node(&ca, "abc");
-            ca.get_wrapper().append_child(&inner_text_node).unwrap();
+            ca.wrapper.append_child(&inner_text_node).unwrap();
 
             // No range set
             selection::unset_selection_range();
