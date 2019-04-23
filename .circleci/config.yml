@@ -59,8 +59,8 @@ jobs:
       # Multiple caches are used to increase the chance of a cache hit.
       - restore_cache:
           keys:
-            - v1-cargo-cache-build-{{ arch }}-{{ .Branch }}
-            - v1-cargo-cache-build-{{ arch }}
+            - v2-cargo-cache-build-{{ arch }}-{{ .Branch }}
+            - v2-cargo-cache-build-{{ arch }}
 
       # Install nightly & wasm
       - run:
@@ -97,14 +97,13 @@ jobs:
 
       # Save cache
       - save_cache:
-          key: v1-cargo-cache-build-{{ arch }}-{{ .Branch }}
+          key: v2-cargo-cache-build-{{ arch }}-{{ .Branch }}
           paths:
             - target
             - /usr/local/cargo
       - save_cache:
-          key: v1-cargo-cache-build-{{ arch }}
+          key: v2-cargo-cache-build-{{ arch }}
           paths:
-            - target
             - /usr/local/cargo
 
   lint:
@@ -117,8 +116,8 @@ jobs:
       # Multiple caches are used to increase the chance of a cache hit.
       - restore_cache:
           keys:
-            - v1-cargo-cache-lint-{{ arch }}-{{ .Branch }}
-            - v1-cargo-cache-lint-{{ arch }}
+            - v2-cargo-cache-lint-{{ arch }}-{{ .Branch }}
+            - v2-cargo-cache-lint-{{ arch }}
 
       # Install nightly
       - run:
@@ -140,11 +139,11 @@ jobs:
 
       # Save cache
       - save_cache:
-          key: v1-cargo-cache-lint-{{ arch }}-{{ .Branch }}
+          key: v2-cargo-cache-lint-{{ arch }}-{{ .Branch }}
           paths:
             - /usr/local/cargo
       - save_cache:
-          key: v1-cargo-cache-lint-{{ arch }}
+          key: v2-cargo-cache-lint-{{ arch }}
           paths:
             - /usr/local/cargo
 
@@ -158,8 +157,8 @@ jobs:
       # Multiple caches are used to increase the chance of a cache hit.
       - restore_cache:
           keys:
-            - v1-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
-            - v1-cargo-cache-unittest-{{ arch }}
+            - v2-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
+            - v2-cargo-cache-unittest-{{ arch }}
 
       # Install nightly
       - run:
@@ -178,14 +177,13 @@ jobs:
 
       # Save cache
       - save_cache:
-          key: v1-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
+          key: v2-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
           paths:
             - target
             - /usr/local/cargo
       - save_cache:
-          key: v1-cargo-cache-unittest-{{ arch }}
+          key: v2-cargo-cache-unittest-{{ arch }}
           paths:
-            - target
             - /usr/local/cargo
 
   test-browser:
@@ -198,8 +196,8 @@ jobs:
       # Multiple caches are used to increase the chance of a cache hit.
       - restore_cache:
           keys:
-            - v1-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
-            - v1-cargo-cache-browsertest-{{ arch }}
+            - v2-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
+            - v2-cargo-cache-browsertest-{{ arch }}
 
       # Install nightly & wasm
       - run:
@@ -239,14 +237,13 @@ jobs:
 
       # Save cache
       - save_cache:
-          key: v1-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
+          key: v2-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
           paths:
             - target
             - /usr/local/cargo
       - save_cache:
-          key: v1-cargo-cache-browsertest-{{ arch }}
+          key: v2-cargo-cache-browsertest-{{ arch }}
           paths:
-            - target
             - /usr/local/cargo
 
   test-integration-firefox:
