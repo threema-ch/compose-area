@@ -26,7 +26,7 @@ const emojiStrFacepalm = '\ud83e\udd26\u200d\u2640\ufe0f';
 
 async function extractText(driver: WebDriver): Promise<string> {
     const text: string = await driver.executeScript(`
-        return window.wasm.extract_text(document.getElementById("wrapper"));
+        return window.composeArea.get_text();
     `);
     return text;
 }

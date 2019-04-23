@@ -3,11 +3,10 @@ import _ from 'lodash';
 import * as Benchmark from 'benchmark';
 
 // compose-area
-import * as wasm from 'compose-area';
+import {ComposeArea} from 'compose-area';
 
 // Assign modules to window object for testing purposes.
 window.Benchmark = Benchmark;
-window.wasm = wasm;
 
 // Create benchmark suite
 const suite = new Benchmark.Suite;
@@ -20,7 +19,7 @@ window.setupTest = function() {
     const testDiv = document.createElement('div');
     testDiv.id = divId;
     baseWrapper.appendChild(testDiv)
-    const composeArea = window.wasm.bind_to(testDiv);
+    const composeArea = ComposeArea.bind_to(testDiv);
     return {
         divId: divId,
         testDiv: testDiv,

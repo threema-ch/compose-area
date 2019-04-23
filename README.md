@@ -39,7 +39,7 @@ import('./index.js')
 
 ```js
 // index.js
-import * as composeArea from '@threema/compose-area';
+import * as ca from '@threema/compose-area';
 ```
 
 ### Dynamic Import (Promise)
@@ -48,7 +48,7 @@ Alternatively, import the library asynchronously:
 
 ```js
 import('@threema/compose-area')
-    .then((composeArea) => {
+    .then((ca) => {
         // Use the library
     });
 ```
@@ -56,7 +56,7 @@ import('@threema/compose-area')
 If you're in an asynchronous context, you can also use the `await` keyword.
 
 ```js
-const composeArea = await import('@threema/compose-area');
+const ca = await import('@threema/compose-area');
 ```
 
 
@@ -65,7 +65,7 @@ const composeArea = await import('@threema/compose-area');
 Next, bind to the wrapper element:
 
 ```js
-const area = composeArea.bind_to(document.getElementById('wrapper'));
+const area = ca.ComposeArea.bind_to(document.getElementById('wrapper'));
 ```
 
 Because the insertion should work even when there is no selection / focus
