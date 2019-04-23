@@ -11,16 +11,16 @@ __webpack_require__.r(__webpack_exports__);
 // Assign wasm module to window object for testing purposes.
 window.wasm = compose_area__WEBPACK_IMPORTED_MODULE_0__;
 
-// Initialize compose area
-const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__["bind_to"]('wrapper');
-window.composeArea = composeArea;
-
 // Elements
 const wrapper = document.getElementById('wrapper');
 const logDiv = document.querySelector('#log div');
 const extractedDiv = document.querySelector('#extracted div');
 const selectionDiv = document.querySelector('#selection div');
 const rawDiv = document.querySelector('#raw div');
+
+// Initialize compose area
+const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__["bind_to"](wrapper);
+window.composeArea = composeArea;
 
 // Helper functions
 

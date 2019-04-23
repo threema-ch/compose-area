@@ -73,11 +73,29 @@
 /******/ 					"__wbg_error_4bb6c2a97407129a": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__wbg_error_4bb6c2a97407129a"](p0i32,p1i32);
 /******/ 					},
+/******/ 					"__widl_f_debug_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_debug_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_error_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_error_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_info_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_info_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_log_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_log_1_"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_warn_1_": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_warn_1_"](p0i32);
+/******/ 					},
 /******/ 					"__widl_instanceof_Window": function(p0i32) {
 /******/ 						return installedModules[4].exports["__widl_instanceof_Window"](p0i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_CharacterData": function(p0i32) {
 /******/ 						return installedModules[4].exports["__widl_instanceof_CharacterData"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_add_2_DOMTokenList": function(p0i32,p1i32,p2i32,p3i32,p4i32,p5i32) {
+/******/ 						return installedModules[4].exports["__widl_f_add_2_DOMTokenList"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
 /******/ 					},
 /******/ 					"__widl_f_create_element_Document": function(p0i32,p1i32,p2i32,p3i32) {
 /******/ 						return installedModules[4].exports["__widl_f_create_element_Document"](p0i32,p1i32,p2i32,p3i32);
@@ -87,9 +105,6 @@
 /******/ 					},
 /******/ 					"__widl_f_create_text_node_Document": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["__widl_f_create_text_node_Document"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__widl_f_get_element_by_id_Document": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_get_element_by_id_Document"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_Element": function(p0i32) {
 /******/ 						return installedModules[4].exports["__widl_instanceof_Element"](p0i32);
@@ -103,8 +118,14 @@
 /******/ 					"__widl_f_id_Element": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_id_Element"](p0i32,p1i32);
 /******/ 					},
-/******/ 					"__widl_f_replace_with_with_node_1_Element": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_replace_with_with_node_1_Element"](p0i32,p1i32,p2i32);
+/******/ 					"__widl_f_class_list_Element": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_class_list_Element"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_children_Element": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_children_Element"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_length_HTMLCollection": function(p0i32) {
+/******/ 						return installedModules[4].exports["__widl_f_length_HTMLCollection"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_alt_HTMLImageElement": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__widl_f_alt_HTMLImageElement"](p0i32,p1i32);
@@ -204,21 +225,6 @@
 /******/ 					},
 /******/ 					"__widl_f_document_Window": function(p0i32) {
 /******/ 						return installedModules[4].exports["__widl_f_document_Window"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_debug_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_debug_1_"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_error_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_error_1_"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_info_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_info_1_"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_log_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_log_1_"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_warn_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_warn_1_"](p0i32);
 /******/ 					},
 /******/ 					"__wbg_newnoargs_b4526aa2a6db81de": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["__wbg_newnoargs_b4526aa2a6db81de"](p0i32,p1i32);
@@ -330,7 +336,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"92b597d6447ad5f037f9"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"e30c62068330051e4434"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
