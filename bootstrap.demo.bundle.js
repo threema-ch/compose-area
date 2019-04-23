@@ -56,187 +56,187 @@
 /******/ 			return {
 /******/ 				"./compose_area": {
 /******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
-/******/ 						return installedModules[4].exports["__wbindgen_object_drop_ref"](p0i32);
+/******/ 						return installedModules[4].exports["i"](p0i32);
 /******/ 					},
 /******/ 					"__wbindgen_object_clone_ref": function(p0i32) {
-/******/ 						return installedModules[4].exports["__wbindgen_object_clone_ref"](p0i32);
+/******/ 						return installedModules[4].exports["h"](p0i32);
 /******/ 					},
 /******/ 					"__wbindgen_string_new": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__wbindgen_string_new"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["j"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbg_new_59cb74e423758ede": function() {
-/******/ 						return installedModules[4].exports["__wbg_new_59cb74e423758ede"]();
+/******/ 						return installedModules[4].exports["d"]();
 /******/ 					},
 /******/ 					"__wbg_stack_558ba5917b466edd": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__wbg_stack_558ba5917b466edd"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["f"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbg_error_4bb6c2a97407129a": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__wbg_error_4bb6c2a97407129a"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["c"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_debug_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_debug_1_"](p0i32);
+/******/ 						return installedModules[4].exports["z"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_error_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_error_1_"](p0i32);
+/******/ 						return installedModules[4].exports["E"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_info_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_info_1_"](p0i32);
+/******/ 						return installedModules[4].exports["J"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_log_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_log_1_"](p0i32);
+/******/ 						return installedModules[4].exports["P"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_warn_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_warn_1_"](p0i32);
+/******/ 						return installedModules[4].exports["gb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_Window": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_instanceof_Window"](p0i32);
+/******/ 						return installedModules[4].exports["jb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_CharacterData": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_instanceof_CharacterData"](p0i32);
+/******/ 						return installedModules[4].exports["hb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_add_2_DOMTokenList": function(p0i32,p1i32,p2i32,p3i32,p4i32,p5i32) {
-/******/ 						return installedModules[4].exports["__widl_f_add_2_DOMTokenList"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
+/******/ 						return installedModules[4].exports["l"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
 /******/ 					},
 /******/ 					"__widl_f_create_element_Document": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["__widl_f_create_element_Document"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["w"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_create_range_Document": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_create_range_Document"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["x"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_create_text_node_Document": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_create_text_node_Document"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["y"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_Element": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_instanceof_Element"](p0i32);
+/******/ 						return installedModules[4].exports["ib"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_set_attribute_Element": function(p0i32,p1i32,p2i32,p3i32,p4i32,p5i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_attribute_Element"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
+/******/ 						return installedModules[4].exports["W"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
 /******/ 					},
 /******/ 					"__widl_f_tag_name_Element": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_tag_name_Element"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["fb"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_id_Element": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_id_Element"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["I"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_class_list_Element": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_class_list_Element"](p0i32);
+/******/ 						return installedModules[4].exports["r"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_children_Element": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_children_Element"](p0i32);
+/******/ 						return installedModules[4].exports["q"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_length_HTMLCollection": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_length_HTMLCollection"](p0i32);
+/******/ 						return installedModules[4].exports["N"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_alt_HTMLImageElement": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_alt_HTMLImageElement"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["n"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_append_child_Node": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_append_child_Node"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["o"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_contains_Node": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_contains_Node"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["v"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_insert_before_Node": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["__widl_f_insert_before_Node"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["K"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_normalize_Node": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_normalize_Node"](p0i32);
+/******/ 						return installedModules[4].exports["T"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_node_type_Node": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_node_type_Node"](p0i32);
+/******/ 						return installedModules[4].exports["R"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_node_name_Node": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_node_name_Node"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["Q"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_child_nodes_Node": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_child_nodes_Node"](p0i32);
+/******/ 						return installedModules[4].exports["p"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_node_value_Node": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_node_value_Node"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["S"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_item_NodeList": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_item_NodeList"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["M"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_get_NodeList": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_get_NodeList"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["F"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_length_NodeList": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_length_NodeList"](p0i32);
+/******/ 						return installedModules[4].exports["O"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_clone_range_Range": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_clone_range_Range"](p0i32);
+/******/ 						return installedModules[4].exports["s"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_collapse_with_to_start_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_collapse_with_to_start_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["t"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_delete_contents_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_delete_contents_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["A"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_insert_node_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_insert_node_Range"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["L"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_set_end_Range": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_end_Range"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["X"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_set_end_after_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_end_after_Range"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["Y"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_set_end_before_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_end_before_Range"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["Z"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_set_start_Range": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_start_Range"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["ab"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_set_start_after_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_start_after_Range"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["bb"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_set_start_before_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_set_start_before_Range"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["cb"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_start_container_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_start_container_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["db"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_start_offset_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_start_offset_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["eb"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_end_container_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_end_container_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["C"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_end_offset_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_end_offset_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["D"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_common_ancestor_container_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_common_ancestor_container_Range"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["u"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_add_range_Selection": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_add_range_Selection"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["m"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_get_range_at_Selection": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__widl_f_get_range_at_Selection"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["G"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_remove_all_ranges_Selection": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_remove_all_ranges_Selection"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["V"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_range_count_Selection": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_range_count_Selection"](p0i32);
+/******/ 						return installedModules[4].exports["U"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_get_selection_Window": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__widl_f_get_selection_Window"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["H"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_document_Window": function(p0i32) {
-/******/ 						return installedModules[4].exports["__widl_f_document_Window"](p0i32);
+/******/ 						return installedModules[4].exports["B"](p0i32);
 /******/ 					},
 /******/ 					"__wbg_newnoargs_b4526aa2a6db81de": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__wbg_newnoargs_b4526aa2a6db81de"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["e"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbg_call_a7a8823c404228ab": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["__wbg_call_a7a8823c404228ab"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["b"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__wbindgen_debug_string": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__wbindgen_debug_string"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["g"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["__wbindgen_throw"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["k"](p0i32,p1i32);
 /******/ 					}
 /******/ 				}
 /******/ 			};
@@ -336,7 +336,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"e30c62068330051e4434"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"5db791bbc400d3eab10a"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {

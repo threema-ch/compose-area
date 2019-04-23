@@ -19,7 +19,6 @@ __webpack_require__.r(__webpack_exports__);
 
 // Assign modules to window object for testing purposes.
 window.Benchmark = benchmark__WEBPACK_IMPORTED_MODULE_1__;
-window.wasm = compose_area__WEBPACK_IMPORTED_MODULE_2__;
 
 // Create benchmark suite
 const suite = new benchmark__WEBPACK_IMPORTED_MODULE_1__["Suite"];
@@ -32,7 +31,7 @@ window.setupTest = function() {
     const testDiv = document.createElement('div');
     testDiv.id = divId;
     baseWrapper.appendChild(testDiv)
-    const composeArea = window.wasm.bind_to(testDiv);
+    const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_2__[/* ComposeArea */ "a"].bind_to(testDiv);
     return {
         divId: divId,
         testDiv: testDiv,

@@ -8,9 +8,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var compose_area__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 
 
-// Assign wasm module to window object for testing purposes.
-window.wasm = compose_area__WEBPACK_IMPORTED_MODULE_0__;
-
 // Elements
 const wrapper = document.getElementById('wrapper');
 const logDiv = document.querySelector('#log div');
@@ -19,7 +16,7 @@ const selectionDiv = document.querySelector('#selection div');
 const rawDiv = document.querySelector('#raw div');
 
 // Initialize compose area
-const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__["bind_to"](wrapper);
+const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__[/* ComposeArea */ "a"].bind_to(wrapper);
 window.composeArea = composeArea;
 
 // Helper functions
