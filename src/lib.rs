@@ -47,35 +47,6 @@ pub enum Direction {
     After,
 }
 
-/// Initialize a new compose area wrapper.
-#[wasm_bindgen]
-pub fn bind_to(wrapper: Element) -> ComposeArea {
-    utils::set_panic_hook();
-    utils::init_log();
-
-    let window = web_sys::window().expect("No global `window` exists");
-    let document = window.document().expect("Should have a document on window");
-
-    // Initialize the wrapper element
-    wrapper.class_list().add_2("cawrapper", "initialized").expect("Could not add wrapper classes");
-    wrapper.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
-    if wrapper.children().length() == 0 {
-        let br = document.create_element("br").expect("Could not create br element");
-        if wrapper.append_child(&br).is_err() {
-            error!("Could not append newline to wrapper");
-        }
-    }
-
-    info!("Compose area initialized");
-
-    ComposeArea {
-        window,
-        document,
-        wrapper,
-        selection_range: None,
-    }
-}
-
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct RangeResult {
@@ -155,6 +126,34 @@ impl RangeResult {
 
 #[wasm_bindgen]
 impl ComposeArea {
+
+    /// Initialize a new compose area wrapper.
+    pub fn bind_to(wrapper: Element) -> Self {
+        utils::set_panic_hook();
+        utils::init_log();
+
+        let window = web_sys::window().expect("No global `window` exists");
+        let document = window.document().expect("Should have a document on window");
+
+        // Initialize the wrapper element
+        wrapper.class_list().add_2("cawrapper", "initialized").expect("Could not add wrapper classes");
+        wrapper.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
+        if wrapper.children().length() == 0 {
+            let br = document.create_element("br").expect("Could not create br element");
+            if wrapper.append_child(&br).is_err() {
+                error!("Could not append newline to wrapper");
+            }
+        }
+
+        info!("Compose area initialized");
+
+        Self {
+            window,
+            document,
+            wrapper,
+            selection_range: None,
+        }
+    }
 
     /// Store the current selection range.
     /// Return the stored range.
