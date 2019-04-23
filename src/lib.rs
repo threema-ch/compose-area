@@ -322,7 +322,7 @@ mod tests {
         document.body().unwrap().append_child(&wrapper).unwrap();
 
         // Bind to wrapper
-        let ca = bind_to(wrapper.clone());
+        let ca = ComposeArea::bind_to(wrapper.clone());
 
         // Make sure that no nodes are left
         if empty {
