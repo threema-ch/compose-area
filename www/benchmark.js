@@ -20,7 +20,7 @@ window.setupTest = function() {
     const testDiv = document.createElement('div');
     testDiv.id = divId;
     baseWrapper.appendChild(testDiv)
-    const composeArea = window.wasm.bind_to(divId);
+    const composeArea = window.wasm.bind_to(testDiv);
     return {
         divId: divId,
         testDiv: testDiv,
@@ -75,13 +75,13 @@ suite.add('3. Extract text from compose area', {
         teardownTest(ctx.divId);
     },
 });
-suite.add('4. Get selection range', {
+suite.add('4. Fetch selection range', {
     setup: () => {
         const ctx = setupTest();
         ctx.composeArea.insert_text('hello world');
     },
     fn: () => {
-        window.lastPos = ctx.composeArea.dom_get_range();
+        window.lastPos = ctx.composeArea.fetch_range();
     },
     teardown: () => {
         teardownTest(ctx.divId);

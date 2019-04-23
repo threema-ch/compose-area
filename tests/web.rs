@@ -21,7 +21,8 @@ fn test_bind_to() {
     let wrapper_before = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_before.outer_html(), format!("<div id=\"{}\"></div>", WRAPPER_ID));
 
-    let _area = compose_area::bind_to(WRAPPER_ID);
+    let wrapper = document.get_element_by_id(WRAPPER_ID).unwrap();
+    compose_area::bind_to(wrapper);
 
     // Initialized wrapper
     let wrapper_after = helpers::get_wrapper(&document, WRAPPER_ID);
