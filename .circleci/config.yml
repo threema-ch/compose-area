@@ -198,8 +198,8 @@ jobs:
       # Multiple caches are used to increase the chance of a cache hit.
       - restore_cache:
           keys:
-            - v1-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
-            - v1-cargo-cache-browsertest-{{ arch }}
+            - v2-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
+            - v2-cargo-cache-browsertest-{{ arch }}
 
       # Install nightly & wasm
       - run:
@@ -238,15 +238,14 @@ jobs:
           command: PATH=$(pwd)/firefox:$PATH wasm-pack test --headless --firefox
 
       # Save cache
+      # Note: Ignore target dir, since it tends to get huge over time!
       - save_cache:
-          key: v1-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
+          key: v2-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
           paths:
-            - target
             - /usr/local/cargo
       - save_cache:
-          key: v1-cargo-cache-browsertest-{{ arch }}
+          key: v2-cargo-cache-browsertest-{{ arch }}
           paths:
-            - target
             - /usr/local/cargo
 
   test-integration-firefox:
