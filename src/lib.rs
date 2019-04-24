@@ -299,8 +299,8 @@ impl ComposeArea {
     /// Extract the text in the compose area.
     ///
     /// Convert elements like images to alt text.
-    pub fn get_text(&self, no_trim: bool) -> String {
-        extract_text(&self.wrapper, no_trim)
+    pub fn get_text(&self, no_trim: Option<bool>) -> String {
+        extract_text(&self.wrapper, no_trim.unwrap_or(false))
     }
 }
 
