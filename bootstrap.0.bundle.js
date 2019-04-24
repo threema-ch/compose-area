@@ -154,6 +154,10 @@ if (typeof cachedTextEncoder.encodeInto === 'function') {
     };
 }
 
+function isLikeNone(x) {
+    return x === undefined || x === null;
+}
+
 let stack_pointer = 32;
 
 function addBorrowedObject(obj) {
@@ -368,10 +372,6 @@ function __widl_f_node_name_Node(ret, arg0) {
 
 function __widl_f_child_nodes_Node(arg0) {
     return addHeapObject(getObject(arg0).childNodes);
-}
-
-function isLikeNone(x) {
-    return x === undefined || x === null;
 }
 
 function __widl_f_node_value_Node(ret, arg0) {
@@ -759,12 +759,12 @@ class ComposeArea {
     * Extract the text in the compose area.
     *
     * Convert elements like images to alt text.
-    * @param {boolean} no_trim
+    * @param {boolean | undefined} no_trim
     * @returns {string}
     */
     get_text(no_trim) {
         const retptr = globalArgumentPtr();
-        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_get_text */ "i"](retptr, this.ptr, no_trim);
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_get_text */ "i"](retptr, this.ptr, isLikeNone(no_trim) ? 0xFFFFFF : no_trim ? 1 : 0);
         const mem = getUint32Memory();
         const rustptr = mem[retptr / 4];
         const rustlen = mem[retptr / 4 + 1];
