@@ -304,6 +304,15 @@ impl ComposeArea {
             e.focus().unwrap_or_else(|_| error!("Could not focus compose area"));
         }
     }
+
+    /// Clear the contents of the compose area.
+    pub fn clear(&mut self) {
+        while self.wrapper.has_child_nodes() {
+            let last_child = self.wrapper.last_child().expect("Could not find last child");
+            self.wrapper.remove_child(&last_child).expect("Could not remove last child");
+        }
+        self.selection_range = None;
+    }
 }
 
 #[cfg(test)]
@@ -687,6 +696,26 @@ mod tests {
             let range_result = ca.fetch_range();
             assert!(range_result.range.is_some());
             assert!(!range_result.outside);
+        }
+    }
+
+    mod clear {
+        use super::*;
+
+        #[wasm_bindgen_test]
+        fn clear_contents() {
+            // Init, no child nodes
+            let mut ca = init();
+            assert_eq!(ca.wrapper.child_nodes().length(), 0);
+
+            // Append some child nodes
+            ca.wrapper.append_child(&text_node(&ca, "abc")).unwrap();
+            ca.wrapper.append_child(&element_node(&ca, "br")).unwrap();
+            assert_eq!(ca.wrapper.child_nodes().length(), 2);
+
+            // Clear
+            ca.clear();
+            assert_eq!(ca.wrapper.child_nodes().length(), 0);
         }
     }
 
