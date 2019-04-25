@@ -13,7 +13,7 @@ mod utils;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, Selection, Range};
+use web_sys::{self, Element, Node, HtmlElement, Selection, Range};
 
 use crate::selection::{Position, set_selection_range};
 use crate::extract::extract_text;
@@ -295,6 +295,14 @@ impl ComposeArea {
     /// Convert elements like images to alt text.
     pub fn get_text(&self, no_trim: Option<bool>) -> String {
         extract_text(&self.wrapper, no_trim.unwrap_or(false))
+    }
+
+    /// Focus the compose area.
+    pub fn focus(&self) {
+        self.restore_selection_range();
+        if let Some(e) = self.wrapper.dyn_ref::<HtmlElement>() {
+            e.focus().unwrap_or_else(|_| error!("Could not focus compose area"));
+        }
     }
 }
 

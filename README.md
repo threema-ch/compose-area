@@ -110,6 +110,12 @@ wrapper.addEventListener('paste', (e) => {
 });
 ```
 
+To focus the compose area programmatically:
+
+```js
+area.focus();
+```
+
 
 ## Dev Setup
 

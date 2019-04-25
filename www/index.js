@@ -93,3 +93,4 @@ document.getElementById('clearselection').addEventListener('click', (e) => {
     sel.removeAllRanges();
     showState();
 });
+document.getElementById('focus').addEventListener('click', (e) => composeArea.focus());
