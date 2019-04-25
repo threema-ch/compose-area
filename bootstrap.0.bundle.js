@@ -78,8 +78,8 @@ let cachedTextDecoder = new TextDecoder('utf-8');
 
 let cachegetUint8Memory = null;
 function getUint8Memory() {
-    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "q"].buffer) {
-        cachegetUint8Memory = new Uint8Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "q"].buffer);
+    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "r"].buffer) {
+        cachegetUint8Memory = new Uint8Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "r"].buffer);
     }
     return cachegetUint8Memory;
 }
@@ -98,8 +98,8 @@ function globalArgumentPtr() {
 
 let cachegetUint32Memory = null;
 function getUint32Memory() {
-    if (cachegetUint32Memory === null || cachegetUint32Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "q"].buffer) {
-        cachegetUint32Memory = new Uint32Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "q"].buffer);
+    if (cachegetUint32Memory === null || cachegetUint32Memory.buffer !== _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "r"].buffer) {
+        cachegetUint32Memory = new Uint32Array(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "r"].buffer);
     }
     return cachegetUint32Memory;
 }
@@ -157,16 +157,16 @@ if (typeof cachedTextEncoder.encodeInto === 'function') {
     };
 }
 
-function isLikeNone(x) {
-    return x === undefined || x === null;
-}
-
 let stack_pointer = 32;
 
 function addBorrowedObject(obj) {
     if (stack_pointer == 1) throw new Error('out of js stack');
     heap[--stack_pointer] = obj;
     return stack_pointer;
+}
+
+function isLikeNone(x) {
+    return x === undefined || x === null;
 }
 /**
 * Process a DOM node recursively and extract text.
@@ -179,7 +179,7 @@ function addBorrowedObject(obj) {
 function extract_text(root_element, no_trim) {
     const retptr = globalArgumentPtr();
     try {
-        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* extract_text */ "p"](retptr, addBorrowedObject(root_element), no_trim);
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* extract_text */ "q"](retptr, addBorrowedObject(root_element), no_trim);
         const mem = getUint32Memory();
         const rustptr = mem[retptr / 4];
         const rustlen = mem[retptr / 4 + 1];
@@ -717,7 +717,7 @@ class ComposeArea {
     * @returns {RangeResult}
     */
     store_selection_range() {
-        return RangeResult.__wrap(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_store_selection_range */ "o"](this.ptr));
+        return RangeResult.__wrap(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_store_selection_range */ "p"](this.ptr));
     }
     /**
     * Restore the stored selection range.
@@ -727,7 +727,7 @@ class ComposeArea {
     * @returns {boolean}
     */
     restore_selection_range() {
-        return (_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_restore_selection_range */ "n"](this.ptr)) !== 0;
+        return (_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_restore_selection_range */ "o"](this.ptr)) !== 0;
     }
     /**
     * Insert an image at the current caret position.
@@ -763,10 +763,26 @@ class ComposeArea {
         const ptr0 = passStringToWasm(text);
         const len0 = WASM_VECTOR_LEN;
         try {
-            return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_text */ "m"](this.ptr, ptr0, len0);
+            return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_text */ "n"](this.ptr, ptr0, len0);
 
         } finally {
             _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_free */ "c"](ptr0, len0 * 1);
+
+        }
+
+    }
+    /**
+    * Insert the specified node at the previously stored selection range.
+    * Set the caret position to right after the newly inserted node.
+    * @param {any} node_ref
+    * @returns {void}
+    */
+    insert_node(node_ref) {
+        try {
+            return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_node */ "m"](this.ptr, addBorrowedObject(node_ref));
+
+        } finally {
+            heap[stack_pointer++] = undefined;
 
         }
 
@@ -841,7 +857,7 @@ class RangeResult {
     */
     to_string() {
         const retptr = globalArgumentPtr();
-        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* rangeresult_to_string */ "r"](retptr, this.ptr);
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* rangeresult_to_string */ "s"](retptr, this.ptr);
         const mem = getUint32Memory();
         const rustptr = mem[retptr / 4];
         const rustlen = mem[retptr / 4 + 1];
@@ -857,7 +873,7 @@ class RangeResult {
     */
     to_string_compact() {
         const retptr = globalArgumentPtr();
-        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* rangeresult_to_string_compact */ "s"](retptr, this.ptr);
+        _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* rangeresult_to_string_compact */ "t"](retptr, this.ptr);
         const mem = getUint32Memory();
         const rustptr = mem[retptr / 4];
         const rustlen = mem[retptr / 4 + 1];
@@ -899,7 +915,7 @@ module.exports = wasmExports;
 
 
 // exec wasm module
-wasmExports["t"]()
+wasmExports["u"]()
 
 /***/ })
 
