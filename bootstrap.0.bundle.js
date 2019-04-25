@@ -157,6 +157,20 @@ if (typeof cachedTextEncoder.encodeInto === 'function') {
     };
 }
 
+function getObject(idx) { return heap[idx]; }
+
+function dropObject(idx) {
+    if (idx < 36) return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+}
+
+function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
+}
+
 let stack_pointer = 32;
 
 function addBorrowedObject(obj) {
@@ -208,8 +222,6 @@ function __wbg_error_4bb6c2a97407129a(arg0, arg1) {
 function __wbg_new_59cb74e423758ede() {
     return addHeapObject(new Error());
 }
-
-function getObject(idx) { return heap[idx]; }
 
 function __wbg_stack_558ba5917b466edd(ret, arg0) {
 
@@ -731,10 +743,12 @@ class ComposeArea {
     }
     /**
     * Insert an image at the current caret position.
+    *
+    * Return a reference to the inserted image element.
     * @param {string} src
     * @param {string} alt
     * @param {string} cls
-    * @returns {void}
+    * @returns {any}
     */
     insert_image(src, alt, cls) {
         const ptr0 = passStringToWasm(src);
@@ -744,7 +758,7 @@ class ComposeArea {
         const ptr2 = passStringToWasm(cls);
         const len2 = WASM_VECTOR_LEN;
         try {
-            return _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_image */ "l"](this.ptr, ptr0, len0, ptr1, len1, ptr2, len2);
+            return takeObject(_compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* composearea_insert_image */ "l"](this.ptr, ptr0, len0, ptr1, len1, ptr2, len2));
 
         } finally {
             _compose_area_bg__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_free */ "c"](ptr0, len0 * 1);
@@ -887,12 +901,6 @@ class RangeResult {
 
 function __wbindgen_object_clone_ref(idx) {
     return addHeapObject(getObject(idx));
-}
-
-function dropObject(idx) {
-    if (idx < 36) return;
-    heap[idx] = heap_next;
-    heap_next = idx;
 }
 
 function __wbindgen_object_drop_ref(i) { dropObject(i); }

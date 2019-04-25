@@ -88,7 +88,12 @@ document.addEventListener('selectionchange', (e) => {
 function insertEmoji(e) {
     const img = e.target.nodeName === 'IMG' ? e.target : e.target.children[0];
     log(`⚙️ insert_image`);
-    composeArea.insert_image(img.src, img.alt, 'emoji');
+    const elem = composeArea.insert_image(img.src, img.alt, 'emoji');
+
+    // Ensure that emoji cannot be dragged
+    elem.draggable = false;
+    elem.ondragstart = (e) => e.preventDefault();
+
     showState();
 }
 document.getElementById('tongue').addEventListener('click', insertEmoji);
