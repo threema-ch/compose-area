@@ -138,12 +138,6 @@ impl ComposeArea {
         // Initialize the wrapper element
         wrapper.class_list().add_2("cawrapper", "initialized").expect("Could not add wrapper classes");
         wrapper.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
-        if wrapper.children().length() == 0 {
-            let br = document.create_element("br").expect("Could not create br element");
-            if wrapper.append_child(&br).is_err() {
-                error!("Could not append newline to wrapper");
-            }
-        }
 
         info!("Compose area initialized");
 
@@ -312,7 +306,7 @@ mod tests {
 
     wasm_bindgen_test_configure!(run_in_browser);
 
-    fn init(empty: bool) -> ComposeArea {
+    fn init() -> ComposeArea {
         // Get references
         let window = web_sys::window().expect("No global `window` exists");
         let document = window.document().expect("Should have a document on window");
@@ -323,13 +317,6 @@ mod tests {
 
         // Bind to wrapper
         let ca = ComposeArea::bind_to(wrapper.clone());
-
-        // Make sure that no nodes are left
-        if empty {
-            while wrapper.has_child_nodes() {
-                wrapper.remove_child(&wrapper.last_child().unwrap()).unwrap();
-            }
-        }
 
         ca
     }
@@ -488,7 +475,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn at_end() {
-                let mut ca = init(true);
+                let mut ca = init();
                 InsertNodeTest {
                     children: vec![text_node(&ca, "hello ")],
                     selection_start: PositionByIndex::after(0),
@@ -500,7 +487,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn in_the_middle() {
-                let mut ca = init(true);
+                let mut ca = init();
                 InsertNodeTest {
                     children: vec![text_node(&ca, "ab")],
                     selection_start: PositionByIndex::offset(0, 1),
@@ -512,7 +499,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn replace_text() {
-                let mut ca = init(true);
+                let mut ca = init();
                 InsertNodeTest {
                     children: vec![text_node(&ca, "abcd")],
                     selection_start: PositionByIndex::offset(0, 1),
@@ -524,7 +511,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn replace_nodes() {
-                let mut ca = init(true);
+                let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
                     children: vec![text_node(&ca, "ab"), img.as_node(&ca)],
@@ -541,7 +528,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn at_end() {
-                let mut ca = init(true);
+                let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
                     children: vec![text_node(&ca, "hi ")],
@@ -556,7 +543,7 @@ mod tests {
             /// before that trailing newline.
             #[wasm_bindgen_test]
             fn at_end_after_br() {
-                let mut ca = init(true);
+                let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
 
                 // Prepare wrapper
@@ -572,7 +559,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn split_text() {
-                let mut ca = init(true);
+                let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
                     children: vec![text_node(&ca, "bonjour")],
@@ -585,7 +572,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn between_nodes_br() {
-                let mut ca = init(true);
+                let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 InsertNodeTest {
                     children: vec![
@@ -602,7 +589,7 @@ mod tests {
 
             #[wasm_bindgen_test]
             fn between_nodes_div() {
-                let mut ca = init(true);
+                let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
                 let div_a = {
                     let div = element_node(&ca, "div");
@@ -631,7 +618,7 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn restore_selection_range() {
-            let mut ca = init(true);
+            let mut ca = init();
             let node = text_node(&ca, "abc");
             ca.wrapper.append_child(&node).unwrap();
 
@@ -671,7 +658,7 @@ mod tests {
 
         #[wasm_bindgen_test]
         fn get_range_result() {
-            let ca = init(true);
+            let ca = init();
             let inner_text_node = text_node(&ca, "abc");
             ca.wrapper.append_child(&inner_text_node).unwrap();
 
