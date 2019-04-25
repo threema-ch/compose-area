@@ -80,19 +80,19 @@
 /******/ 						return installedModules[4].exports["D"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_info_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["I"](p0i32);
+/******/ 						return installedModules[4].exports["J"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_log_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["N"](p0i32);
+/******/ 						return installedModules[4].exports["O"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_warn_1_": function(p0i32) {
-/******/ 						return installedModules[4].exports["eb"](p0i32);
+/******/ 						return installedModules[4].exports["fb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_Window": function(p0i32) {
-/******/ 						return installedModules[4].exports["hb"](p0i32);
+/******/ 						return installedModules[4].exports["jb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_CharacterData": function(p0i32) {
-/******/ 						return installedModules[4].exports["fb"](p0i32);
+/******/ 						return installedModules[4].exports["gb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_add_2_DOMTokenList": function(p0i32,p1i32,p2i32,p3i32,p4i32,p5i32) {
 /******/ 						return installedModules[4].exports["l"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
@@ -107,19 +107,25 @@
 /******/ 						return installedModules[4].exports["x"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_instanceof_Element": function(p0i32) {
-/******/ 						return installedModules[4].exports["gb"](p0i32);
+/******/ 						return installedModules[4].exports["hb"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_set_attribute_Element": function(p0i32,p1i32,p2i32,p3i32,p4i32,p5i32) {
-/******/ 						return installedModules[4].exports["U"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
+/******/ 						return installedModules[4].exports["V"](p0i32,p1i32,p2i32,p3i32,p4i32,p5i32);
 /******/ 					},
 /******/ 					"__widl_f_tag_name_Element": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["db"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["eb"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_id_Element": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["H"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["I"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_class_list_Element": function(p0i32) {
 /******/ 						return installedModules[4].exports["q"](p0i32);
+/******/ 					},
+/******/ 					"__widl_instanceof_HTMLElement": function(p0i32) {
+/******/ 						return installedModules[4].exports["ib"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_focus_HTMLElement": function(p0i32,p1i32) {
+/******/ 						return installedModules[4].exports["E"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_alt_HTMLImageElement": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["n"](p0i32,p1i32);
@@ -131,31 +137,31 @@
 /******/ 						return installedModules[4].exports["u"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_insert_before_Node": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["J"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["K"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_normalize_Node": function(p0i32) {
-/******/ 						return installedModules[4].exports["R"](p0i32);
+/******/ 						return installedModules[4].exports["S"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_node_type_Node": function(p0i32) {
-/******/ 						return installedModules[4].exports["P"](p0i32);
+/******/ 						return installedModules[4].exports["Q"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_node_name_Node": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["O"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["P"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_child_nodes_Node": function(p0i32) {
 /******/ 						return installedModules[4].exports["p"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_node_value_Node": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["Q"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["R"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_item_NodeList": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["L"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["M"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_get_NodeList": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["E"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["F"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_length_NodeList": function(p0i32) {
-/******/ 						return installedModules[4].exports["M"](p0i32);
+/******/ 						return installedModules[4].exports["N"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_clone_range_Range": function(p0i32) {
 /******/ 						return installedModules[4].exports["r"](p0i32);
@@ -167,31 +173,31 @@
 /******/ 						return installedModules[4].exports["z"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_insert_node_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["K"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["L"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_set_end_Range": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["V"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["W"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_set_end_after_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["W"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__widl_f_set_end_before_Range": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["X"](p0i32,p1i32,p2i32);
 /******/ 					},
+/******/ 					"__widl_f_set_end_before_Range": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["Y"](p0i32,p1i32,p2i32);
+/******/ 					},
 /******/ 					"__widl_f_set_start_Range": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules[4].exports["Y"](p0i32,p1i32,p2i32,p3i32);
+/******/ 						return installedModules[4].exports["Z"](p0i32,p1i32,p2i32,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_set_start_after_Range": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["Z"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__widl_f_set_start_before_Range": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[4].exports["ab"](p0i32,p1i32,p2i32);
 /******/ 					},
+/******/ 					"__widl_f_set_start_before_Range": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[4].exports["bb"](p0i32,p1i32,p2i32);
+/******/ 					},
 /******/ 					"__widl_f_start_container_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["bb"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["cb"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_start_offset_Range": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["cb"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["db"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_end_container_Range": function(p0i32,p1i32) {
 /******/ 						return installedModules[4].exports["B"](p0i32,p1i32);
@@ -206,16 +212,16 @@
 /******/ 						return installedModules[4].exports["m"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_get_range_at_Selection": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules[4].exports["F"](p0i32,p1i32,p2i32);
+/******/ 						return installedModules[4].exports["G"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__widl_f_remove_all_ranges_Selection": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["T"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["U"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_range_count_Selection": function(p0i32) {
-/******/ 						return installedModules[4].exports["S"](p0i32);
+/******/ 						return installedModules[4].exports["T"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_get_selection_Window": function(p0i32,p1i32) {
-/******/ 						return installedModules[4].exports["G"](p0i32,p1i32);
+/******/ 						return installedModules[4].exports["H"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__widl_f_document_Window": function(p0i32) {
 /******/ 						return installedModules[4].exports["A"](p0i32);
@@ -330,7 +336,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"eb1127af5c21970b8338"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"5":"05d08d8b6eeca81b5316"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
