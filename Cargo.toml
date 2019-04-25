@@ -46,6 +46,7 @@ features = [
     "Range",
     "Selection",
     "Window",
+    "HtmlElement",
     "HtmlImageElement",
     "CharacterData",
     "DomTokenList",
