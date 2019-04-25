@@ -219,6 +219,39 @@ impl ComposeArea {
         self.insert_node(text_node.unchecked_ref());
     }
 
+    /// Insert the specified node at the previously stored selection range.
+    /// Set the caret position to right after the newly inserted node.
+    pub fn insert_node(&mut self, node_ref: &Node) {
+        debug!("WASM: insert_node");
+
+        // Insert the node
+        if let Some(ref range) = self.selection_range {
+            range.delete_contents().expect("Could not remove selection contents");
+            range.insert_node(node_ref).expect("Could not insert node");
+        } else {
+            // No current selection. Append at end, unless the last element in
+            // the area is a `<br>` node. This is needed because Firefox always
+            // adds a trailing newline that isn't rendered.
+            let last_child_node = utils::get_last_child(&self.wrapper);
+            match last_child_node.and_then(|n| n.dyn_into::<Element>().ok()) {
+                Some(ref element) if element.tag_name() == "BR" => {
+                    self.wrapper.insert_before(node_ref, Some(element))
+                        .expect("Could not insert child");
+                },
+                Some(_) | None => {
+                    self.wrapper.append_child(node_ref).expect("Could not append child");
+                },
+            };
+        }
+
+        // Update selection
+        self.selection_range = set_selection_range(&Position::After(node_ref), None);
+
+        // Normalize elements
+        self.normalize();
+    }
+
+
     /// Normalize the contents of the wrapper element.
     ///
     /// See https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
@@ -256,38 +289,6 @@ impl ComposeArea {
             Some(range) => RangeResult::outside(range),
             None => RangeResult::none(),
         }
-    }
-
-    /// Insert the specified node at the previously stored selection range.
-    /// Set the caret position to right after the newly inserted node.
-    fn insert_node(&mut self, node_ref: &Node) {
-        debug!("WASM: insert_node");
-
-        // Insert the node
-        if let Some(ref range) = self.selection_range {
-            range.delete_contents().expect("Could not remove selection contents");
-            range.insert_node(node_ref).expect("Could not insert node");
-        } else {
-            // No current selection. Append at end, unless the last element in
-            // the area is a `<br>` node. This is needed because Firefox always
-            // adds a trailing newline that isn't rendered.
-            let last_child_node = utils::get_last_child(&self.wrapper);
-            match last_child_node.and_then(|n| n.dyn_into::<Element>().ok()) {
-                Some(ref element) if element.tag_name() == "BR" => {
-                    self.wrapper.insert_before(node_ref, Some(element))
-                        .expect("Could not insert child");
-                },
-                Some(_) | None => {
-                    self.wrapper.append_child(node_ref).expect("Could not append child");
-                },
-            };
-        }
-
-        // Update selection
-        self.selection_range = set_selection_range(&Position::After(node_ref), None);
-
-        // Normalize elements
-        self.normalize();
     }
 
     /// Extract the text in the compose area.
