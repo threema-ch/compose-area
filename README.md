@@ -91,6 +91,12 @@ area.insert_image("emoji.jpg", "😀", "emoji");
 area.insert_text("hello");
 ```
 
+You can also insert a DOM node directly:
+
+```js
+area.insert_node(document.createElement("span"));
+```
+
 To extract the text from the area, there's also a method:
 
 ```js
