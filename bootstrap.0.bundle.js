@@ -8,57 +8,55 @@
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __wbg_error_4bb6c2a97407129a; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __wbg_new_59cb74e423758ede; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return __wbg_stack_558ba5917b466edd; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "z", function() { return __widl_f_debug_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "E", function() { return __widl_f_error_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "J", function() { return __widl_f_info_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "P", function() { return __widl_f_log_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gb", function() { return __widl_f_warn_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hb", function() { return __widl_instanceof_CharacterData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "y", function() { return __widl_f_debug_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "D", function() { return __widl_f_error_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "I", function() { return __widl_f_info_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "N", function() { return __widl_f_log_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "eb", function() { return __widl_f_warn_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fb", function() { return __widl_instanceof_CharacterData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return __widl_f_add_2_DOMTokenList; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "w", function() { return __widl_f_create_element_Document; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "x", function() { return __widl_f_create_range_Document; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "y", function() { return __widl_f_create_text_node_Document; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ib", function() { return __widl_instanceof_Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "W", function() { return __widl_f_set_attribute_Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fb", function() { return __widl_f_tag_name_Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "I", function() { return __widl_f_id_Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "r", function() { return __widl_f_class_list_Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return __widl_f_children_Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "N", function() { return __widl_f_length_HTMLCollection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "v", function() { return __widl_f_create_element_Document; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "w", function() { return __widl_f_create_range_Document; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "x", function() { return __widl_f_create_text_node_Document; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gb", function() { return __widl_instanceof_Element; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "U", function() { return __widl_f_set_attribute_Element; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "db", function() { return __widl_f_tag_name_Element; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "H", function() { return __widl_f_id_Element; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return __widl_f_class_list_Element; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return __widl_f_alt_HTMLImageElement; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return __widl_f_append_child_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "v", function() { return __widl_f_contains_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "K", function() { return __widl_f_insert_before_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "T", function() { return __widl_f_normalize_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "R", function() { return __widl_f_node_type_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Q", function() { return __widl_f_node_name_Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "u", function() { return __widl_f_contains_Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "J", function() { return __widl_f_insert_before_Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "R", function() { return __widl_f_normalize_Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "P", function() { return __widl_f_node_type_Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "O", function() { return __widl_f_node_name_Node; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return __widl_f_child_nodes_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "S", function() { return __widl_f_node_value_Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "M", function() { return __widl_f_item_NodeList; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "F", function() { return __widl_f_get_NodeList; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "O", function() { return __widl_f_length_NodeList; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "s", function() { return __widl_f_clone_range_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "t", function() { return __widl_f_collapse_with_to_start_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "A", function() { return __widl_f_delete_contents_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "L", function() { return __widl_f_insert_node_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "X", function() { return __widl_f_set_end_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Y", function() { return __widl_f_set_end_after_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Z", function() { return __widl_f_set_end_before_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ab", function() { return __widl_f_set_start_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return __widl_f_set_start_after_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cb", function() { return __widl_f_set_start_before_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "db", function() { return __widl_f_start_container_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "eb", function() { return __widl_f_start_offset_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "C", function() { return __widl_f_end_container_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "D", function() { return __widl_f_end_offset_Range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "u", function() { return __widl_f_common_ancestor_container_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Q", function() { return __widl_f_node_value_Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "L", function() { return __widl_f_item_NodeList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "E", function() { return __widl_f_get_NodeList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "M", function() { return __widl_f_length_NodeList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "r", function() { return __widl_f_clone_range_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "s", function() { return __widl_f_collapse_with_to_start_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "z", function() { return __widl_f_delete_contents_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "K", function() { return __widl_f_insert_node_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "V", function() { return __widl_f_set_end_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "W", function() { return __widl_f_set_end_after_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "X", function() { return __widl_f_set_end_before_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Y", function() { return __widl_f_set_start_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Z", function() { return __widl_f_set_start_after_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ab", function() { return __widl_f_set_start_before_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return __widl_f_start_container_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cb", function() { return __widl_f_start_offset_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "B", function() { return __widl_f_end_container_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "C", function() { return __widl_f_end_offset_Range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "t", function() { return __widl_f_common_ancestor_container_Range; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return __widl_f_add_range_Selection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "G", function() { return __widl_f_get_range_at_Selection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "V", function() { return __widl_f_remove_all_ranges_Selection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "U", function() { return __widl_f_range_count_Selection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "jb", function() { return __widl_instanceof_Window; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "H", function() { return __widl_f_get_selection_Window; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "B", function() { return __widl_f_document_Window; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "F", function() { return __widl_f_get_range_at_Selection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "T", function() { return __widl_f_remove_all_ranges_Selection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "S", function() { return __widl_f_range_count_Selection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hb", function() { return __widl_instanceof_Window; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "G", function() { return __widl_f_get_selection_Window; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "A", function() { return __widl_f_document_Window; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __wbg_newnoargs_b4526aa2a6db81de; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __wbg_call_a7a8823c404228ab; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return __wbindgen_string_new; });
@@ -312,14 +310,6 @@ function __widl_f_id_Element(ret, arg0) {
 
 function __widl_f_class_list_Element(arg0) {
     return addHeapObject(getObject(arg0).classList);
-}
-
-function __widl_f_children_Element(arg0) {
-    return addHeapObject(getObject(arg0).children);
-}
-
-function __widl_f_length_HTMLCollection(arg0) {
-    return getObject(arg0).length;
 }
 
 function __widl_f_alt_HTMLImageElement(ret, arg0) {
