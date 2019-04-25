@@ -199,7 +199,9 @@ impl ComposeArea {
     }
 
     /// Insert an image at the current caret position.
-    pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) {
+    ///
+    /// Return a reference to the inserted image element.
+    pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) -> Element {
         debug!("WASM: insert_image ({})", &alt);
 
         let img = self.document.create_element("img").expect("Could not create img element");
@@ -208,6 +210,8 @@ impl ComposeArea {
         img.set_attribute("class", &cls).expect("Could not set attribute");
 
         self.insert_node(img.unchecked_ref());
+
+        img
     }
 
     /// Insert plain text at the current caret position.
