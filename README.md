@@ -62,7 +62,9 @@ const ca = await import('@threema/compose-area');
 
 ## Usage
 
-Next, bind to the wrapper element:
+### Initialization
+
+First, bind to the wrapper element:
 
 ```js
 const area = ca.ComposeArea.bind_to(document.getElementById('wrapper'));
@@ -77,6 +79,8 @@ document.addEventListener('selectionchange', (e) => {
     area.store_selection_range();
 });
 ```
+
+### Inserting
 
 Now you can start typing inside the compose area. It behaves like a regular
 content editable div.
@@ -97,10 +101,13 @@ You can also insert a DOM node directly:
 area.insert_node(document.createElement("span"));
 ```
 
-To extract the text from the area, there's also a method:
+The `insert_image` method returns a reference to the inserted element, so that
+you can set custom attributes on it.
 
 ```js
-area.get_text();
+const img = area.insert_image(...);
+img.draggable = false;
+img.ondragstart = (e) => e.preventDefault();
 ```
 
 If you want to properly handle pasting of formatted text, intercept the `paste`
@@ -116,10 +123,26 @@ wrapper.addEventListener('paste', (e) => {
 });
 ```
 
+### Extracting Text
+
+To extract the text from the area, there's also a method:
+
+```js
+area.get_text();
+```
+
+### Other helpers
+
 To focus the compose area programmatically:
 
 ```js
 area.focus();
+```
+
+To clear the contents of the compose area:
+
+```js
+area.clear();
 ```
 
 
