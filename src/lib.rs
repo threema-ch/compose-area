@@ -316,9 +316,7 @@ mod tests {
         document.body().unwrap().append_child(&wrapper).unwrap();
 
         // Bind to wrapper
-        let ca = ComposeArea::bind_to(wrapper.clone());
-
-        ca
+        ComposeArea::bind_to(wrapper.clone())
     }
 
     /// Create and return a text node.
