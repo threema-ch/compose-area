@@ -16,7 +16,6 @@ default = ["console_error_panic_hook", "console_log"]
 [dependencies]
 cfg-if = "0.1.2"
 wasm-bindgen = "=0.2.42"
-unicode-normalization = "0.1"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -39,17 +38,17 @@ console_log = { version = "0.1", optional = true }
 version = "0.3"
 features = [
     "console",
+    "CharacterData",
     "Document",
+    "DomTokenList",
     "Element",
+    "HtmlElement",
+    "HtmlImageElement",
     "Node",
     "NodeList",
     "Range",
     "Selection",
     "Window",
-    "HtmlElement",
-    "HtmlImageElement",
-    "CharacterData",
-    "DomTokenList",
 ]
 
 [dev-dependencies]
