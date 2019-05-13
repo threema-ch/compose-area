@@ -12,6 +12,10 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.2.2 (2019-05-13)
+
+- [added] More logging, especially on trace level
+
 ### v0.2.1 (2019-05-13)
 
 - [added] Configurable log level
