@@ -173,7 +173,7 @@ impl ComposeArea {
     pub fn store_selection_range(&mut self) -> RangeResult {
         trace!("[compose_area] store_selection_range");
         let range_result = self.fetch_range();
-        trace!("[compose_area] Range: {}", range_result.to_string().replace('\n', ""));
+        trace!("[compose_area]   Range: {}", range_result.to_string().replace('\n', ""));
 
         // Ignore selections outside the wrapper
         if !range_result.outside {
@@ -216,7 +216,7 @@ impl ComposeArea {
                 }
             }
         } else {
-            trace!("[compose_area] No stored range");
+            trace!("[compose_area]   No stored range");
             false
         }
     }
@@ -283,13 +283,13 @@ impl ComposeArea {
     ///
     /// See https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
     fn normalize(&self) {
-        trace!("[compose_area] normalize");
+        trace!("[compose_area]   normalize");
         self.wrapper.normalize();
     }
 
     /// Return the DOM selection.
     fn fetch_selection(&self) -> Option<Selection> {
-        trace!("[compose_area] fetch_selection");
+        trace!("[compose_area]   fetch_selection");
         self.window.get_selection().expect("Could not get selection from window")
     }
 
