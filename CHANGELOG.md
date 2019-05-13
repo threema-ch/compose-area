@@ -12,9 +12,10 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
-### Unreleased
+### v0.2.1 (2019-05-13)
 
 - [added] Configurable log level
+- [changed] Upgrade wasm-bindgen to 0.2.42
 
 ### v0.2.0 (2019-04-25)
 
