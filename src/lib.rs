@@ -12,6 +12,7 @@ mod selection;
 mod utils;
 
 use cfg_if::cfg_if;
+use log::Level;
 use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{self, Element, Node, HtmlElement, Selection, Range};
 
@@ -128,9 +129,26 @@ impl RangeResult {
 impl ComposeArea {
 
     /// Initialize a new compose area wrapper.
-    pub fn bind_to(wrapper: Element) -> Self {
+    ///
+    /// If the `log_level` argument is supplied, the console logger is
+    /// initialized. Valid log levels: `trace`, `debug`, `info`, `warn` or
+    /// `error`.
+    pub fn bind_to(wrapper: Element, log_level: Option<String>) -> Self {
         utils::set_panic_hook();
-        utils::init_log();
+
+        // Set log level
+        if let Some(level) = log_level {
+            match &*level {
+                "trace" => utils::init_log(Level::Trace),
+                "debug" => utils::init_log(Level::Debug),
+                "info" => utils::init_log(Level::Info),
+                "warn" => utils::init_log(Level::Warn),
+                "error" => utils::init_log(Level::Error),
+                other => web_sys::console::warn_1(
+                    &format!("bind_to: Invalid log level: {}", other).into()
+                ),
+            }
+        }
 
         let window = web_sys::window().expect("No global `window` exists");
         let document = window.document().expect("Should have a document on window");

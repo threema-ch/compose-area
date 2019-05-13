@@ -12,6 +12,10 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### Unreleased
+
+- [added] Configurable log level
+
 ### v0.2.0 (2019-04-25)
 
 - [added] Add `ComposeArea::focus`

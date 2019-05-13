@@ -8,7 +8,7 @@ const selectionDiv = document.querySelector('#selection div');
 const rawDiv = document.querySelector('#raw div');
 
 // Initialize compose area
-const composeArea = ComposeArea.bind_to(wrapper);
+const composeArea = ComposeArea.bind_to(wrapper, "trace");
 window.composeArea = composeArea;
 
 // Helper functions
