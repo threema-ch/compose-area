@@ -149,6 +149,7 @@ impl ComposeArea {
                 ),
             }
         }
+        trace!("[compose_area] bind_to");
 
         let window = web_sys::window().expect("No global `window` exists");
         let document = window.document().expect("Should have a document on window");
@@ -157,7 +158,7 @@ impl ComposeArea {
         wrapper.class_list().add_2("cawrapper", "initialized").expect("Could not add wrapper classes");
         wrapper.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
 
-        info!("Compose area initialized");
+        info!("[compose_area] Initialized");
 
         Self {
             window,
@@ -170,7 +171,9 @@ impl ComposeArea {
     /// Store the current selection range.
     /// Return the stored range.
     pub fn store_selection_range(&mut self) -> RangeResult {
+        trace!("[compose_area] store_selection_range");
         let range_result = self.fetch_range();
+        trace!("[compose_area] Range: {}", range_result.to_string().replace('\n', ""));
 
         // Ignore selections outside the wrapper
         if !range_result.outside {
@@ -190,28 +193,30 @@ impl ComposeArea {
     /// Return a boolean indicating whether a selection range was stored (and
     /// thus restored).
     pub fn restore_selection_range(&self) -> bool {
+        trace!("[compose_area] restore_selection_range");
         if let Some(ref range) = self.selection_range {
             // Get the current selection
             let selection = match self.fetch_selection() {
                 Some(selection) => selection,
                 None => {
-                    error!("No selection found");
+                    error!("[compose_area] No selection found");
                     return false;
                 }
             };
 
             // Restore the range
             if selection.remove_all_ranges().is_err() {
-                error!("Removing all ranges failed");
+                error!("[compose_area] Removing all ranges failed");
             }
             match selection.add_range(range) {
                 Ok(_) => true,
                 Err(_) => {
-                    error!("Adding range failed");
+                    error!("[compose_area] Adding range failed");
                     false
                 }
             }
         } else {
+            trace!("[compose_area] No stored range");
             false
         }
     }
@@ -220,7 +225,7 @@ impl ComposeArea {
     ///
     /// Return a reference to the inserted image element.
     pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) -> Element {
-        debug!("WASM: insert_image ({})", &alt);
+        debug!("[compose_area] insert_image ({})", &alt);
 
         let img = self.document.create_element("img").expect("Could not create img element");
         img.set_attribute("src", &src).expect("Could not set attribute");
@@ -234,7 +239,7 @@ impl ComposeArea {
 
     /// Insert plain text at the current caret position.
     pub fn insert_text(&mut self, text: &str) {
-        debug!("WASM: insert_text ({})", &text);
+        debug!("[compose_area] insert_text ({})", &text);
 
         let text_node = self.document.create_text_node(text);
 
@@ -244,7 +249,7 @@ impl ComposeArea {
     /// Insert the specified node at the previously stored selection range.
     /// Set the caret position to right after the newly inserted node.
     pub fn insert_node(&mut self, node_ref: &Node) {
-        debug!("WASM: insert_node");
+        debug!("[compose_area] insert_node");
 
         // Insert the node
         if let Some(ref range) = self.selection_range {
@@ -278,21 +283,24 @@ impl ComposeArea {
     ///
     /// See https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
     fn normalize(&self) {
+        trace!("[compose_area] normalize");
         self.wrapper.normalize();
     }
 
     /// Return the DOM selection.
     fn fetch_selection(&self) -> Option<Selection> {
+        trace!("[compose_area] fetch_selection");
         self.window.get_selection().expect("Could not get selection from window")
     }
 
     /// Return the last range of the selection that is within the wrapper
     /// element.
     pub fn fetch_range(&self) -> RangeResult {
+        trace!("[compose_area] fetch_range");
         let selection = match self.fetch_selection() {
             Some(sel) => sel,
             None => {
-                error!("Could not find selection");
+                error!("[compose_area] Could not find selection");
                 return RangeResult::none();
             },
         };
@@ -317,19 +325,22 @@ impl ComposeArea {
     ///
     /// Convert elements like images to alt text.
     pub fn get_text(&self, no_trim: Option<bool>) -> String {
+        debug!("[compose_area] get_text");
         extract_text(&self.wrapper, no_trim.unwrap_or(false))
     }
 
     /// Focus the compose area.
     pub fn focus(&self) {
+        debug!("[compose_area] focus");
         self.restore_selection_range();
         if let Some(e) = self.wrapper.dyn_ref::<HtmlElement>() {
-            e.focus().unwrap_or_else(|_| error!("Could not focus compose area"));
+            e.focus().unwrap_or_else(|_| error!("[compose_area] Could not focus compose area"));
         }
     }
 
     /// Clear the contents of the compose area.
     pub fn clear(&mut self) {
+        debug!("[compose_area] clear");
         while self.wrapper.has_child_nodes() {
             let last_child = self.wrapper.last_child().expect("Could not find last child");
             self.wrapper.remove_child(&last_child).expect("Could not remove last child");
