@@ -16,7 +16,7 @@ const selectionDiv = document.querySelector('#selection div');
 const rawDiv = document.querySelector('#raw div');
 
 // Initialize compose area
-const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__[/* ComposeArea */ "a"].bind_to(wrapper);
+const composeArea = compose_area__WEBPACK_IMPORTED_MODULE_0__[/* ComposeArea */ "a"].bind_to(wrapper, "trace");
 window.composeArea = composeArea;
 
 // Helper functions
