@@ -19,7 +19,7 @@ window.setupTest = function() {
     const testDiv = document.createElement('div');
     testDiv.id = divId;
     baseWrapper.appendChild(testDiv)
-    const composeArea = ComposeArea.bind_to(testDiv);
+    const composeArea = ComposeArea.bind_to(testDiv, "warn");
     return {
         divId: divId,
         testDiv: testDiv,

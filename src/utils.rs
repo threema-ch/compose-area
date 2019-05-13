@@ -1,4 +1,5 @@
 use cfg_if::cfg_if;
+use log::Level;
 use wasm_bindgen::JsCast;
 use web_sys::{CharacterData, Node, Element};
 
@@ -22,15 +23,14 @@ cfg_if! {
     // When the `console_log` feature is enabled, forward log calls to the
     // JS console.
     if #[cfg(feature = "console_log")] {
-        pub fn init_log() {
-            use log::Level;
+        pub fn init_log(level: Level) {
             // Best effort, ignore error if initialization fails.
-            // (This could be the ase if the logger is initialized multiple
+            // (This could be the case if the logger is initialized multiple
             // times.)
-            let _ = console_log::init_with_level(Level::Trace);
+            let _ = console_log::init_with_level(level);
         }
     } else {
-        pub fn init_log() {}
+        pub fn init_log(_level: Level) {}
     }
 }
 
