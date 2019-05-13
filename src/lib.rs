@@ -356,7 +356,7 @@ mod tests {
         document.body().unwrap().append_child(&wrapper).unwrap();
 
         // Bind to wrapper
-        ComposeArea::bind_to(wrapper.clone())
+        ComposeArea::bind_to(wrapper.clone(), Some("trace".into()))
     }
 
     /// Create and return a text node.
