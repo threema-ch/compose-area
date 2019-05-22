@@ -12,11 +12,15 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.3.1 (2019-05-22)
+
+- [fixed] Fix offset bug in "word at caret" methods (#41)
+
 ### v0.3.0 (2019-05-22)
 
-- [added] Add `ComposeArea::get_word_at_caret`
-- [added] Add `ComposeArea::select_word_at_caret`
-- [changed] Upgrade wasm-bindgen to 0.2.45
+- [added] Add `ComposeArea::get_word_at_caret` (#39)
+- [added] Add `ComposeArea::select_word_at_caret` (#39)
+- [changed] Upgrade wasm-bindgen to 0.2.45 (#40)
 - [fixed] Thanks to a fix in wasm-bindgen, optional parameters in the
   TypeScript declaration files should now be marked as omittable
 
@@ -26,14 +30,14 @@ Possible log types:
 
 ### v0.2.1 (2019-05-13)
 
-- [added] Configurable log level
-- [changed] Upgrade wasm-bindgen to 0.2.42
+- [added] Configurable log level (#37)
+- [changed] Upgrade wasm-bindgen to 0.2.42 (#33)
 
 ### v0.2.0 (2019-04-25)
 
-- [added] Add `ComposeArea::focus`
-- [added] Add `ComposeArea::clear`
-- [added] Expose `ComposeArea::insert_node`
+- [added] Add `ComposeArea::focus` (#29)
+- [added] Add `ComposeArea::clear` (#30)
+- [added] Expose `ComposeArea::insert_node` (#31)
 - [changed] `ComposeArea::insert_image` now returns reference to the img element
 - [changed] `ComposeArea::get_text`: Make `no_trim` parameter optional
 - [changed] `ComposeArea::bind_to`: Stop inserting `<br>` element
