@@ -871,6 +871,8 @@ class ComposeArea {
     * Extract the text in the compose area.
     *
     * Convert elements like images to alt text.
+    *
+    * If the `no_trim` argument is not specified, it defaults to `false`.
     * @param {boolean | undefined} no_trim
     * @returns {string}
     */
