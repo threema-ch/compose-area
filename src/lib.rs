@@ -14,9 +14,9 @@ mod utils;
 use cfg_if::cfg_if;
 use log::Level;
 use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, HtmlElement, Selection, Range};
+use web_sys::{self, Element, Node, HtmlElement, Selection, Range, Text};
 
-use crate::selection::{Position, set_selection_range};
+use crate::selection::{Position, set_selection_range, glue_range_to_text};
 use crate::extract::extract_text;
 
 cfg_if! {
@@ -122,6 +122,40 @@ impl RangeResult {
                 &range.end_offset().unwrap(),
             ),
         }
+    }
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub struct WordAtCaret {
+    node: Node,
+    before: String,
+    after: String,
+    offsets: (u32, u32),
+}
+
+#[wasm_bindgen]
+impl WordAtCaret {
+    pub fn node(&self) -> Node {
+        self.node.clone()
+    }
+
+    pub fn before(&self) -> String {
+        self.before.clone()
+    }
+
+    pub fn after(&self) -> String {
+        self.after.clone()
+    }
+
+    /// Return the UTF16 offset from the start node where the current word starts (inclusive).
+    pub fn start_offset(&self) -> u32 {
+        self.offsets.0
+    }
+
+    /// Return the UTF16 offset from the start node where the current word ends (exclusive).
+    pub fn end_offset(&self) -> u32 {
+        self.offsets.1
     }
 }
 
@@ -346,6 +380,95 @@ impl ComposeArea {
             self.wrapper.remove_child(&last_child).expect("Could not remove last child");
         }
         self.selection_range = None;
+    }
+
+    /// Return the word (whitespace delimited) at the current caret position.
+    ///
+    /// Note: This methods uses the range that was last set with
+    /// `store_selection_range`.
+    pub fn get_word_at_caret(&mut self) -> Option<WordAtCaret> {
+        debug!("[compose_area] get_word_at_caret");
+
+        if let Some(ref range) = self.selection_range {
+            // Clone the current range so we don't modify any existing selection
+            let mut range = range.clone_range();
+
+            // Ensure that range is relative to a text node
+            if !glue_range_to_text(&mut range) {
+                return None;
+            }
+
+            // Get the container element (which is the same for start and end
+            // since the range is collapsed) and offset. After having called
+            // the `glue_range_to_text` function, this will be a text node.
+            let node: Text = range
+                .start_container()
+                .expect("Could not get start container")
+                .dyn_into::<Text>()
+                .expect("Node is not a text node");
+            let offset: u32 = range
+                .start_offset()
+                .expect("Could not get start offset");
+
+            // Note that the offset refers to JS characters, not bytes.
+            let text: String = node.data();
+            let mut before: Vec<u16> = vec![];
+            let mut after: Vec<u16> = vec![];
+            let mut start = 0;
+            let mut end = 0;
+            let is_word_boundary = |c: u16| c == 0x20 /* space */ || c == 0x09 /* tab */;
+            #[allow(clippy::collapsible_if)]
+            for (i, c) in text.encode_utf16().enumerate() {
+                if i < offset as usize {
+                    if is_word_boundary(c) {
+                        before.clear();
+                        start = i + 1;
+                    } else {
+                        before.push(c);
+                    }
+                } else {
+                    if is_word_boundary(c) {
+                        end = i;
+                        break;
+                    } else {
+                        after.push(c);
+                    }
+                }
+            }
+            if end < start {
+                end = text.encode_utf16().count();
+            }
+
+            // Note: Decoding should not be able to fail since it was
+            // previously encoded from a string.
+            #[allow(clippy::cast_possible_truncation)]
+            Some(WordAtCaret {
+                node: node.dyn_into::<Node>().expect("Could not turn Text into Node"),
+                before: String::from_utf16(&before).expect("Could not decode UTF16 value"),
+                after: String::from_utf16(&after).expect("Could not decode UTF16 value"),
+                offsets: (start as u32, end as u32),
+            })
+        } else {
+            None
+        }
+    }
+
+    /// Select the word (whitespace delimited) at the current caret position.
+    ///
+    /// Note: This methods uses the range that was last set with
+    /// `store_selection_range`.
+    pub fn select_word_at_caret(&mut self) -> bool {
+        debug!("[compose_area] select_word_at_caret");
+
+        if let Some(wac) = self.get_word_at_caret() {
+            let node = wac.node();
+            set_selection_range(
+                &Position::Offset(&node, wac.start_offset()),
+                Some(&Position::Offset(&node, wac.end_offset()))
+            ).is_some()
+        } else {
+            false
+        }
     }
 }
 
@@ -753,4 +876,62 @@ mod tests {
         }
     }
 
+    mod word_at_caret {
+        use super::*;
+
+        #[wasm_bindgen_test]
+        fn empty() {
+            let mut ca = init();
+            let wac = ca.get_word_at_caret();
+            assert!(wac.is_none());
+        }
+
+        #[wasm_bindgen_test]
+        fn in_text() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node("hello world!\tgoodbye.");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::Offset(&text, 9), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), "wor");
+            assert_eq!(&wac.after(), "ld!");
+            assert_eq!(wac.start_offset(), 6);
+            assert_eq!(wac.end_offset(), 12);
+        }
+
+        #[wasm_bindgen_test]
+        fn after_text() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node("hello world");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::After(&text), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), "world");
+            assert_eq!(&wac.after(), "");
+            assert_eq!(wac.start_offset(), 6);
+            assert_eq!(wac.end_offset(), 11);
+        }
+
+        #[wasm_bindgen_test]
+        fn before_word() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node("hello world");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::Offset(&text, 0), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), "");
+            assert_eq!(&wac.after(), "hello");
+            assert_eq!(wac.start_offset(), 0);
+            assert_eq!(wac.end_offset(), 5);
+        }
+    }
 }
