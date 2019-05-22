@@ -12,6 +12,14 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.3.0 (2019-05-22)
+
+- [added] Add `ComposeArea::get_word_at_caret`
+- [added] Add `ComposeArea::select_word_at_caret`
+- [changed] Upgrade wasm-bindgen to 0.2.45
+- [fixed] Thanks to a fix in wasm-bindgen, optional parameters in the
+  TypeScript declaration files should now be marked as omittable
+
 ### v0.2.2 (2019-05-13)
 
 - [added] More logging, especially on trace level
