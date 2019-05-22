@@ -13,6 +13,7 @@ const wrapper = document.getElementById('wrapper');
 const logDiv = document.querySelector('#log div');
 const extractedDiv = document.querySelector('#extracted div');
 const selectionDiv = document.querySelector('#selection div');
+const wordcontextDiv = document.querySelector('#wordcontext div');
 const rawDiv = document.querySelector('#raw div');
 
 // Initialize compose area
@@ -49,6 +50,14 @@ function showState() {
     // Get range
     const range_result = composeArea.fetch_range();
     selectionDiv.innerText = range_result.to_string();
+
+    // Get word context
+    const wac = composeArea.get_word_at_caret();
+    if (wac) {
+        wordcontextDiv.innerText = `${wac.before()}|${wac.after()}`;
+    } else {
+        wordcontextDiv.innerText = '';
+    }
 
     // Get raw HTML
     rawDiv.innerText = wrapper.innerHTML;
@@ -106,7 +115,12 @@ document.getElementById('clearselection').addEventListener('click', (e) => {
     sel.removeAllRanges();
     showState();
 });
-document.getElementById('focus').addEventListener('click', (e) => composeArea.focus());
+document.getElementById('focus').addEventListener('click', (e) => {
+    composeArea.focus();
+});
+document.getElementById('selectword').addEventListener('click', (e) => {
+    composeArea.select_word_at_caret();
+});
 
 
 /***/ })
