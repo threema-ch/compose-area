@@ -130,6 +130,7 @@ impl RangeResult {
 pub struct WordAtCaret {
     before: String,
     after: String,
+    offsets: (usize, usize),
 }
 
 #[wasm_bindgen]
@@ -140,6 +141,16 @@ impl WordAtCaret {
 
     pub fn after(&self) -> String {
         self.after.clone()
+    }
+
+    /// Return the UTF16 offset from the start node where the current word starts (inclusive).
+    pub fn start_offset(&self) -> usize {
+        self.offsets.0
+    }
+
+    /// Return the UTF16 offset from the start node where the current word ends (exclusive).
+    pub fn end_offset(&self) -> usize {
+        self.offsets.1
     }
 }
 
@@ -398,28 +409,38 @@ impl ComposeArea {
             let text: String = node.data();
             let mut before: Vec<u16> = vec![];
             let mut after: Vec<u16> = vec![];
+            let mut start = 0;
+            let mut end = 0;
             let is_word_boundary = |c: u16| c == 0x20 /* space */ || c == 0x09 /* tab */;
+            #[allow(clippy::collapsible_if)]
             for (i, c) in text.encode_utf16().enumerate() {
                 if i < offset as usize {
                     if is_word_boundary(c) {
                         before.clear();
+                        start = i + 1;
                     } else {
                         before.push(c);
                     }
                 } else {
                     if is_word_boundary(c) {
+                        end = i;
                         break;
                     } else {
                         after.push(c);
                     }
                 }
             }
+            if end < start {
+                end = text.encode_utf16().count();
+            }
 
             // Note: Decoding should not be able to fail since it was
             // previously encoded from a string.
+            #[allow(clippy::cast_possible_truncation)]
             Some(WordAtCaret {
                 before: String::from_utf16(&before).expect("Could not decode UTF16 value"),
                 after: String::from_utf16(&after).expect("Could not decode UTF16 value"),
+                offsets: (start, end),
             })
         } else {
             None
@@ -853,6 +874,8 @@ mod tests {
             let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), "wor");
             assert_eq!(&wac.after(), "ld!");
+            assert_eq!(wac.start_offset(), 6);
+            assert_eq!(wac.end_offset(), 12);
         }
 
         #[wasm_bindgen_test]
@@ -867,6 +890,8 @@ mod tests {
             let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), "world");
             assert_eq!(&wac.after(), "");
+            assert_eq!(wac.start_offset(), 6);
+            assert_eq!(wac.end_offset(), 11);
         }
 
         #[wasm_bindgen_test]
@@ -881,6 +906,8 @@ mod tests {
             let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), "");
             assert_eq!(&wac.after(), "hello");
+            assert_eq!(wac.start_offset(), 0);
+            assert_eq!(wac.end_offset(), 5);
         }
     }
 }
