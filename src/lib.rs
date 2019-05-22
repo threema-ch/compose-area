@@ -437,7 +437,7 @@ impl ComposeArea {
                     }
                 }
             }
-            if end < start {
+            if end <= start {
                 end = text.encode_utf16().count();
             }
 
@@ -934,6 +934,22 @@ mod tests {
             assert_eq!(&wac.after(), "hello");
             assert_eq!(wac.start_offset(), 0);
             assert_eq!(wac.end_offset(), 5);
+        }
+
+        #[wasm_bindgen_test]
+        fn single_word() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node(":ok:");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::Offset(&text, 4), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), ":ok:");
+            assert_eq!(&wac.after(), "");
+            assert_eq!(wac.start_offset(), 0);
+            assert_eq!(wac.end_offset(), 4);
         }
     }
 }
