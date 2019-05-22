@@ -54,7 +54,7 @@ function showState() {
     // Get word context
     const wac = composeArea.get_word_at_caret();
     if (wac) {
-        wordcontextDiv.innerText = `${wac.before()}|${wac.after()}`;
+        wordcontextDiv.innerText = `${wac.before()}|${wac.after()}\nOffsets: (${wac.start_offset()}, ${wac.end_offset()})`;
     } else {
         wordcontextDiv.innerText = '';
     }
