@@ -128,13 +128,18 @@ impl RangeResult {
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct WordAtCaret {
+    node: Node,
     before: String,
     after: String,
-    offsets: (usize, usize),
+    offsets: (u32, u32),
 }
 
 #[wasm_bindgen]
 impl WordAtCaret {
+    pub fn node(&self) -> Node {
+        self.node.clone()
+    }
+
     pub fn before(&self) -> String {
         self.before.clone()
     }
@@ -144,12 +149,12 @@ impl WordAtCaret {
     }
 
     /// Return the UTF16 offset from the start node where the current word starts (inclusive).
-    pub fn start_offset(&self) -> usize {
+    pub fn start_offset(&self) -> u32 {
         self.offsets.0
     }
 
     /// Return the UTF16 offset from the start node where the current word ends (exclusive).
-    pub fn end_offset(&self) -> usize {
+    pub fn end_offset(&self) -> u32 {
         self.offsets.1
     }
 }
@@ -438,12 +443,31 @@ impl ComposeArea {
             // previously encoded from a string.
             #[allow(clippy::cast_possible_truncation)]
             Some(WordAtCaret {
+                node: node.dyn_into::<Node>().expect("Could not turn Text into Node"),
                 before: String::from_utf16(&before).expect("Could not decode UTF16 value"),
                 after: String::from_utf16(&after).expect("Could not decode UTF16 value"),
-                offsets: (start, end),
+                offsets: (start as u32, end as u32),
             })
         } else {
             None
+        }
+    }
+
+    /// Select the word (whitespace delimited) at the current caret position.
+    ///
+    /// Note: This methods uses the range that was last set with
+    /// `store_selection_range`.
+    pub fn select_word_at_caret(&mut self) -> bool {
+        debug!("[compose_area] select_word_at_caret");
+
+        if let Some(wac) = self.get_word_at_caret() {
+            let node = wac.node();
+            set_selection_range(
+                &Position::Offset(&node, wac.start_offset()),
+                Some(&Position::Offset(&node, wac.end_offset()))
+            ).is_some()
+        } else {
+            false
         }
     }
 }
