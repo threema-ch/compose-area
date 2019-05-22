@@ -14,9 +14,9 @@ mod utils;
 use cfg_if::cfg_if;
 use log::Level;
 use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, HtmlElement, Selection, Range};
+use web_sys::{self, Element, Node, HtmlElement, Selection, Range, Text};
 
-use crate::selection::{Position, set_selection_range};
+use crate::selection::{Position, set_selection_range, glue_range_to_text};
 use crate::extract::extract_text;
 
 cfg_if! {
@@ -122,6 +122,24 @@ impl RangeResult {
                 &range.end_offset().unwrap(),
             ),
         }
+    }
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub struct WordAtCaret {
+    before: String,
+    after: String,
+}
+
+#[wasm_bindgen]
+impl WordAtCaret {
+    pub fn before(&self) -> String {
+        self.before.clone()
+    }
+
+    pub fn after(&self) -> String {
+        self.after.clone()
     }
 }
 
@@ -346,6 +364,66 @@ impl ComposeArea {
             self.wrapper.remove_child(&last_child).expect("Could not remove last child");
         }
         self.selection_range = None;
+    }
+
+    /// Return the word (whitespace delimited) at the current caret position.
+    ///
+    /// Note: This methods uses the range that was last set with
+    /// `store_selection_range`.
+    pub fn get_word_at_caret(&mut self) -> Option<WordAtCaret> {
+        debug!("[compose_area] get_word_at_caret");
+
+        if let Some(ref range) = self.selection_range {
+            // Clone the current range so we don't modify any existing selection
+            let mut range = range.clone_range();
+
+            // Ensure that range is relative to a text node
+            if !glue_range_to_text(&mut range) {
+                return None;
+            }
+
+            // Get the container element (which is the same for start and end
+            // since the range is collapsed) and offset. After having called
+            // the `glue_range_to_text` function, this will be a text node.
+            let node: Text = range
+                .start_container()
+                .expect("Could not get start container")
+                .dyn_into::<Text>()
+                .expect("Node is not a text node");
+            let offset: u32 = range
+                .start_offset()
+                .expect("Could not get start offset");
+
+            // Note that the offset refers to JS characters, not bytes.
+            let text: String = node.data();
+            let mut before: Vec<u16> = vec![];
+            let mut after: Vec<u16> = vec![];
+            let is_word_boundary = |c: u16| c == 0x20 /* space */ || c == 0x09 /* tab */;
+            for (i, c) in text.encode_utf16().enumerate() {
+                if i < offset as usize {
+                    if is_word_boundary(c) {
+                        before.clear();
+                    } else {
+                        before.push(c);
+                    }
+                } else {
+                    if is_word_boundary(c) {
+                        break;
+                    } else {
+                        after.push(c);
+                    }
+                }
+            }
+
+            // Note: Decoding should not be able to fail since it was
+            // previously encoded from a string.
+            Some(WordAtCaret {
+                before: String::from_utf16(&before).expect("Could not decode UTF16 value"),
+                after: String::from_utf16(&after).expect("Could not decode UTF16 value"),
+            })
+        } else {
+            None
+        }
     }
 }
 
@@ -753,4 +831,56 @@ mod tests {
         }
     }
 
+    mod word_at_caret {
+        use super::*;
+
+        #[wasm_bindgen_test]
+        fn empty() {
+            let mut ca = init();
+            let wac = ca.get_word_at_caret();
+            assert!(wac.is_none());
+        }
+
+        #[wasm_bindgen_test]
+        fn in_text() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node("hello world!\tgoodbye.");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::Offset(&text, 9), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), "wor");
+            assert_eq!(&wac.after(), "ld!");
+        }
+
+        #[wasm_bindgen_test]
+        fn after_text() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node("hello world");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::After(&text), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), "world");
+            assert_eq!(&wac.after(), "");
+        }
+
+        #[wasm_bindgen_test]
+        fn before_word() {
+            let mut ca = init();
+
+            let text = ca.document.create_text_node("hello world");
+            ca.wrapper.append_child(&text).unwrap();
+            set_selection_range(&Position::Offset(&text, 0), None);
+            ca.store_selection_range();
+
+            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            assert_eq!(&wac.before(), "");
+            assert_eq!(&wac.after(), "hello");
+        }
+    }
 }
