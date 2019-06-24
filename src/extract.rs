@@ -32,16 +32,19 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
         match node.node_type() {
             Node::TEXT_NODE => {
                 if last_node_type == "div" {
-                    // An image following a div should go on a new line
+                    // A text node following a div should go on a new line
                     text.push('\n');
                 }
                 last_node_type = "text".to_string();
-                text.push_str(
+                let node_value = node.node_value().unwrap_or_else(|| "".into());
+                if node_value == "\n" {
+                    // Chromium inserts newline text nodes instead of <br>
+                    // elements if `white-space: pre / pre-wrap` is used.
+                    text.push('\n')
+                } else {
                     // Append text, but strip leading and trailing newlines
-                    node.node_value()
-                        .unwrap_or_else(|| "".into())
-                        .trim_matches(|c| c == '\n' || c == '\r')
-                );
+                    text.push_str(node_value.trim_matches(|c| c == '\n' || c == '\r'));
+                }
             }
             Node::ELEMENT_NODE => {
                 let element: &Element = node.unchecked_ref();
@@ -171,6 +174,31 @@ mod tests {
         fn newline_double_div() {
             ExtractTextTest {
                 html: html! { <div><div>Hello</div><div>World</div></div> },
+                expected: "Hello\nWorld",
+            }.test();
+        }
+
+        #[wasm_bindgen_test]
+        fn double_text_node_concat() {
+            let mut node = VirtualNode::element("span");
+            node.as_velement_mut().unwrap().children.push(VirtualNode::text("Hello\n"));
+            node.as_velement_mut().unwrap().children.push(VirtualNode::text("World"));
+            ExtractTextTest {
+                html: node,
+                expected: "HelloWorld",
+            }.test();
+        }
+
+        #[wasm_bindgen_test]
+        fn double_text_node_newline() {
+            // Chromium inserts newline text nodes instead of <br>
+            // elements if `white-space: pre / pre-wrap` is used.
+            let mut node = VirtualNode::element("span");
+            node.as_velement_mut().unwrap().children.push(VirtualNode::text("Hello"));
+            node.as_velement_mut().unwrap().children.push(VirtualNode::text("\n"));
+            node.as_velement_mut().unwrap().children.push(VirtualNode::text("World"));
+            ExtractTextTest {
+                html: node,
                 expected: "Hello\nWorld",
             }.test();
         }

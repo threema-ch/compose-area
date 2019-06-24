@@ -359,7 +359,9 @@ impl ComposeArea {
     ///
     /// Convert elements like images to alt text.
     ///
-    /// If the `no_trim` argument is not specified, it defaults to `false`.
+    /// Args:
+    /// - `no_trim`: If set to `true`, don't trim leading / trailing whitespace
+    ///   from returned text. Default: `false`.
     pub fn get_text(&self, no_trim: Option<bool>) -> String {
         debug!("[compose_area] get_text");
         extract_text(&self.wrapper, no_trim.unwrap_or(false))
