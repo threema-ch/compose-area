@@ -1,7 +1,6 @@
 use cfg_if::cfg_if;
 use log::Level;
-use wasm_bindgen::JsCast;
-use web_sys::{CharacterData, Node, Element};
+use web_sys::{Node, Element};
 
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -32,12 +31,6 @@ cfg_if! {
     } else {
         pub fn init_log(_level: Level) {}
     }
-}
-
-/// Return whether the node is a character data node.
-#[inline]
-pub(crate) fn is_character_data_node(node: &Node) -> bool {
-    node.is_instance_of::<CharacterData>()
 }
 
 /// Return the last child node of the specified parent element (or `None`).

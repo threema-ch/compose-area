@@ -3,8 +3,6 @@
 use wasm_bindgen::JsCast;
 use web_sys::{Node, Range, Text};
 
-use crate::utils::is_character_data_node;
-
 /// A position relative to a node.
 #[derive(Debug)]
 pub enum Position<'a> {
@@ -54,11 +52,7 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
             range.set_start_before(node).expect("Could not set_start_before");
         }
         Position::Offset(node, offset) => {
-            if is_character_data_node(&node) {
-                range.set_start(node, *offset).expect("Could not set_start");
-            } else {
-                range.set_start_after(node).expect("Could not set_start_after");
-            }
+            range.set_start(node, *offset).expect("Could not set_start");
         }
     }
 
@@ -71,11 +65,7 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
             range.set_end_before(node).expect("Could not set_end_before");
         }
         Some(Position::Offset(node, offset)) => {
-            if is_character_data_node(&node) {
-                range.set_end(node, *offset).expect("Could not set_start");
-            } else {
-                range.set_end_after(node).expect("Could not set_end_after");
-            }
+            range.set_end(node, *offset).expect("Could not set_start");
         }
         None => range.collapse_with_to_start(true),
     }
