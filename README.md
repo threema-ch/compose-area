@@ -64,6 +64,13 @@ const ca = await import('@threema/compose-area');
 
 ### Initialization
 
+This library requires a wrapper element with `white-space` set to `pre` or
+`pre-wrap` in order to work properly.
+
+```html
+<div id="wrapper" style="white-space: pre-wrap;"></div>
+```
+
 First, bind to the wrapper element:
 
 ```js
