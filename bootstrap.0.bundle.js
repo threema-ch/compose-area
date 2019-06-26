@@ -872,7 +872,9 @@ class ComposeArea {
     *
     * Convert elements like images to alt text.
     *
-    * If the `no_trim` argument is not specified, it defaults to `false`.
+    * Args:
+    * - `no_trim`: If set to `true`, don\'t trim leading / trailing whitespace
+    *   from returned text. Default: `false`.
     * @param {boolean | undefined} no_trim
     * @returns {string}
     */
