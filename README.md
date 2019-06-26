@@ -102,11 +102,17 @@ area.insert_image("emoji.jpg", "😀", "emoji");
 area.insert_text("hello");
 ```
 
-You can also insert a DOM node directly:
+You can also insert HTML or a DOM node directly:
 
 ```js
+area.insert_html("<div></div>");
 area.insert_node(document.createElement("span"));
 ```
+
+*(Note: Due to browser limitations, inserting a node directly will not result
+in a new entry in the browser's internal undo stack. This means that the node
+insertion cannot be undone using Ctrl+Z. If you need that, use `insert_html`
+instead.)*
 
 The `insert_image` method returns a reference to the inserted element, so that
 you can set custom attributes on it.

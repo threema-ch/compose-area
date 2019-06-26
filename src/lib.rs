@@ -14,9 +14,9 @@ mod utils;
 use cfg_if::cfg_if;
 use log::Level;
 use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, HtmlElement, Selection, Range, Text};
+use web_sys::{self, Element, Node, HtmlElement, HtmlDocument, Selection, Range, Text};
 
-use crate::selection::{Position, set_selection_range, glue_range_to_text};
+use crate::selection::{Position, set_selection_range, activate_selection_range, glue_range_to_text};
 use crate::extract::extract_text;
 
 cfg_if! {
@@ -35,7 +35,15 @@ pub struct ComposeArea {
     window: web_sys::Window,
     document: web_sys::Document,
     wrapper: Element,
+    /// The selection range. This will always be a selection within the compose
+    /// area wrapper, if set.
+    ///
+    /// NOTE: When setting this value to a range, make sure that the range was
+    /// cloned, so that updates to the range in the browser aren't reflected in
+    /// this instance.
     selection_range: Option<Range>,
+    /// Counter used for creating unique element IDs.
+    counter: u32,
 }
 
 /// This enum is relevant when determining the current node while the caret is
@@ -199,6 +207,7 @@ impl ComposeArea {
             document,
             wrapper,
             selection_range: None,
+            counter: 0,
         }
     }
 
@@ -255,33 +264,113 @@ impl ComposeArea {
         }
     }
 
+    /// Ensure that there's an active selection inside the compose are. Then
+    /// exec the specified command, normalize the compose area and store the
+    /// new selection range.
+    fn exec_command(&mut self, command_id: &str, value: &str) {
+        // Ensure that there's an active selection inside the compose area.
+        let active_range = self.fetch_range();
+        if active_range.range.is_none() || active_range.outside {
+            // No active selection range inside the compose area.
+            match self.selection_range {
+                Some(ref range) => {
+                    activate_selection_range(
+                        &self.fetch_selection().expect("Could not get window selection"),
+                        range
+                    );
+                },
+                None => {
+                    // No stored selection range. Create a new selection at the end end.
+                    let last_child_node = utils::get_last_child(&self.wrapper);
+                    self.selection_range = match last_child_node {
+                        Some(ref node) => {
+                            // Insert at the very end, unless the last element in the
+                            // area is a `<br>` node. This is needed because Firefox
+                            // always adds a trailing newline that isn't rendered
+                            let mut insert_before = false;
+                            if let Some(ref element) = node.dyn_ref::<Element>() {
+                                if element.tag_name() == "BR" {
+                                    insert_before = true;
+                                }
+                            }
+                            if insert_before {
+                                set_selection_range(&Position::Before(node), None)
+                            } else {
+                                set_selection_range(&Position::After(node), None)
+                            }
+                        },
+                        None => {
+                            set_selection_range(&Position::Offset(&self.wrapper, 0), None)
+                        },
+                    }.map(|range| range.clone_range());
+                }
+            }
+        }
+
+        // Execute command
+        self.document
+            .dyn_ref::<HtmlDocument>()
+            .expect("Document is not a HtmlDocument")
+            .exec_command_with_show_ui_and_value(command_id, false, value)
+            .expect("Could not exec command");
+        self.normalize();
+        self.store_selection_range();
+    }
+
+    /// Return and increment the counter variable.
+    fn get_counter(&mut self) -> u32 {
+        let val = self.counter;
+        self.counter += 1;
+        val
+    }
+
     /// Insert an image at the current caret position.
     ///
     /// Return a reference to the inserted image element.
     pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) -> Element {
         debug!("[compose_area] insert_image ({})", &alt);
 
-        let img = self.document.create_element("img").expect("Could not create img element");
-        img.set_attribute("src", &src).expect("Could not set attribute");
-        img.set_attribute("alt", &alt).expect("Could not set attribute");
-        img.set_attribute("class", &cls).expect("Could not set attribute");
+        // NOTE: Ideally we'd create an image node here and would then use
+        //       `insert_node`. But unfortunately that will not modify the undo
+        //       stack of the browser (see https://stackoverflow.com/a/15895618).
+        //       Thus, we need to resort to an ugly `execCommand` with a HTML
+        //       string. Furthermore, we need to create a random ID in order
+        //       to be able to find the image again in the DOM.
 
-        self.insert_node(img.unchecked_ref());
+        let img_id = format!("__$$compose_area_img_{}", self.get_counter());
+        let html = format!(
+            "<img id=\"{}\" src=\"{}\" alt=\"{}\" class=\"{}\">",
+            img_id,
+            src.replace('"', ""),
+            alt.replace('"', ""),
+            cls.replace('"', ""),
+        );
+        self.insert_html(&html);
 
-        img
+        self.document.get_element_by_id(&img_id).expect("Could not find inserted image node")
     }
 
     /// Insert plain text at the current caret position.
     pub fn insert_text(&mut self, text: &str) {
-        debug!("[compose_area] insert_text ({})", &text);
+        debug!("[compose_area] insert_text ({})", text);
+        self.exec_command("insertText", text);
+    }
 
-        let text_node = self.document.create_text_node(text);
-
-        self.insert_node(text_node.unchecked_ref());
+    /// Insert HTML at the current caret position.
+    ///
+    /// Note: This is potentially dangerous, make sure that you only insert
+    /// HTML from trusted sources!
+    pub fn insert_html(&mut self, html: &str) {
+        debug!("[compose_area] insert_html ({})", html);
+        self.exec_command("insertHTML", html);
     }
 
     /// Insert the specified node at the previously stored selection range.
     /// Set the caret position to right after the newly inserted node.
+    ///
+    /// **NOTE:** Due to browser limitations, this will not result in a new
+    /// entry in the browser's internal undo stack. This means that the node
+    /// insertion cannot be undone using Ctrl+Z.
     pub fn insert_node(&mut self, node_ref: &Node) {
         debug!("[compose_area] insert_node");
 
@@ -306,7 +395,8 @@ impl ComposeArea {
         }
 
         // Update selection
-        self.selection_range = set_selection_range(&Position::After(node_ref), None);
+        self.selection_range = set_selection_range(&Position::After(node_ref), None)
+            .map(|range| range.clone_range());
 
         // Normalize elements
         self.normalize();
@@ -490,7 +580,10 @@ mod tests {
         let document = window.document().expect("Should have a document on window");
 
         // Create wrapper element
-        let wrapper = document.create_element("div").expect("Could not create wrapper div");
+        let wrapper = document.create_element("div")
+            .expect("Could not create wrapper div");
+        wrapper.set_attribute("style", "white-space: pre-wrap;")
+            .expect("Could not set style on wrapper div");
         document.body().unwrap().append_child(&wrapper).unwrap();
 
         // Bind to wrapper
@@ -515,8 +608,14 @@ mod tests {
     }
 
     impl Img {
-        fn html(&self) -> String {
-            format!(r#"<img src="{}" alt="{}" class="{}">"#, self.src, self.alt, self.cls)
+        fn html(&self, counter: u32) -> String {
+            format!(
+                r#"<img id="__$$compose_area_img_{}" src="{}" alt="{}" class="{}">"#,
+                counter,
+                self.src,
+                self.alt,
+                self.cls,
+            )
         }
 
         fn as_node(&self, ca: &ComposeArea) -> Node {
@@ -711,14 +810,15 @@ mod tests {
                     selection_start: PositionByIndex::after(0),
                     selection_end: None,
                     node: img,
-                    final_html: format!("hi {}", img.html()),
+                    final_html: format!("hi {}", img.html(0)),
                 }.test(&mut ca);
             }
 
-            /// If there is no selection but a trailing newline, insert element
-            /// before that trailing newline.
+            /// If there is no selection but a trailing newline, element
+            /// will replace that trailing newline due to the way how the
+            /// `insertHTML` command works.
             #[wasm_bindgen_test]
-            fn at_end_after_br() {
+            fn at_end_with_br() {
                 let mut ca = init();
                 let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
 
@@ -730,7 +830,7 @@ mod tests {
 
                 // Insert node and verify
                 ca.insert_image(&img.src, &img.alt, &img.cls);
-                assert_eq!(ca.wrapper.inner_html(), format!("{}<br>", img.html()));
+                assert_eq!(ca.wrapper.inner_html(), img.html(0).to_string());
             }
 
             #[wasm_bindgen_test]
@@ -742,7 +842,7 @@ mod tests {
                     selection_start: PositionByIndex::offset(0, 3),
                     selection_end: None,
                     node: img,
-                    final_html: format!("bon{}jour", img.html()),
+                    final_html: format!("bon{}jour", img.html(0)),
                 }.test(&mut ca);
             }
 
@@ -759,7 +859,7 @@ mod tests {
                     selection_start: PositionByIndex::after(0),
                     selection_end: None,
                     node: img,
-                    final_html: format!("a{}<br>b", img.html()),
+                    final_html: format!("a{}<br>b", img.html(0)),
                 }.test(&mut ca);
             }
 
@@ -783,7 +883,7 @@ mod tests {
                     selection_start: PositionByIndex::after_nested(vec![0, 0]),
                     selection_end: None,
                     node: img,
-                    final_html: format!("<div>a{}</div><div>b<br></div>", img.html()),
+                    final_html: format!("<div>a{}</div><div>b<br></div>", img.html(0)),
                 }.test(&mut ca);
             }
         }

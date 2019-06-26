@@ -42,6 +42,7 @@ features = [
     "Document",
     "DomTokenList",
     "Element",
+    "HtmlDocument",
     "HtmlElement",
     "HtmlImageElement",
     "Node",
