@@ -36,14 +36,9 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                     text.push('\n');
                 }
                 last_node_type = "text".to_string();
-                let node_value = node.node_value().unwrap_or_else(|| "".into());
-                if node_value == "\n" {
-                    // Chromium inserts newline text nodes instead of <br>
-                    // elements if `white-space: pre / pre-wrap` is used.
-                    text.push('\n')
-                } else {
-                    // Append text, but strip leading and trailing newlines
-                    text.push_str(node_value.trim_matches(|c| c == '\n' || c == '\r'));
+                // Append text, but strip leading and trailing newlines
+                if let Some(ref val) = node.node_value() {
+                    text.push_str(val);
                 }
             }
             Node::ELEMENT_NODE => {
@@ -179,23 +174,9 @@ mod tests {
         }
 
         #[wasm_bindgen_test]
-        fn double_text_node_concat() {
+        fn double_text_node() {
             let mut node = VirtualNode::element("span");
             node.as_velement_mut().unwrap().children.push(VirtualNode::text("Hello\n"));
-            node.as_velement_mut().unwrap().children.push(VirtualNode::text("World"));
-            ExtractTextTest {
-                html: node,
-                expected: "HelloWorld",
-            }.test();
-        }
-
-        #[wasm_bindgen_test]
-        fn double_text_node_newline() {
-            // Chromium inserts newline text nodes instead of <br>
-            // elements if `white-space: pre / pre-wrap` is used.
-            let mut node = VirtualNode::element("span");
-            node.as_velement_mut().unwrap().children.push(VirtualNode::text("Hello"));
-            node.as_velement_mut().unwrap().children.push(VirtualNode::text("\n"));
             node.as_velement_mut().unwrap().children.push(VirtualNode::text("World"));
             ExtractTextTest {
                 html: node,
