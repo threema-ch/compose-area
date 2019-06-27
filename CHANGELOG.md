@@ -12,11 +12,15 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.3.3 (2019-06-27)
+
+- [fixed] Never trim text nodes (#47) 
+
 ### v0.3.2 (2019-06-27)
 
 - [fixed] Handle newlines in Chromium with `white-space: pre` (#44)
 - [fixed] Fix undo stack (#45)
-- [changed] Upgrade wasm-bindgen to 0.2.47 (#TODO)
+- [changed] Upgrade wasm-bindgen to 0.2.47 (#46)
 
 ### v0.3.1 (2019-05-22)
 
