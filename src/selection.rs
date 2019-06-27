@@ -1,15 +1,12 @@
 /// Everything related to the caret position and DOM selection ranges.
 
 use wasm_bindgen::JsCast;
-use web_sys::{Node, Range, Text};
-
-use crate::utils::is_character_data_node;
+use web_sys::{Node, Selection, Range, Text};
 
 /// A position relative to a node.
 #[derive(Debug)]
 pub enum Position<'a> {
     /// Caret position is before the selected node.
-    #[allow(dead_code)]  // Needed in tests
     Before(&'a Node),
 
     /// Caret position is after the selected node.
@@ -54,11 +51,7 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
             range.set_start_before(node).expect("Could not set_start_before");
         }
         Position::Offset(node, offset) => {
-            if is_character_data_node(&node) {
-                range.set_start(node, *offset).expect("Could not set_start");
-            } else {
-                range.set_start_after(node).expect("Could not set_start_after");
-            }
+            range.set_start(node, *offset).expect("Could not set_start");
         }
     }
 
@@ -71,15 +64,18 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
             range.set_end_before(node).expect("Could not set_end_before");
         }
         Some(Position::Offset(node, offset)) => {
-            if is_character_data_node(&node) {
-                range.set_end(node, *offset).expect("Could not set_start");
-            } else {
-                range.set_end_after(node).expect("Could not set_end_after");
-            }
+            range.set_end(node, *offset).expect("Could not set_start");
         }
         None => range.collapse_with_to_start(true),
     }
 
+    activate_selection_range(&selection, &range);
+    Some(range)
+}
+
+/// Activate the specified selection range in the DOM. Remove all previous
+/// ranges.
+pub fn activate_selection_range(selection: &Selection, range: &Range) {
     // Note: In theory we don't need to re-add the range to the document if
     //       it's already there. Unfortunately, Safari is not spec-compliant
     //       and returns a copy of the range instead of a reference when using
@@ -89,8 +85,6 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
     //       See https://bugs.webkit.org/show_bug.cgi?id=145212
     selection.remove_all_ranges().unwrap();
     selection.add_range(&range).expect("Could not add range");
-
-    Some(range)
 }
 
 #[cfg(test)]
