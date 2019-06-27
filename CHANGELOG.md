@@ -12,6 +12,12 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.3.2 (2019-06-27)
+
+- [fixed] Handle newlines in Chromium with `white-space: pre` (#44)
+- [fixed] Fix undo stack (#45)
+- [changed] Upgrade wasm-bindgen to 0.2.47 (#TODO)
+
 ### v0.3.1 (2019-05-22)
 
 - [fixed] Fix offset bug in "word at caret" methods (#41)
