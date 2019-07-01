@@ -32,6 +32,9 @@ references:
         name: Set up selenium tests
         command: cd selenium && npm ci
     - run:
+        name: Enable safaridriver when available
+        command: if [ -n "$(which safaridriver)" ]; then echo "Enabling safaridriver"; sudo safaridriver --enable; fi
+    - run:
         name: Run selenium tests
         command: cd selenium && npm test $BROWSER
 
@@ -260,6 +263,13 @@ jobs:
     environment:
       BROWSER: chrome
 
+  test-integration-safari:
+    macos:
+      xcode: "10.2.0"
+    steps: *steps-integrationtests
+    environment:
+      BROWSER: safari
+
   deploy-demo:
     docker:
       - image: circleci/node:10
@@ -339,11 +349,15 @@ workflows:
       - test-integration-chrome:
           requires:
             - build
+      - test-integration-safari:
+          requires:
+            - build
       - deploy-demo:
           requires:
             - build
             - test-integration-firefox
             - test-integration-chrome
+            - test-integration-safari
           filters:
             branches:
               only: master

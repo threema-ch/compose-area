@@ -1,3 +1,4 @@
+import * as process from 'process';
 import { Builder } from 'selenium-webdriver';
 import * as TermColor from 'term-color';
 
@@ -7,6 +8,8 @@ import { TESTS } from './tests';
 // Configuration
 const TEST_URL = 'http://localhost:8080/';
 
+// Ensure that unhandled rejections result in aborting
+process.on('unhandledRejection', (up) => { throw up });
 
 // Script arguments
 const browser = process.argv[2];
