@@ -12,6 +12,10 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.3.4 (2019-10-28)
+
+- [changed] Upgrade wasm-bindgen to 0.2.50
+
 ### v0.3.3 (2019-06-27)
 
 - [fixed] Never trim text nodes (#47) 
