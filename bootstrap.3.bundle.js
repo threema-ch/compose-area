@@ -1,11 +1,6 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[3],[
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[3],{
+
+/***/ 7:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17108,36 +17103,11 @@
   else {}
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(7), __webpack_require__(8)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(5), __webpack_require__(8)(module)))
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports) {
 
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 8 */
+/***/ 8:
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -17165,7 +17135,8 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 9 */
+
+/***/ 9:
 /***/ (function(module, exports) {
 
 /*!
@@ -19995,5 +19966,6 @@ module.exports = function(module) {
 
 
 /***/ })
-]]);
+
+}]);
 //# sourceMappingURL=bootstrap.3.bundle.js.map
