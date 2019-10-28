@@ -221,7 +221,7 @@ jobs:
           name: Install latest firefox
           command: >
             apt-get update
-            && apt-get install -y libgtk-3-0 libdbus-glib-1-2
+            && apt-get install -y libgtk-3-0 libdbus-glib-1-2 libx11-xcb1
             && wget -q -O - "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US"
             |  tar xj
 
