@@ -36,6 +36,16 @@ async function clearSelectionRange(driver: WebDriver): Promise<void> {
     await clearBtn.click();
 }
 
+async function skipInBrowser(driver: WebDriver, browser: string): Promise<boolean> {
+    const cap = await driver.getCapabilities()
+    if (cap.get('browserName') === browser) {
+        // Test skipped due to buggy webdriver behavior in Chrome.
+        console.warn(`Warning: Skipping test in ${browser}`);
+        return true;
+    }
+    return false;
+}
+
 /**
  * The wrapper element should be found on the test page.
  */
@@ -78,8 +88,7 @@ async function insertTextBetweenEmoji(driver: WebDriver) {
     await e1.click();
     await e2.click();
 
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
-    await wrapperElement.sendKeys('X');
+    await wrapperElement.sendKeys(Key.ARROW_LEFT, 'X');
 
     const text = await extractText(driver);
     expect(text).to.equal(emojiStrTongue + 'X' + emojiStrBeers);
@@ -89,6 +98,8 @@ async function insertTextBetweenEmoji(driver: WebDriver) {
  * Replace selected text with text.
  */
 async function replaceSelectedTextWithText(driver: WebDriver) {
+    if (await skipInBrowser(driver, 'chrome')) { return; }
+
     await driver.sleep(100); // Wait for compose area init
     const wrapperElement = await driver.findElement(wrapper);
 
@@ -109,6 +120,8 @@ async function replaceSelectedTextWithText(driver: WebDriver) {
  * Replace selected text with emoji.
  */
 async function replaceSelectedTextWithEmoji(driver: WebDriver) {
+    if (await skipInBrowser(driver, 'chrome')) { return; }
+
     await driver.sleep(100); // Wait for compose area init
     const wrapperElement = await driver.findElement(wrapper);
     const emoji = await driver.findElement(emojiTongue);
@@ -130,6 +143,8 @@ async function replaceSelectedTextWithEmoji(driver: WebDriver) {
  * Replace selected text and emoji.
  */
 async function replaceSelectedTextAndEmoji(driver: WebDriver) {
+    if (await skipInBrowser(driver, 'chrome')) { return; }
+
     await driver.sleep(100); // Wait for compose area init
 
     const wrapperElement = await driver.findElement(wrapper);
@@ -163,11 +178,13 @@ async function replaceEmojiWithText(driver: WebDriver) {
 
     await wrapperElement.sendKeys('a');
     emoji.click();
-    await wrapperElement.sendKeys('b');
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
-    await wrapperElement.sendKeys(Key.SHIFT + Key.ARROW_LEFT);
-    await wrapperElement.sendKeys('A');
-    await wrapperElement.sendKeys('B');
+    await wrapperElement.sendKeys(
+        'b',
+        Key.ARROW_LEFT,
+        Key.SHIFT + Key.ARROW_LEFT,
+        'A',
+        'B',
+    );
 
     const text = await extractText(driver);
     expect(text).to.equal('aABb');
@@ -177,13 +194,20 @@ async function replaceEmojiWithText(driver: WebDriver) {
  * Replace all text.
  */
 async function replaceAllText(driver: WebDriver) {
+    // Doesn't work in Firefox. Disabled until
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
+    if (await skipInBrowser(driver, 'firefox')) { return; }
+
+    // Doesn't work in Chrome because every `sendKeys` call resets the focus.
+    if (await skipInBrowser(driver, 'chrome')) { return; }
+
     await driver.sleep(100); // Wait for compose area init
     const wrapperElement = await driver.findElement(wrapper);
 
     await wrapperElement.click();
 
     await wrapperElement.sendKeys('abcde');
-    await wrapperElement.sendKeys(Key.META, 'a');
+    await wrapperElement.sendKeys(Key.CONTROL + 'a');
     await wrapperElement.sendKeys('X');
 
     const text = await extractText(driver);
@@ -200,18 +224,19 @@ async function deleteKey(driver: WebDriver) {
 
     await wrapperElement.click();
 
-    await wrapperElement.sendKeys('abcd');
-    await wrapperElement.sendKeys(Key.ENTER);
+    await wrapperElement.sendKeys('abcd', Key.ENTER);
     await emoji.click();
 
     expect(await extractText(driver)).to.equal('abcd\n' + emojiStrTongue);
 
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
-    await wrapperElement.sendKeys(Key.ARROW_LEFT); // Between c and d
-    await wrapperElement.sendKeys(Key.DELETE);
-    await wrapperElement.sendKeys(Key.DELETE);
-    await wrapperElement.sendKeys('x');
+    await wrapperElement.sendKeys(
+        Key.ARROW_LEFT,
+        Key.ARROW_LEFT,
+        Key.ARROW_LEFT,  // Between c and d
+        Key.DELETE,
+        Key.DELETE,
+        'x',
+    );
 
     expect(await extractText(driver)).to.equal('abcx' + emojiStrTongue);
 }
@@ -220,6 +245,8 @@ async function deleteKey(driver: WebDriver) {
  * Cutting and pasting
  */
 async function cutAndPaste(driver: WebDriver) {
+    if (await skipInBrowser(driver, 'chrome')) { return; }
+
     await driver.sleep(100); // Wait for compose area init
     const wrapperElement = await driver.findElement(wrapper);
     const emoji = await driver.findElement(emojiTongue);
@@ -280,8 +307,7 @@ async function handleSelectionChanges(driver: WebDriver) {
     expect(await extractText(driver)).to.equal(`1234`);
 
     // Insert emoji
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.ARROW_LEFT, Key.ARROW_LEFT);
     await e1.click();
     expect(await extractText(driver)).to.equal(
         `12${emojiStrBeers}34`
@@ -296,8 +322,7 @@ async function handleSelectionChanges(driver: WebDriver) {
 
     // Change selection range
     await wrapperElement.click();
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
-    await wrapperElement.sendKeys(Key.ARROW_LEFT);
+    await wrapperElement.sendKeys(Key.ARROW_LEFT, Key.ARROW_LEFT);
 
     // Click outside wrapper, then insert another emoji
     await headlineElement.click();
@@ -315,9 +340,7 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Replace selected text with emoji', replaceSelectedTextWithEmoji],
     ['Replace selected text and emoji', replaceSelectedTextAndEmoji],
     ['Replace emoji with text', replaceEmojiWithText],
-    // Doesn't work in Firefox. Disabled until
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1529540 is resolved.
-    //['Replace all text', replaceAllText],
+    ['Replace all text', replaceAllText],
     ['Use the delete key', deleteKey],
     ['Cut and paste', cutAndPaste],
     ['Don\'t insert outside wrapper', noInsertOutsideWrapper],
