@@ -173,6 +173,19 @@ area.clear();
     wasm-pack build --release -- --no-default-features
 
 
+## Running the testproject
+
+    # Setup npm
+    cd pkg
+    npm link
+    cd ../www
+    npm install
+    npm link compose-area
+
+    # Run server
+    npm run start
+
+
 ## Testing
 
     # Unit tests
@@ -195,19 +208,6 @@ area.clear();
 
     # Run linting checks
     cargo clean && cargo clippy --all-targets --all-features
-
-
-## Running the testproject
-
-    # Setup npm
-    cd pkg
-    npm link
-    cd ../www
-    npm install
-    npm link compose-area 
-
-    # Run server
-    npm run start
 
 
 ## License
