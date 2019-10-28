@@ -15,6 +15,11 @@
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return __wbg_stack_558ba5917b466edd; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __wbg_error_4bb6c2a97407129a; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "rb", function() { return __widl_instanceof_Window; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "y", function() { return __widl_f_debug_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "D", function() { return __widl_f_error_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "M", function() { return __widl_f_info_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "T", function() { return __widl_f_log_1_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lb", function() { return __widl_f_warn_1_; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "x", function() { return __widl_f_data_CharacterData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "R", function() { return __widl_f_length_CharacterData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return __widl_f_add_2_DOMTokenList; });
@@ -68,11 +73,6 @@
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "qb", function() { return __widl_instanceof_Text; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "J", function() { return __widl_f_get_selection_Window; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "A", function() { return __widl_f_document_Window; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "y", function() { return __widl_f_debug_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "D", function() { return __widl_f_error_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "M", function() { return __widl_f_info_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "T", function() { return __widl_f_log_1_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lb", function() { return __widl_f_warn_1_; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __wbg_newnoargs_8d1797b163dbc9fb; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __wbg_call_836fa928f74337e5; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return __wbindgen_debug_string; });
@@ -670,6 +670,26 @@ const __widl_instanceof_Window = function(arg0) {
     return getObject(arg0) instanceof Window;
 };
 
+const __widl_f_debug_1_ = function(arg0) {
+    console.debug(getObject(arg0));
+};
+
+const __widl_f_error_1_ = function(arg0) {
+    console.error(getObject(arg0));
+};
+
+const __widl_f_info_1_ = function(arg0) {
+    console.info(getObject(arg0));
+};
+
+const __widl_f_log_1_ = function(arg0) {
+    console.log(getObject(arg0));
+};
+
+const __widl_f_warn_1_ = function(arg0) {
+    console.warn(getObject(arg0));
+};
+
 const __widl_f_data_CharacterData = function(ret, arg0) {
 
     const retptr = passStringToWasm(getObject(arg0).data);
@@ -1041,26 +1061,6 @@ const __widl_f_document_Window = function(arg0) {
     const val = getObject(arg0).document;
     return isLikeNone(val) ? 0 : addHeapObject(val);
 
-};
-
-const __widl_f_debug_1_ = function(arg0) {
-    console.debug(getObject(arg0));
-};
-
-const __widl_f_error_1_ = function(arg0) {
-    console.error(getObject(arg0));
-};
-
-const __widl_f_info_1_ = function(arg0) {
-    console.info(getObject(arg0));
-};
-
-const __widl_f_log_1_ = function(arg0) {
-    console.log(getObject(arg0));
-};
-
-const __widl_f_warn_1_ = function(arg0) {
-    console.warn(getObject(arg0));
 };
 
 const __wbg_newnoargs_8d1797b163dbc9fb = function(arg0, arg1) {
