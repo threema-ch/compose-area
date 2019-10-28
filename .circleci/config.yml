@@ -260,6 +260,25 @@ jobs:
     environment:
       BROWSER: chrome
 
+  audit:
+    docker:
+      - image: rust:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-cargo-audit-cache
+      - run:
+          name: Install cargo-audit
+          command: cargo install --force cargo-audit
+      - run:
+          name: Run cargo audit
+          command: cargo audit
+      - save_cache:
+          key: v1-cargo-audit-cache
+          paths:
+            - /usr/local/cargo
+
   deploy-demo:
     docker:
       - image: circleci/node:10
@@ -327,6 +346,7 @@ jobs:
 
 workflows:
   version: 2
+
   build-and-test:
     jobs:
       - build
@@ -347,3 +367,24 @@ workflows:
           filters:
             branches:
               only: master
+
+  # Build master every week on Monday at 03:00 am
+  weekly:
+    triggers:
+      - schedule:
+          cron: "0 3 * * 1"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
+      - test-unit
+      - test-browser
+      - test-integration-firefox:
+          requires:
+            - build
+      - test-integration-chrome:
+          requires:
+            - build
+      - audit
