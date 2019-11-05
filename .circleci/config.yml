@@ -304,6 +304,7 @@ jobs:
             && echo "Installing dependencies..."
             && npm ci
             && echo "Copying npm package..."
+            && rm -r node_modules/compose-area
             && cp -Rv ../pkg node_modules/compose-area
             && echo "Build..."
             && npm run build
