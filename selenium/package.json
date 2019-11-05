@@ -9,7 +9,7 @@
   "author": "dbrgn",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^11.9.4",
+    "@types/node": "^11.15.2",
     "@types/selenium-webdriver": "^3.0.15",
     "chai": "^4.2.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
