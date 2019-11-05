@@ -7,6 +7,9 @@
     "start": "webpack-dev-server --config webpack.dev.js --host 0.0.0.0 --disable-host-check"
   },
   "author": "",
+  "dependencies": {
+    "compose-area": "file:../pkg"
+  },
   "devDependencies": {
     "benchmark": "^2.1.4",
     "copy-webpack-plugin": "^4.5.2",
