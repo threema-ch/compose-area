@@ -176,11 +176,8 @@ area.clear();
 ## Running the testproject
 
     # Setup npm
-    cd pkg
-    npm link
-    cd ../www
+    cd www
     npm install
-    npm link compose-area
 
     # Run server
     npm run start
