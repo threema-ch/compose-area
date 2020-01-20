@@ -7,7 +7,7 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
 Demo: https://threema-ch.github.io/compose-area/
 
-Project status: Alpha, still working out initial bugs.
+Project status: Used in production, but may still contain some bugs.
 
 
 ## Concepts
