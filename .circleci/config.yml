@@ -62,10 +62,7 @@ jobs:
             - v2-cargo-cache-build-{{ arch }}-{{ .Branch }}
             - v2-cargo-cache-build-{{ arch }}
 
-      # Install nightly & wasm
-      - run:
-          name: Install Rust nightly
-          command: rustup update nightly && rustup default nightly
+      # Install wasm
       - run:
           name: Add wasm32 target
           command: rustup target add wasm32-unknown-unknown
@@ -119,10 +116,7 @@ jobs:
             - v2-cargo-cache-lint-{{ arch }}-{{ .Branch }}
             - v2-cargo-cache-lint-{{ arch }}
 
-      # Install nightly
-      - run:
-          name: Install Rust nightly
-          command: rustup update nightly-2019-04-11 && rustup default nightly-2019-04-11
+      # Install clippy
       - run:
           name: Install clippy
           command: rustup component add clippy
@@ -160,11 +154,6 @@ jobs:
             - v2-cargo-cache-unittest-{{ arch }}-{{ .Branch }}
             - v2-cargo-cache-unittest-{{ arch }}
 
-      # Install nightly
-      - run:
-          name: Install Rust nightly
-          command: rustup update nightly && rustup default nightly
-
       # Show versions
       - run:
           name: Show versions
@@ -199,10 +188,7 @@ jobs:
             - v2-cargo-cache-browsertest-{{ arch }}-{{ .Branch }}
             - v2-cargo-cache-browsertest-{{ arch }}
 
-      # Install nightly & wasm
-      - run:
-          name: Install Rust nightly
-          command: rustup update nightly && rustup default nightly
+      # Install wasm
       - run:
           name: Add wasm32 target
           command: rustup target add wasm32-unknown-unknown
