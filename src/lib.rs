@@ -3,7 +3,7 @@
 #![deny(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::non_ascii_literal, clippy::single_match_else, clippy::if_not_else,
-         clippy::similar_names, clippy::module_name_repetitions)]
+         clippy::similar_names, clippy::module_name_repetitions, clippy::must_use_candidate)]
 
 #[macro_use] extern crate log;
 
@@ -100,6 +100,7 @@ impl RangeResult {
     }
 
     /// Used by JS code to show a string representation of the range.
+    #[allow(clippy::inherent_to_string)]
     pub fn to_string(&self) -> String {
         match (&self.range, self.outside) {
             (_, true) => "Outside".to_string(),
@@ -587,7 +588,7 @@ mod tests {
         document.body().unwrap().append_child(&wrapper).unwrap();
 
         // Bind to wrapper
-        ComposeArea::bind_to(wrapper.clone(), Some("trace".into()))
+        ComposeArea::bind_to(wrapper, Some("trace".into()))
     }
 
     /// Create and return a text node.
@@ -830,7 +831,7 @@ mod tests {
 
                 // Insert node and verify
                 ca.insert_image(&img.src, &img.alt, &img.cls);
-                assert_eq!(ca.wrapper.inner_html(), img.html(0).to_string());
+                assert_eq!(ca.wrapper.inner_html(), img.html(0));
             }
 
             #[wasm_bindgen_test]
