@@ -12,6 +12,10 @@ Possible log types:
 - `[security]` to invite users to upgrade in case of vulnerabilities.
 
 
+### v0.3.5 (2020-01-21)
+
+- [changed] Update dependencies (#56)
+
 ### v0.3.4 (2019-10-28)
 
 - [changed] Upgrade wasm-bindgen to 0.2.50
