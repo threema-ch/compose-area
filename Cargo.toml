@@ -15,7 +15,7 @@ default = ["console_error_panic_hook", "console_log"]
 
 [dependencies]
 cfg-if = "0.1.2"
-wasm-bindgen = { version = "=0.2.58", features = ["spans", "std"] }
+wasm-bindgen = { version = "=0.2.63", features = ["spans", "std"] }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -32,7 +32,7 @@ wee_alloc = { version = "0.4.2", optional = true }
 
 # Add logging support
 log = "0.4"
-console_log = { version = "0.1", optional = true }
+console_log = { version = "0.2", optional = true }
 
 [dependencies.web-sys]
 version = "0.3"
@@ -53,7 +53,7 @@ features = [
 ]
 
 [dev-dependencies]
-wasm-bindgen-test = "0.2"
+wasm-bindgen-test = "0.3"
 virtual-dom-rs = "0.6"
 
 [profile.release]
