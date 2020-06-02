@@ -10,15 +10,20 @@ Possible log types:
 - `[removed]` for deprecated features removed in this release.
 - `[fixed]` for any bug fixes.
 - `[security]` to invite users to upgrade in case of vulnerabilities.
+- `[maintenance]` for maintenance work like dependency updates.
 
+
+### v0.3.6 (2020-06-02)
+
+- [maintenance] Update dependencies (#58, #59, #60)
 
 ### v0.3.5 (2020-01-21)
 
-- [changed] Update dependencies (#56)
+- [maintenance] Update dependencies (#56)
 
 ### v0.3.4 (2019-10-28)
 
-- [changed] Upgrade wasm-bindgen to 0.2.50
+- [maintenance] Upgrade wasm-bindgen to 0.2.50
 
 ### v0.3.3 (2019-06-27)
 
@@ -28,7 +33,7 @@ Possible log types:
 
 - [fixed] Handle newlines in Chromium with `white-space: pre` (#44)
 - [fixed] Fix undo stack (#45)
-- [changed] Upgrade wasm-bindgen to 0.2.47 (#46)
+- [maintenance] Upgrade wasm-bindgen to 0.2.47 (#46)
 
 ### v0.3.1 (2019-05-22)
 
@@ -38,9 +43,9 @@ Possible log types:
 
 - [added] Add `ComposeArea::get_word_at_caret` (#39)
 - [added] Add `ComposeArea::select_word_at_caret` (#39)
-- [changed] Upgrade wasm-bindgen to 0.2.45 (#40)
 - [fixed] Thanks to a fix in wasm-bindgen, optional parameters in the
   TypeScript declaration files should now be marked as omittable
+- [maintenance] Upgrade wasm-bindgen to 0.2.45 (#40)
 
 ### v0.2.2 (2019-05-13)
 
@@ -49,7 +54,7 @@ Possible log types:
 ### v0.2.1 (2019-05-13)
 
 - [added] Configurable log level (#37)
-- [changed] Upgrade wasm-bindgen to 0.2.42 (#33)
+- [maintenance] Upgrade wasm-bindgen to 0.2.42 (#33)
 
 ### v0.2.0 (2019-04-25)
 
@@ -59,7 +64,7 @@ Possible log types:
 - [changed] `ComposeArea::insert_image` now returns reference to the img element
 - [changed] `ComposeArea::get_text`: Make `no_trim` parameter optional
 - [changed] `ComposeArea::bind_to`: Stop inserting `<br>` element
-- [changed] Upgrade wasm-bindgen to 0.2.42
+- [maintenance] Upgrade wasm-bindgen to 0.2.42
 
 ### v0.1.1 (2019-04-23)
 
