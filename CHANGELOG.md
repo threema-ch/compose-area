@@ -13,6 +13,10 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.4.2 (2020-06-09)
+
+- [fixed] Fix packaging bug caused by wasm-pack (https://github.com/rustwasm/wasm-pack/issues/837)
+
 ### v0.4.1 (2020-06-09)
 
 - [added] ComposeArea.insert_image: Downcast Element to HtmlElement (#63)
