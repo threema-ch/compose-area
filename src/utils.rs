@@ -1,6 +1,6 @@
 use cfg_if::cfg_if;
 use log::Level;
-use web_sys::{Node, Element};
+use web_sys::{Element, Node};
 
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -40,5 +40,9 @@ pub(crate) fn get_last_child(parent: &Element) -> Option<Node> {
     if child_count == 0 {
         return None;
     }
-    Some(child_nodes.get(child_count - 1).expect("Could not access last child node"))
+    Some(
+        child_nodes
+            .get(child_count - 1)
+            .expect("Could not access last child node"),
+    )
 }

@@ -7,7 +7,7 @@ use wasm_bindgen_test::*;
 
 mod helpers;
 
-use helpers::{setup_test, setup_compose_area_test};
+use helpers::{setup_compose_area_test, setup_test};
 
 const WRAPPER_ID: &str = "testwrapper";
 
@@ -20,7 +20,10 @@ fn test_bind_to() {
 
     // Initial empty wrapper
     let wrapper_before = helpers::get_wrapper(&document, WRAPPER_ID);
-    assert_eq!(wrapper_before.outer_html(), format!("<div id=\"{}\"></div>", WRAPPER_ID));
+    assert_eq!(
+        wrapper_before.outer_html(),
+        format!("<div id=\"{}\"></div>", WRAPPER_ID)
+    );
 
     let wrapper = document.get_element_by_id(WRAPPER_ID).unwrap();
     ComposeArea::bind_to(wrapper, Some("trace".into()));
@@ -28,5 +31,8 @@ fn test_bind_to() {
     // Initialized wrapper
     let wrapper_after = helpers::get_wrapper(&document, WRAPPER_ID);
     assert_eq!(wrapper_after.class_name(), "cawrapper initialized");
-    assert_eq!(wrapper_after.get_attribute("contenteditable").unwrap(), "true");
+    assert_eq!(
+        wrapper_after.get_attribute("contenteditable").unwrap(),
+        "true"
+    );
 }

@@ -1,11 +1,17 @@
 #![cfg_attr(test, feature(proc_macro_hygiene))]
-
 #![deny(clippy::all)]
 #![warn(clippy::pedantic)]
-#![allow(clippy::non_ascii_literal, clippy::single_match_else, clippy::if_not_else,
-         clippy::similar_names, clippy::module_name_repetitions, clippy::must_use_candidate)]
+#![allow(
+    clippy::non_ascii_literal,
+    clippy::single_match_else,
+    clippy::if_not_else,
+    clippy::similar_names,
+    clippy::module_name_repetitions,
+    clippy::must_use_candidate
+)]
 
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 
 mod extract;
 mod selection;
@@ -13,11 +19,13 @@ mod utils;
 
 use cfg_if::cfg_if;
 use log::Level;
-use wasm_bindgen::{JsCast, prelude::*};
-use web_sys::{self, Element, Node, HtmlElement, HtmlDocument, Selection, Range, Text};
+use wasm_bindgen::{prelude::*, JsCast};
+use web_sys::{self, Element, HtmlDocument, HtmlElement, Node, Range, Selection, Text};
 
-use crate::selection::{Position, set_selection_range, activate_selection_range, glue_range_to_text};
 use crate::extract::extract_text;
+use crate::selection::{
+    activate_selection_range, glue_range_to_text, set_selection_range, Position,
+};
 
 cfg_if! {
     // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -170,7 +178,6 @@ impl WordAtCaret {
 
 #[wasm_bindgen]
 impl ComposeArea {
-
     /// Initialize a new compose area wrapper.
     ///
     /// If the `log_level` argument is supplied, the console logger is
@@ -188,7 +195,7 @@ impl ComposeArea {
                 "warn" => utils::init_log(Level::Warn),
                 "error" => utils::init_log(Level::Error),
                 other => web_sys::console::warn_1(
-                    &format!("bind_to: Invalid log level: {}", other).into()
+                    &format!("bind_to: Invalid log level: {}", other).into(),
                 ),
             }
         }
@@ -198,8 +205,13 @@ impl ComposeArea {
         let document = window.document().expect("Should have a document on window");
 
         // Initialize the wrapper element
-        wrapper.class_list().add_2("cawrapper", "initialized").expect("Could not add wrapper classes");
-        wrapper.set_attribute("contenteditable", "true").expect("Could not set contenteditable attr");
+        wrapper
+            .class_list()
+            .add_2("cawrapper", "initialized")
+            .expect("Could not add wrapper classes");
+        wrapper
+            .set_attribute("contenteditable", "true")
+            .expect("Could not set contenteditable attr");
 
         info!("[compose_area] Initialized");
 
@@ -217,16 +229,16 @@ impl ComposeArea {
     pub fn store_selection_range(&mut self) -> RangeResult {
         trace!("[compose_area] store_selection_range");
         let range_result = self.fetch_range();
-        trace!("[compose_area]   Range: {}", range_result.to_string().replace('\n', ""));
+        trace!(
+            "[compose_area]   Range: {}",
+            range_result.to_string().replace('\n', "")
+        );
 
         // Ignore selections outside the wrapper
         if !range_result.outside {
             // Note: We need to clone the range object. Otherwise, changes to the
             // range in the DOM will be reflected in our stored reference.
-            self.selection_range = range_result
-                .clone()
-                .range
-                .map(|range| range.clone_range());
+            self.selection_range = range_result.clone().range.map(|range| range.clone_range());
         }
 
         range_result
@@ -276,10 +288,12 @@ impl ComposeArea {
             match self.selection_range {
                 Some(ref range) => {
                     activate_selection_range(
-                        &self.fetch_selection().expect("Could not get window selection"),
-                        range
+                        &self
+                            .fetch_selection()
+                            .expect("Could not get window selection"),
+                        range,
                     );
-                },
+                }
                 None => {
                     // No stored selection range. Create a new selection at the end end.
                     let last_child_node = utils::get_last_child(&self.wrapper);
@@ -299,11 +313,10 @@ impl ComposeArea {
                             } else {
                                 set_selection_range(&Position::After(node), None)
                             }
-                        },
-                        None => {
-                            set_selection_range(&Position::Offset(&self.wrapper, 0), None)
-                        },
-                    }.map(|range| range.clone_range());
+                        }
+                        None => set_selection_range(&Position::Offset(&self.wrapper, 0), None),
+                    }
+                    .map(|range| range.clone_range());
                 }
             }
         }
@@ -381,7 +394,9 @@ impl ComposeArea {
 
         // Insert the node
         if let Some(ref range) = self.selection_range {
-            range.delete_contents().expect("Could not remove selection contents");
+            range
+                .delete_contents()
+                .expect("Could not remove selection contents");
             range.insert_node(node_ref).expect("Could not insert node");
         } else {
             // No current selection. Append at end, unless the last element in
@@ -390,23 +405,25 @@ impl ComposeArea {
             let last_child_node = utils::get_last_child(&self.wrapper);
             match last_child_node.and_then(|n| n.dyn_into::<Element>().ok()) {
                 Some(ref element) if element.tag_name() == "BR" => {
-                    self.wrapper.insert_before(node_ref, Some(element))
+                    self.wrapper
+                        .insert_before(node_ref, Some(element))
                         .expect("Could not insert child");
-                },
+                }
                 Some(_) | None => {
-                    self.wrapper.append_child(node_ref).expect("Could not append child");
-                },
+                    self.wrapper
+                        .append_child(node_ref)
+                        .expect("Could not append child");
+                }
             };
         }
 
         // Update selection
-        self.selection_range = set_selection_range(&Position::After(node_ref), None)
-            .map(|range| range.clone_range());
+        self.selection_range =
+            set_selection_range(&Position::After(node_ref), None).map(|range| range.clone_range());
 
         // Normalize elements
         self.normalize();
     }
-
 
     /// Normalize the contents of the wrapper element.
     ///
@@ -419,7 +436,9 @@ impl ComposeArea {
     /// Return the DOM selection.
     fn fetch_selection(&self) -> Option<Selection> {
         trace!("[compose_area]   fetch_selection");
-        self.window.get_selection().expect("Could not get selection from window")
+        self.window
+            .get_selection()
+            .expect("Could not get selection from window")
     }
 
     /// Return the last range of the selection that is within the wrapper
@@ -431,14 +450,16 @@ impl ComposeArea {
             None => {
                 error!("[compose_area] Could not find selection");
                 return RangeResult::none();
-            },
+            }
         };
         let mut candidate: Option<Range> = None;
         for i in 0..selection.range_count() {
-            let range = selection.get_range_at(i)
+            let range = selection
+                .get_range_at(i)
                 .expect("Could not get range from selection");
             candidate = Some(range.clone());
-            let container = range.common_ancestor_container()
+            let container = range
+                .common_ancestor_container()
                 .expect("Could not get common ancestor container for range");
             if self.wrapper.contains(Some(&container)) {
                 return RangeResult::contained(range);
@@ -467,7 +488,8 @@ impl ComposeArea {
         debug!("[compose_area] focus");
         self.restore_selection_range();
         if let Some(e) = self.wrapper.dyn_ref::<HtmlElement>() {
-            e.focus().unwrap_or_else(|_| error!("[compose_area] Could not focus compose area"));
+            e.focus()
+                .unwrap_or_else(|_| error!("[compose_area] Could not focus compose area"));
         }
     }
 
@@ -475,8 +497,13 @@ impl ComposeArea {
     pub fn clear(&mut self) {
         debug!("[compose_area] clear");
         while self.wrapper.has_child_nodes() {
-            let last_child = self.wrapper.last_child().expect("Could not find last child");
-            self.wrapper.remove_child(&last_child).expect("Could not remove last child");
+            let last_child = self
+                .wrapper
+                .last_child()
+                .expect("Could not find last child");
+            self.wrapper
+                .remove_child(&last_child)
+                .expect("Could not remove last child");
         }
         self.selection_range = None;
     }
@@ -505,9 +532,7 @@ impl ComposeArea {
                 .expect("Could not get start container")
                 .dyn_into::<Text>()
                 .expect("Node is not a text node");
-            let offset: u32 = range
-                .start_offset()
-                .expect("Could not get start offset");
+            let offset: u32 = range.start_offset().expect("Could not get start offset");
 
             // Note that the offset refers to JS characters, not bytes.
             let text: String = node.data();
@@ -542,7 +567,9 @@ impl ComposeArea {
             // previously encoded from a string.
             #[allow(clippy::cast_possible_truncation)]
             Some(WordAtCaret {
-                node: node.dyn_into::<Node>().expect("Could not turn Text into Node"),
+                node: node
+                    .dyn_into::<Node>()
+                    .expect("Could not turn Text into Node"),
                 before: String::from_utf16(&before).expect("Could not decode UTF16 value"),
                 after: String::from_utf16(&after).expect("Could not decode UTF16 value"),
                 offsets: (start as u32, end as u32),
@@ -563,8 +590,9 @@ impl ComposeArea {
             let node = wac.node();
             set_selection_range(
                 &Position::Offset(&node, wac.start_offset()),
-                Some(&Position::Offset(&node, wac.end_offset()))
-            ).is_some()
+                Some(&Position::Offset(&node, wac.end_offset())),
+            )
+            .is_some()
         } else {
             false
         }
@@ -585,9 +613,11 @@ mod tests {
         let document = window.document().expect("Should have a document on window");
 
         // Create wrapper element
-        let wrapper = document.create_element("div")
+        let wrapper = document
+            .create_element("div")
             .expect("Could not create wrapper div");
-        wrapper.set_attribute("style", "white-space: pre-wrap;")
+        wrapper
+            .set_attribute("style", "white-space: pre-wrap;")
             .expect("Could not set style on wrapper div");
         document.body().unwrap().append_child(&wrapper).unwrap();
 
@@ -616,10 +646,7 @@ mod tests {
         fn html(&self, counter: u32) -> String {
             format!(
                 r#"<img id="__$$compose_area_img_{}" src="{}" alt="{}" class="{}">"#,
-                counter,
-                self.src,
-                self.alt,
-                self.cls,
+                counter, self.src, self.alt, self.cls,
             )
         }
 
@@ -680,12 +707,7 @@ mod tests {
         impl<N> InsertNodeTest<N> {
             fn get_node(&self, indices: &[usize]) -> Node {
                 assert!(!indices.is_empty());
-                let mut node: Node = self
-                    .children
-                    .as_slice()
-                    .get(indices[0])
-                    .unwrap()
-                    .clone();
+                let mut node: Node = self.children.as_slice().get(indices[0]).unwrap().clone();
                 for i in indices.iter().skip(1) {
                     node = node
                         .unchecked_ref::<Element>()
@@ -697,8 +719,8 @@ mod tests {
             }
 
             fn do_test<F>(&self, mut ca: &mut ComposeArea, insert_func: F)
-                where
-                    F: FnOnce(&mut ComposeArea, &N)
+            where
+                F: FnOnce(&mut ComposeArea, &N),
             {
                 // Add child nodes
                 for child in &self.children {
@@ -720,10 +742,10 @@ mod tests {
                             &pos_start,
                             Some(&match sel.offset {
                                 Some(offset) => Position::Offset(&node_end, offset),
-                                None => Position::After(&node_end)
-                            })
+                                None => Position::After(&node_end),
+                            }),
                         )
-                    },
+                    }
                     None => set_selection_range(&pos_start, None),
                 };
 
@@ -762,7 +784,8 @@ mod tests {
                     selection_end: None,
                     node: "world",
                     final_html: "hello world".into(),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
 
             #[wasm_bindgen_test]
@@ -774,7 +797,8 @@ mod tests {
                     selection_end: None,
                     node: "XY",
                     final_html: "aXYb".into(),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
 
             #[wasm_bindgen_test]
@@ -786,20 +810,26 @@ mod tests {
                     selection_end: Some(PositionByIndex::offset(0, 3)),
                     node: "X",
                     final_html: "aXd".into(),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
 
             #[wasm_bindgen_test]
             fn replace_nodes() {
                 let mut ca = init();
-                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                let img = Img {
+                    src: "img.jpg",
+                    alt: "😀",
+                    cls: "em",
+                };
                 InsertNodeTest {
                     children: vec![text_node(&ca, "ab"), img.as_node(&ca)],
                     selection_start: PositionByIndex::offset(0, 1),
                     selection_end: Some(PositionByIndex::after(1)),
                     node: "z",
                     final_html: "az".into(),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
         }
 
@@ -809,14 +839,19 @@ mod tests {
             #[wasm_bindgen_test]
             fn at_end() {
                 let mut ca = init();
-                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                let img = Img {
+                    src: "img.jpg",
+                    alt: "😀",
+                    cls: "em",
+                };
                 InsertNodeTest {
                     children: vec![text_node(&ca, "hi ")],
                     selection_start: PositionByIndex::after(0),
                     selection_end: None,
                     node: img,
                     final_html: format!("hi {}", img.html(0)),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
 
             /// If there is no selection but a trailing newline, element
@@ -825,7 +860,11 @@ mod tests {
             #[wasm_bindgen_test]
             fn at_end_with_br() {
                 let mut ca = init();
-                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                let img = Img {
+                    src: "img.jpg",
+                    alt: "😀",
+                    cls: "em",
+                };
 
                 // Prepare wrapper
                 ca.wrapper.set_inner_html("<br>");
@@ -841,20 +880,29 @@ mod tests {
             #[wasm_bindgen_test]
             fn split_text() {
                 let mut ca = init();
-                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                let img = Img {
+                    src: "img.jpg",
+                    alt: "😀",
+                    cls: "em",
+                };
                 InsertNodeTest {
                     children: vec![text_node(&ca, "bonjour")],
                     selection_start: PositionByIndex::offset(0, 3),
                     selection_end: None,
                     node: img,
                     final_html: format!("bon{}jour", img.html(0)),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
 
             #[wasm_bindgen_test]
             fn between_nodes_br() {
                 let mut ca = init();
-                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                let img = Img {
+                    src: "img.jpg",
+                    alt: "😀",
+                    cls: "em",
+                };
                 InsertNodeTest {
                     children: vec![
                         text_node(&ca, "a"),
@@ -865,13 +913,18 @@ mod tests {
                     selection_end: None,
                     node: img,
                     final_html: format!("a{}<br>b", img.html(0)),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
 
             #[wasm_bindgen_test]
             fn between_nodes_div() {
                 let mut ca = init();
-                let img = Img { src: "img.jpg", alt: "😀", cls: "em" };
+                let img = Img {
+                    src: "img.jpg",
+                    alt: "😀",
+                    cls: "em",
+                };
                 let div_a = {
                     let div = element_node(&ca, "div");
                     div.append_child(&text_node(&ca, "a")).unwrap();
@@ -889,7 +942,8 @@ mod tests {
                     selection_end: None,
                     node: img,
                     final_html: format!("<div>a{}</div><div>b<br></div>", img.html(0)),
-                }.test(&mut ca);
+                }
+                .test(&mut ca);
             }
         }
     }
@@ -951,7 +1005,11 @@ mod tests {
 
             // Range is outside
             let outer_text_node = ca.document.create_text_node("hello");
-            ca.document.body().unwrap().append_child(&outer_text_node).unwrap();
+            ca.document
+                .body()
+                .unwrap()
+                .append_child(&outer_text_node)
+                .unwrap();
             set_selection_range(&Position::Offset(&outer_text_node, 0), None);
             let range_result = ca.fetch_range();
             assert!(range_result.range.is_some());
@@ -1004,7 +1062,9 @@ mod tests {
             set_selection_range(&Position::Offset(&text, 9), None);
             ca.store_selection_range();
 
-            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            let wac = ca
+                .get_word_at_caret()
+                .expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), "wor");
             assert_eq!(&wac.after(), "ld!");
             assert_eq!(wac.start_offset(), 6);
@@ -1020,7 +1080,9 @@ mod tests {
             set_selection_range(&Position::After(&text), None);
             ca.store_selection_range();
 
-            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            let wac = ca
+                .get_word_at_caret()
+                .expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), "world");
             assert_eq!(&wac.after(), "");
             assert_eq!(wac.start_offset(), 6);
@@ -1036,7 +1098,9 @@ mod tests {
             set_selection_range(&Position::Offset(&text, 0), None);
             ca.store_selection_range();
 
-            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            let wac = ca
+                .get_word_at_caret()
+                .expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), "");
             assert_eq!(&wac.after(), "hello");
             assert_eq!(wac.start_offset(), 0);
@@ -1052,7 +1116,9 @@ mod tests {
             set_selection_range(&Position::Offset(&text, 4), None);
             ca.store_selection_range();
 
-            let wac = ca.get_word_at_caret().expect("get_word_at_caret returned None");
+            let wac = ca
+                .get_word_at_caret()
+                .expect("get_word_at_caret returned None");
             assert_eq!(&wac.before(), ":ok:");
             assert_eq!(&wac.after(), "");
             assert_eq!(wac.start_offset(), 0);

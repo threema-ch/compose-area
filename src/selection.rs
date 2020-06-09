@@ -1,7 +1,6 @@
 /// Everything related to the caret position and DOM selection ranges.
-
 use wasm_bindgen::JsCast;
-use web_sys::{Node, Selection, Range, Text};
+use web_sys::{Node, Range, Selection, Text};
 
 /// A position relative to a node.
 #[derive(Debug)]
@@ -27,28 +26,37 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
     let document = window.document().expect("should have a document on window");
 
     // Get selection
-    let selection = match window.get_selection().expect("Could not get selection from window") {
+    let selection = match window
+        .get_selection()
+        .expect("Could not get selection from window")
+    {
         Some(sel) => sel,
         None => {
             error!("Could not get window selection");
             return None;
-        },
+        }
     };
 
     // Get the current selection range. Create a new range if necessary.
     let range = if selection.range_count() == 0 {
         document.create_range().expect("Could not create range")
     } else {
-        selection.get_range_at(0).expect("Could not get range at index 0")
+        selection
+            .get_range_at(0)
+            .expect("Could not get range at index 0")
     };
 
     // Set range start
     match start {
         Position::After(node) => {
-            range.set_start_after(node).expect("Could not set_start_after");
+            range
+                .set_start_after(node)
+                .expect("Could not set_start_after");
         }
         Position::Before(node) => {
-            range.set_start_before(node).expect("Could not set_start_before");
+            range
+                .set_start_before(node)
+                .expect("Could not set_start_before");
         }
         Position::Offset(node, offset) => {
             range.set_start(node, *offset).expect("Could not set_start");
@@ -61,7 +69,9 @@ pub fn set_selection_range(start: &Position, end: Option<&Position>) -> Option<R
             range.set_end_after(node).expect("Could not set_end_after");
         }
         Some(Position::Before(node)) => {
-            range.set_end_before(node).expect("Could not set_end_before");
+            range
+                .set_end_before(node)
+                .expect("Could not set_end_before");
         }
         Some(Position::Offset(node, offset)) => {
             range.set_end(node, *offset).expect("Could not set_start");
@@ -126,7 +136,9 @@ pub fn glue_range_to_text(range: &mut Range) -> bool {
     }
 
     // Determine node type of container
-    let container = range.start_container().expect("Could not get start container");
+    let container = range
+        .start_container()
+        .expect("Could not get start container");
     match container.node_type() {
         Node::TEXT_NODE => true,
         Node::ELEMENT_NODE => {
@@ -136,7 +148,9 @@ pub fn glue_range_to_text(range: &mut Range) -> bool {
             } else if let Some(prev_sibling) = container.child_nodes().get(offset - 1) {
                 if prev_sibling.node_type() == Node::TEXT_NODE {
                     let length = prev_sibling.dyn_ref::<Text>().unwrap().length();
-                    range.set_start(&prev_sibling, length).expect("Could not set_start");
+                    range
+                        .set_start(&prev_sibling, length)
+                        .expect("Could not set_start");
                     range.collapse_with_to_start(true);
                     true
                 } else {
