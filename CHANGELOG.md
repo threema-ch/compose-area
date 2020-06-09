@@ -13,6 +13,11 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.4.0 (2020-06-09)
+
+- [maintenance] Upgrade wasm-pack. This upgrade generates more strict
+  TypeScript declaration files.
+
 ### v0.3.7 (2020-06-09)
 
 - [fixed] Downgrade wasm-pack again, because the newer version generated
