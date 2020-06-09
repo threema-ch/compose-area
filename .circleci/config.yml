@@ -141,6 +141,44 @@ jobs:
           paths:
             - /usr/local/cargo
 
+  fmt:
+    docker:
+      - image: rust:latest
+    steps:
+      - checkout
+
+      # Load cargo target from cache if possible.
+      # Multiple caches are used to increase the chance of a cache hit.
+      - restore_cache:
+          keys:
+            - v2-cargo-cache-fmt-{{ arch }}-{{ .Branch }}
+            - v2-cargo-cache-fmt-{{ arch }}
+
+      # Install rustfmt
+      - run:
+          name: Install rustfmt
+          command: rustup component add rustfmt
+
+      # Show versions
+      - run:
+          name: Show versions
+          command: rustc --version && cargo --version && cargo fmt --version
+
+      # Run format checks
+      - run:
+          name: Run rustfmt
+          command: cargo fmt -- --check
+
+      # Save cache
+      - save_cache:
+          key: v2-cargo-cache-fmt-{{ arch }}-{{ .Branch }}
+          paths:
+            - /usr/local/cargo
+      - save_cache:
+          key: v2-cargo-cache-fmt-{{ arch }}
+          paths:
+            - /usr/local/cargo
+
   test-unit:
     docker:
       - image: rust:latest
@@ -338,6 +376,7 @@ workflows:
     jobs:
       - build
       - lint
+      - fmt
       - test-unit
       - test-browser
       - test-integration-firefox:
@@ -366,6 +405,8 @@ workflows:
                 - master
     jobs:
       - build
+      - lint
+      - fmt
       - test-unit
       - test-browser
       - test-integration-firefox:
