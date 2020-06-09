@@ -363,7 +363,7 @@ class ComposeArea {
     * @param {string} src
     * @param {string} alt
     * @param {string} cls
-    * @returns {Element}
+    * @returns {HTMLElement}
     */
     insert_image(src, alt, cls) {
         var ptr0 = passStringToWasm0(src, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
