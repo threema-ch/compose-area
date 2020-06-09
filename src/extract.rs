@@ -1,4 +1,4 @@
-use wasm_bindgen::{JsCast, prelude::*};
+use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{Element, HtmlImageElement, Node};
 
 /// Process a DOM node recursively and extract text.
@@ -27,7 +27,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
             None => {
                 warn!("visit_child_nodes: Index out of bounds");
                 return;
-            },
+            }
         };
         match node.node_type() {
             Node::TEXT_NODE => {
@@ -97,11 +97,15 @@ mod tests {
                 let document = window.document().expect("Should have a document on window");
 
                 // Create wrapper element
-                let test_wrapper = document.create_element("div").expect("Could not create test wrapper");
+                let test_wrapper = document
+                    .create_element("div")
+                    .expect("Could not create test wrapper");
 
                 // Write HTML to DOM
                 let node: Node = self.html.create_dom_node().node;
-                test_wrapper.append_child(&node).expect("Could not append node to test wrapper");
+                test_wrapper
+                    .append_child(&node)
+                    .expect("Could not append node to test wrapper");
 
                 // Extract and validate text
                 let text: String = extract_text(&test_wrapper, false);
@@ -114,7 +118,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { Hello World },
                 expected: "Hello World",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -122,7 +127,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div>Hello World</div> },
                 expected: "Hello World",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -130,7 +136,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { <span>Hello World</span> },
                 expected: "Hello World",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -138,7 +145,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div>Hello <img src="#" alt="Big">World</div> },
                 expected: "Hello BigWorld",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -146,7 +154,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div>Hello<br>World</div> },
                 expected: "Hello\nWorld",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -154,7 +163,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div><div>Hello</div>World</div> },
                 expected: "Hello\nWorld",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -162,7 +172,8 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div>Hello<div>World</div></div> },
                 expected: "Hello\nWorld",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
@@ -170,18 +181,26 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div><div>Hello</div><div>World</div></div> },
                 expected: "Hello\nWorld",
-            }.test();
+            }
+            .test();
         }
 
         #[wasm_bindgen_test]
         fn double_text_node() {
             let mut node = VirtualNode::element("span");
-            node.as_velement_mut().unwrap().children.push(VirtualNode::text("Hello\n"));
-            node.as_velement_mut().unwrap().children.push(VirtualNode::text("World"));
+            node.as_velement_mut()
+                .unwrap()
+                .children
+                .push(VirtualNode::text("Hello\n"));
+            node.as_velement_mut()
+                .unwrap()
+                .children
+                .push(VirtualNode::text("World"));
             ExtractTextTest {
                 html: node,
                 expected: "Hello\nWorld",
-            }.test();
+            }
+            .test();
         }
     }
 }
