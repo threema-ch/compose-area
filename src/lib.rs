@@ -328,7 +328,7 @@ impl ComposeArea {
     /// Insert an image at the current caret position.
     ///
     /// Return a reference to the inserted image element.
-    pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) -> Element {
+    pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) -> HtmlElement {
         debug!("[compose_area] insert_image ({})", &alt);
 
         // NOTE: Ideally we'd create an image node here and would then use
@@ -348,7 +348,11 @@ impl ComposeArea {
         );
         self.insert_html(&html);
 
-        self.document.get_element_by_id(&img_id).expect("Could not find inserted image node")
+        self.document
+            .get_element_by_id(&img_id)
+            .expect("Could not find inserted image node")
+            .dyn_into::<HtmlElement>()
+            .expect("Could not cast image element into HtmlElement")
     }
 
     /// Insert plain text at the current caret position.
