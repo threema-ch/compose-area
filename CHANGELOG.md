@@ -13,6 +13,10 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.4.1 (2020-06-09)
+
+- [added] ComposeArea.insert_image: Downcast Element to HtmlElement (#63)
+
 ### v0.4.0 (2020-06-09)
 
 - [maintenance] Upgrade wasm-pack. This upgrade generates more strict
