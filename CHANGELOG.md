@@ -13,6 +13,11 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.3.7 (2020-06-09)
+
+- [fixed] Downgrade wasm-pack again, because the newer version generated
+  potentially semver-incommpatible type declarations (#62)
+
 ### v0.3.6 (2020-06-02)
 
 - [maintenance] Update dependencies (#58, #59, #60)
