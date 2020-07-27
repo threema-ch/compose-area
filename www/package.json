@@ -14,7 +14,7 @@
     "benchmark": "^2.1.4",
     "copy-webpack-plugin": "^5.1.1",
     "hello-wasm-pack": "^0.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.11.0",
