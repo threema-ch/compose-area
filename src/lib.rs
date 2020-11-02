@@ -17,7 +17,6 @@ mod extract;
 mod selection;
 mod utils;
 
-use cfg_if::cfg_if;
 use log::Level;
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{self, Element, HtmlDocument, HtmlElement, Node, Range, Selection, Text};
@@ -26,16 +25,6 @@ use crate::extract::extract_text;
 use crate::selection::{
     activate_selection_range, glue_range_to_text, set_selection_range, Position,
 };
-
-cfg_if! {
-    // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-    // allocator.
-    if #[cfg(feature = "wee_alloc")] {
-        extern crate wee_alloc;
-        #[global_allocator]
-        static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-    }
-}
 
 /// The context object containing the state.
 #[wasm_bindgen]
