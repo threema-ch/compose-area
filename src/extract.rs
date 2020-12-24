@@ -46,6 +46,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                 let tag = element.tag_name().to_lowercase();
                 let last_node_type_clone = last_node_type.clone();
                 last_node_type = tag.clone();
+                // Please note: Browser rendering of a contenteditable div is the worst thing ever.
                 match &*tag {
                     "span" => {
                         visit_child_nodes(element, text);
@@ -62,10 +63,23 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                         text.push_str(&node.unchecked_ref::<HtmlImageElement>().alt());
                     }
                     "br" => {
-                        if parent_node.tag_name().to_lowercase() == "div" && children.length() == 1 {
-                            // A <div> containing a single <br> should not result in an
-                            // *additional* newline (a newline is alerady added when the div
-                            // started). See https://github.com/threema-ch/compose-area/issues/72
+                        if parent_node.tag_name().to_lowercase() == "div" && i == 0 {
+                            // A <br> as the first child of a <div> should not result in an
+                            // *additional* newline (a newline is already added when the div
+                            // started).
+                            //
+                            // Example markup:
+                            //
+                            //     hello
+                            //     <div><br></div>
+                            //     <div>world</div>
+                            //
+                            // Another example:
+                            //
+                            //     hello
+                            //     <div><br><div>world</div></div>
+                            //
+                            // See https://github.com/threema-ch/compose-area/issues/72
                             // for details.
                         } else {
                             text.push('\n');
@@ -197,6 +211,16 @@ mod tests {
         fn br_in_div() {
             ExtractTextTest {
                 html: html! { <div>Hello<div><br></div><div>World</div></div> },
+                expected: "Hello\n\nWorld",
+            }
+            .test();
+        }
+
+        /// Regression test for https://github.com/threema-ch/compose-area/issues/72.
+        #[wasm_bindgen_test]
+        fn br_in_nested_div() {
+            ExtractTextTest {
+                html: html! { <div>Hello<div><br><div>World</div></div> },
                 expected: "Hello\n\nWorld",
             }
             .test();
