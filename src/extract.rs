@@ -62,7 +62,14 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                         text.push_str(&node.unchecked_ref::<HtmlImageElement>().alt());
                     }
                     "br" => {
-                        text.push('\n');
+                        if parent_node.tag_name().to_lowercase() == "div" && children.length() == 1 {
+                            // A <div> containing a single <br> should not result in an
+                            // *additional* newline (a newline is alerady added when the div
+                            // started). See https://github.com/threema-ch/compose-area/issues/72
+                            // for details.
+                        } else {
+                            text.push('\n');
+                        }
                     }
                     _other => {}
                 }
@@ -181,6 +188,16 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div><div>Hello</div><div>World</div></div> },
                 expected: "Hello\nWorld",
+            }
+            .test();
+        }
+
+        /// Regression test for https://github.com/threema-ch/compose-area/issues/72.
+        #[wasm_bindgen_test]
+        fn br_in_div() {
+            ExtractTextTest {
+                html: html! { <div>Hello<div><br></div><div>World</div></div> },
+                expected: "Hello\n\nWorld",
             }
             .test();
         }

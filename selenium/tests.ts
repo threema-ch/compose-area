@@ -332,6 +332,25 @@ async function handleSelectionChanges(driver: WebDriver) {
     );
 }
 
+/**
+ * When inserting an empty line, the newlines should not be duplicated.
+ * Regression test for https://github.com/threema-ch/compose-area/issues/72.
+ */
+async function noDuplicatedNewlines(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('Hello');
+    await wrapperElement.sendKeys(Key.ENTER);
+    await wrapperElement.sendKeys(Key.ENTER);
+    await wrapperElement.sendKeys('World');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('Hello\n\nWorld');
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Insert three emoji', insertThreeEmoji],
@@ -345,4 +364,5 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Cut and paste', cutAndPaste],
     ['Don\'t insert outside wrapper', noInsertOutsideWrapper],
     ['Handle selection changes', handleSelectionChanges],
+    ['Ensure that empty lines are not duplicated', noDuplicatedNewlines],
 ];
