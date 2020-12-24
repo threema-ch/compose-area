@@ -17,71 +17,71 @@
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "U", function() { return __wbg_new_59cb74e423758ede; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lb", function() { return __wbg_stack_558ba5917b466edd; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "u", function() { return __wbg_error_4bb6c2a97407129a; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "O", function() { return __wbg_instanceof_Window_d64060d13377409b; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "r", function() { return __wbg_document_bcf9d67bc56e8c6d; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "A", function() { return __wbg_getSelection_01a62dcf775d32ac; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return __wbg_createRange_29495e614bec3712; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "y", function() { return __wbg_getElementById_0e0dd6444cdc0602; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __wbg_alt_dc1212986a80d28b; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mb", function() { return __wbg_startContainer_b6cb3f290fc55a01; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nb", function() { return __wbg_startOffset_7f18a93e2834543e; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "s", function() { return __wbg_endContainer_50cdd203979c253e; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "t", function() { return __wbg_endOffset_95b5a10916b75d3e; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return __wbg_collapsed_c364a60276b57e36; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return __wbg_commonAncestorContainer_0a7fb5f6f370b107; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return __wbg_cloneRange_401fa84242b3d081; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return __wbg_collapse_590c6ec0f69c6ae7; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return __wbg_deleteContents_fc99a5bf2ebbce92; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "I", function() { return __wbg_insertNode_e7e1471772e93235; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hb", function() { return __wbg_setEnd_0a9f4e5abf561314; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fb", function() { return __wbg_setEndAfter_f8e5aaf6fb2d1402; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gb", function() { return __wbg_setEndBefore_2455eefa02366125; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "kb", function() { return __wbg_setStart_be147835960678d8; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ib", function() { return __wbg_setStartAfter_2e2a2680b9b9ad26; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "jb", function() { return __wbg_setStartBefore_3e2b47829d1a28ab; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "R", function() { return __wbg_length_b5f9d8baa1b12f15; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "P", function() { return __wbg_item_895c70f93fc44a58; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "B", function() { return __wbg_get_5e116e187687d78d; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "N", function() { return __wbg_instanceof_Text_100ea2cde8194aa9; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "M", function() { return __wbg_instanceof_Node_f7f5443a08b96270; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "X", function() { return __wbg_nodeType_f7a0acdc5a8af0ba; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "W", function() { return __wbg_nodeName_f8a5ce4f7e26d194; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return __wbg_childNodes_eb20ba0a94a0a2de; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Q", function() { return __wbg_lastChild_ce5f1ba7d7a0b242; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Y", function() { return __wbg_nodeValue_e0b47d86056705f9; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __wbg_appendChild_11200a24a11d9886; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return __wbg_contains_7c6c45533a91b9ca; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "E", function() { return __wbg_hasChildNodes_a116232429ef947b; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "H", function() { return __wbg_insertBefore_c1b299cade3c81c0; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Z", function() { return __wbg_normalize_45661f7be8b076c0; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cb", function() { return __wbg_removeChild_2aa5d3b347e2e1fa; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "J", function() { return __wbg_instanceof_Element_9906b24503199091; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ob", function() { return __wbg_tagName_232da7df722f2fc5; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "F", function() { return __wbg_id_de55fc63f68ad4ee; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return __wbg_classList_9a7539a9531e355c; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "eb", function() { return __wbg_setAttribute_02daabbc925a51e3; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return __wbg_debug_0b47388bb8aa3359; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "v", function() { return __wbg_error_8e1e7672d9e1c246; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "G", function() { return __wbg_info_4480da6c339da893; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "T", function() { return __wbg_log_cc6b9ddc6ca5449d; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pb", function() { return __wbg_warn_b417f7273686cdae; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "L", function() { return __wbg_instanceof_HtmlElement_97bd46b1ff6a2cf5; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "x", function() { return __wbg_focus_7d47c620082c997f; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return __wbg_data_188f0895e3720bd5; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "S", function() { return __wbg_length_c1ef08b31b4fb00e; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "K", function() { return __wbg_instanceof_HtmlDocument_0adbd48db70bba28; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "w", function() { return __wbg_execCommand_20ddd46f990aa33d; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __wbg_add_7c46494413f58bc4; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ab", function() { return __wbg_rangeCount_666d045004075d8a; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __wbg_addRange_84469932abae757e; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "z", function() { return __wbg_getRangeAt_a331e1ba415ecdac; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return __wbg_removeAllRanges_b305ea0fdd3f48b9; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "V", function() { return __wbg_newnoargs_bfddd41728ab0b9c; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return __wbg_call_20c04382b27a4486; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "db", function() { return __wbg_self_944d201f31e01c91; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "qb", function() { return __wbg_window_993fd51731b86960; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "C", function() { return __wbg_globalThis_8379563d70fab135; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "D", function() { return __wbg_global_073eb4249a3a8c12; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "O", function() { return __wbg_instanceof_Window_0e8decd0a6179699; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "r", function() { return __wbg_document_76c349f54c28c8fa; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "A", function() { return __wbg_getSelection_a6200f7c3b066e96; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return __wbg_createRange_7417ae8c2e527350; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "y", function() { return __wbg_getElementById_35de356b82960e7f; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __wbg_alt_c8bbd91d34bbf4a4; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mb", function() { return __wbg_startContainer_6a277da441b04299; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nb", function() { return __wbg_startOffset_10a5db36288ab8a9; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "s", function() { return __wbg_endContainer_75a43a2998c34fe0; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "t", function() { return __wbg_endOffset_63cef9ef59a82402; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return __wbg_collapsed_59ac2df717b32dd2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return __wbg_commonAncestorContainer_2f3f55bc613489fe; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return __wbg_cloneRange_095edaadd47fd4f4; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return __wbg_collapse_8aed7ef93ec94d6e; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return __wbg_deleteContents_e70a762de08f3104; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "I", function() { return __wbg_insertNode_9f8bb90475329f67; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hb", function() { return __wbg_setEnd_da02a3b4f5aa3925; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fb", function() { return __wbg_setEndAfter_e0b437572d9413e7; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gb", function() { return __wbg_setEndBefore_cb49508018c70aa4; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "kb", function() { return __wbg_setStart_8e286af3a7fa93e1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ib", function() { return __wbg_setStartAfter_f3921b9eb3c59bb7; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "jb", function() { return __wbg_setStartBefore_785537795e6fb48c; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "R", function() { return __wbg_length_8a6a2efe955a8b70; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "P", function() { return __wbg_item_102e71580fef0207; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "B", function() { return __wbg_get_b98c84aa64400fbe; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "N", function() { return __wbg_instanceof_Text_cbaefa3d82bdddd8; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "M", function() { return __wbg_instanceof_Node_11254aed560b4c66; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "X", function() { return __wbg_nodeType_f5e54979099baba1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "W", function() { return __wbg_nodeName_7babcf625aec4083; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return __wbg_childNodes_3ea42a8e103679b0; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Q", function() { return __wbg_lastChild_86e1c02df2b342d8; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Y", function() { return __wbg_nodeValue_2b31b791bfa62a8d; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __wbg_appendChild_5a186a381c8fff5b; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return __wbg_contains_87699bbfe7e284cd; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "E", function() { return __wbg_hasChildNodes_92f3eb57464fc1ac; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "H", function() { return __wbg_insertBefore_83c912a1a16c68d2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Z", function() { return __wbg_normalize_b780513d171a31fd; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cb", function() { return __wbg_removeChild_a5458e964695297f; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "J", function() { return __wbg_instanceof_Element_b2ea0d558fc7d331; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ob", function() { return __wbg_tagName_c547ea7972faad1b; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "F", function() { return __wbg_id_1d70bdde705a2f65; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return __wbg_classList_262889e9fed65a4e; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "eb", function() { return __wbg_setAttribute_65dde98f32b42a41; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return __wbg_debug_ad2e107500a5e66f; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "v", function() { return __wbg_error_899f34a74e6ae34f; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "G", function() { return __wbg_info_9f243b6555ae61bc; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "T", function() { return __wbg_log_8c015365353ccd49; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pb", function() { return __wbg_warn_22c4a606fdfb0a53; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "L", function() { return __wbg_instanceof_HtmlElement_67a9589b0f1c5c31; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "x", function() { return __wbg_focus_2617465192028e1c; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return __wbg_data_e09ed4fd8944fe35; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "S", function() { return __wbg_length_cca45aa2d6b01dfc; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "K", function() { return __wbg_instanceof_HtmlDocument_4e420d706512e41e; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "w", function() { return __wbg_execCommand_81e83cf93eb6abe3; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __wbg_add_0850d066114a0d43; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ab", function() { return __wbg_rangeCount_d9e8306d3ad9a1c4; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __wbg_addRange_fbef75e804365d45; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "z", function() { return __wbg_getRangeAt_778d713a86839a99; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return __wbg_removeAllRanges_54eda87c037227c5; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "V", function() { return __wbg_newnoargs_db0587fa712f9acc; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return __wbg_call_79ca0d435495a83a; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "db", function() { return __wbg_self_d1b58dbab69d5bb1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "qb", function() { return __wbg_window_de445cb18819ad4b; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "C", function() { return __wbg_globalThis_68afcb0d98f0112d; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "D", function() { return __wbg_global_baed4e4fa850c0d0; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sb", function() { return __wbindgen_is_undefined; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "rb", function() { return __wbindgen_debug_string; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "wb", function() { return __wbindgen_throw; });
@@ -626,32 +626,32 @@ const __wbg_error_4bb6c2a97407129a = function(arg0, arg1) {
     }
 };
 
-const __wbg_instanceof_Window_d64060d13377409b = function(arg0) {
+const __wbg_instanceof_Window_0e8decd0a6179699 = function(arg0) {
     var ret = getObject(arg0) instanceof Window;
     return ret;
 };
 
-const __wbg_document_bcf9d67bc56e8c6d = function(arg0) {
+const __wbg_document_76c349f54c28c8fa = function(arg0) {
     var ret = getObject(arg0).document;
     return isLikeNone(ret) ? 0 : addHeapObject(ret);
 };
 
-const __wbg_getSelection_01a62dcf775d32ac = handleError(function(arg0) {
+const __wbg_getSelection_a6200f7c3b066e96 = handleError(function(arg0) {
     var ret = getObject(arg0).getSelection();
     return isLikeNone(ret) ? 0 : addHeapObject(ret);
 });
 
-const __wbg_createRange_29495e614bec3712 = handleError(function(arg0) {
+const __wbg_createRange_7417ae8c2e527350 = handleError(function(arg0) {
     var ret = getObject(arg0).createRange();
     return addHeapObject(ret);
 });
 
-const __wbg_getElementById_0e0dd6444cdc0602 = function(arg0, arg1, arg2) {
+const __wbg_getElementById_35de356b82960e7f = function(arg0, arg1, arg2) {
     var ret = getObject(arg0).getElementById(getStringFromWasm0(arg1, arg2));
     return isLikeNone(ret) ? 0 : addHeapObject(ret);
 };
 
-const __wbg_alt_dc1212986a80d28b = function(arg0, arg1) {
+const __wbg_alt_c8bbd91d34bbf4a4 = function(arg0, arg1) {
     var ret = getObject(arg1).alt;
     var ptr0 = passStringToWasm0(ret, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
     var len0 = WASM_VECTOR_LEN;
@@ -659,108 +659,108 @@ const __wbg_alt_dc1212986a80d28b = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-const __wbg_startContainer_b6cb3f290fc55a01 = handleError(function(arg0) {
+const __wbg_startContainer_6a277da441b04299 = handleError(function(arg0) {
     var ret = getObject(arg0).startContainer;
     return addHeapObject(ret);
 });
 
-const __wbg_startOffset_7f18a93e2834543e = handleError(function(arg0) {
+const __wbg_startOffset_10a5db36288ab8a9 = handleError(function(arg0) {
     var ret = getObject(arg0).startOffset;
     return ret;
 });
 
-const __wbg_endContainer_50cdd203979c253e = handleError(function(arg0) {
+const __wbg_endContainer_75a43a2998c34fe0 = handleError(function(arg0) {
     var ret = getObject(arg0).endContainer;
     return addHeapObject(ret);
 });
 
-const __wbg_endOffset_95b5a10916b75d3e = handleError(function(arg0) {
+const __wbg_endOffset_63cef9ef59a82402 = handleError(function(arg0) {
     var ret = getObject(arg0).endOffset;
     return ret;
 });
 
-const __wbg_collapsed_c364a60276b57e36 = function(arg0) {
+const __wbg_collapsed_59ac2df717b32dd2 = function(arg0) {
     var ret = getObject(arg0).collapsed;
     return ret;
 };
 
-const __wbg_commonAncestorContainer_0a7fb5f6f370b107 = handleError(function(arg0) {
+const __wbg_commonAncestorContainer_2f3f55bc613489fe = handleError(function(arg0) {
     var ret = getObject(arg0).commonAncestorContainer;
     return addHeapObject(ret);
 });
 
-const __wbg_cloneRange_401fa84242b3d081 = function(arg0) {
+const __wbg_cloneRange_095edaadd47fd4f4 = function(arg0) {
     var ret = getObject(arg0).cloneRange();
     return addHeapObject(ret);
 };
 
-const __wbg_collapse_590c6ec0f69c6ae7 = function(arg0, arg1) {
+const __wbg_collapse_8aed7ef93ec94d6e = function(arg0, arg1) {
     getObject(arg0).collapse(arg1 !== 0);
 };
 
-const __wbg_deleteContents_fc99a5bf2ebbce92 = handleError(function(arg0) {
+const __wbg_deleteContents_e70a762de08f3104 = handleError(function(arg0) {
     getObject(arg0).deleteContents();
 });
 
-const __wbg_insertNode_e7e1471772e93235 = handleError(function(arg0, arg1) {
+const __wbg_insertNode_9f8bb90475329f67 = handleError(function(arg0, arg1) {
     getObject(arg0).insertNode(getObject(arg1));
 });
 
-const __wbg_setEnd_0a9f4e5abf561314 = handleError(function(arg0, arg1, arg2) {
+const __wbg_setEnd_da02a3b4f5aa3925 = handleError(function(arg0, arg1, arg2) {
     getObject(arg0).setEnd(getObject(arg1), arg2 >>> 0);
 });
 
-const __wbg_setEndAfter_f8e5aaf6fb2d1402 = handleError(function(arg0, arg1) {
+const __wbg_setEndAfter_e0b437572d9413e7 = handleError(function(arg0, arg1) {
     getObject(arg0).setEndAfter(getObject(arg1));
 });
 
-const __wbg_setEndBefore_2455eefa02366125 = handleError(function(arg0, arg1) {
+const __wbg_setEndBefore_cb49508018c70aa4 = handleError(function(arg0, arg1) {
     getObject(arg0).setEndBefore(getObject(arg1));
 });
 
-const __wbg_setStart_be147835960678d8 = handleError(function(arg0, arg1, arg2) {
+const __wbg_setStart_8e286af3a7fa93e1 = handleError(function(arg0, arg1, arg2) {
     getObject(arg0).setStart(getObject(arg1), arg2 >>> 0);
 });
 
-const __wbg_setStartAfter_2e2a2680b9b9ad26 = handleError(function(arg0, arg1) {
+const __wbg_setStartAfter_f3921b9eb3c59bb7 = handleError(function(arg0, arg1) {
     getObject(arg0).setStartAfter(getObject(arg1));
 });
 
-const __wbg_setStartBefore_3e2b47829d1a28ab = handleError(function(arg0, arg1) {
+const __wbg_setStartBefore_785537795e6fb48c = handleError(function(arg0, arg1) {
     getObject(arg0).setStartBefore(getObject(arg1));
 });
 
-const __wbg_length_b5f9d8baa1b12f15 = function(arg0) {
+const __wbg_length_8a6a2efe955a8b70 = function(arg0) {
     var ret = getObject(arg0).length;
     return ret;
 };
 
-const __wbg_item_895c70f93fc44a58 = function(arg0, arg1) {
+const __wbg_item_102e71580fef0207 = function(arg0, arg1) {
     var ret = getObject(arg0).item(arg1 >>> 0);
     return isLikeNone(ret) ? 0 : addHeapObject(ret);
 };
 
-const __wbg_get_5e116e187687d78d = function(arg0, arg1) {
+const __wbg_get_b98c84aa64400fbe = function(arg0, arg1) {
     var ret = getObject(arg0)[arg1 >>> 0];
     return isLikeNone(ret) ? 0 : addHeapObject(ret);
 };
 
-const __wbg_instanceof_Text_100ea2cde8194aa9 = function(arg0) {
+const __wbg_instanceof_Text_cbaefa3d82bdddd8 = function(arg0) {
     var ret = getObject(arg0) instanceof Text;
     return ret;
 };
 
-const __wbg_instanceof_Node_f7f5443a08b96270 = function(arg0) {
+const __wbg_instanceof_Node_11254aed560b4c66 = function(arg0) {
     var ret = getObject(arg0) instanceof Node;
     return ret;
 };
 
-const __wbg_nodeType_f7a0acdc5a8af0ba = function(arg0) {
+const __wbg_nodeType_f5e54979099baba1 = function(arg0) {
     var ret = getObject(arg0).nodeType;
     return ret;
 };
 
-const __wbg_nodeName_f8a5ce4f7e26d194 = function(arg0, arg1) {
+const __wbg_nodeName_7babcf625aec4083 = function(arg0, arg1) {
     var ret = getObject(arg1).nodeName;
     var ptr0 = passStringToWasm0(ret, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
     var len0 = WASM_VECTOR_LEN;
@@ -768,17 +768,17 @@ const __wbg_nodeName_f8a5ce4f7e26d194 = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-const __wbg_childNodes_eb20ba0a94a0a2de = function(arg0) {
+const __wbg_childNodes_3ea42a8e103679b0 = function(arg0) {
     var ret = getObject(arg0).childNodes;
     return addHeapObject(ret);
 };
 
-const __wbg_lastChild_ce5f1ba7d7a0b242 = function(arg0) {
+const __wbg_lastChild_86e1c02df2b342d8 = function(arg0) {
     var ret = getObject(arg0).lastChild;
     return isLikeNone(ret) ? 0 : addHeapObject(ret);
 };
 
-const __wbg_nodeValue_e0b47d86056705f9 = function(arg0, arg1) {
+const __wbg_nodeValue_2b31b791bfa62a8d = function(arg0, arg1) {
     var ret = getObject(arg1).nodeValue;
     var ptr0 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
     var len0 = WASM_VECTOR_LEN;
@@ -786,41 +786,41 @@ const __wbg_nodeValue_e0b47d86056705f9 = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-const __wbg_appendChild_11200a24a11d9886 = handleError(function(arg0, arg1) {
+const __wbg_appendChild_5a186a381c8fff5b = handleError(function(arg0, arg1) {
     var ret = getObject(arg0).appendChild(getObject(arg1));
     return addHeapObject(ret);
 });
 
-const __wbg_contains_7c6c45533a91b9ca = function(arg0, arg1) {
+const __wbg_contains_87699bbfe7e284cd = function(arg0, arg1) {
     var ret = getObject(arg0).contains(getObject(arg1));
     return ret;
 };
 
-const __wbg_hasChildNodes_a116232429ef947b = function(arg0) {
+const __wbg_hasChildNodes_92f3eb57464fc1ac = function(arg0) {
     var ret = getObject(arg0).hasChildNodes();
     return ret;
 };
 
-const __wbg_insertBefore_c1b299cade3c81c0 = handleError(function(arg0, arg1, arg2) {
+const __wbg_insertBefore_83c912a1a16c68d2 = handleError(function(arg0, arg1, arg2) {
     var ret = getObject(arg0).insertBefore(getObject(arg1), getObject(arg2));
     return addHeapObject(ret);
 });
 
-const __wbg_normalize_45661f7be8b076c0 = function(arg0) {
+const __wbg_normalize_b780513d171a31fd = function(arg0) {
     getObject(arg0).normalize();
 };
 
-const __wbg_removeChild_2aa5d3b347e2e1fa = handleError(function(arg0, arg1) {
+const __wbg_removeChild_a5458e964695297f = handleError(function(arg0, arg1) {
     var ret = getObject(arg0).removeChild(getObject(arg1));
     return addHeapObject(ret);
 });
 
-const __wbg_instanceof_Element_9906b24503199091 = function(arg0) {
+const __wbg_instanceof_Element_b2ea0d558fc7d331 = function(arg0) {
     var ret = getObject(arg0) instanceof Element;
     return ret;
 };
 
-const __wbg_tagName_232da7df722f2fc5 = function(arg0, arg1) {
+const __wbg_tagName_c547ea7972faad1b = function(arg0, arg1) {
     var ret = getObject(arg1).tagName;
     var ptr0 = passStringToWasm0(ret, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
     var len0 = WASM_VECTOR_LEN;
@@ -828,7 +828,7 @@ const __wbg_tagName_232da7df722f2fc5 = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-const __wbg_id_de55fc63f68ad4ee = function(arg0, arg1) {
+const __wbg_id_1d70bdde705a2f65 = function(arg0, arg1) {
     var ret = getObject(arg1).id;
     var ptr0 = passStringToWasm0(ret, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
     var len0 = WASM_VECTOR_LEN;
@@ -836,45 +836,45 @@ const __wbg_id_de55fc63f68ad4ee = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-const __wbg_classList_9a7539a9531e355c = function(arg0) {
+const __wbg_classList_262889e9fed65a4e = function(arg0) {
     var ret = getObject(arg0).classList;
     return addHeapObject(ret);
 };
 
-const __wbg_setAttribute_02daabbc925a51e3 = handleError(function(arg0, arg1, arg2, arg3, arg4) {
+const __wbg_setAttribute_65dde98f32b42a41 = handleError(function(arg0, arg1, arg2, arg3, arg4) {
     getObject(arg0).setAttribute(getStringFromWasm0(arg1, arg2), getStringFromWasm0(arg3, arg4));
 });
 
-const __wbg_debug_0b47388bb8aa3359 = function(arg0) {
+const __wbg_debug_ad2e107500a5e66f = function(arg0) {
     console.debug(getObject(arg0));
 };
 
-const __wbg_error_8e1e7672d9e1c246 = function(arg0) {
+const __wbg_error_899f34a74e6ae34f = function(arg0) {
     console.error(getObject(arg0));
 };
 
-const __wbg_info_4480da6c339da893 = function(arg0) {
+const __wbg_info_9f243b6555ae61bc = function(arg0) {
     console.info(getObject(arg0));
 };
 
-const __wbg_log_cc6b9ddc6ca5449d = function(arg0) {
+const __wbg_log_8c015365353ccd49 = function(arg0) {
     console.log(getObject(arg0));
 };
 
-const __wbg_warn_b417f7273686cdae = function(arg0) {
+const __wbg_warn_22c4a606fdfb0a53 = function(arg0) {
     console.warn(getObject(arg0));
 };
 
-const __wbg_instanceof_HtmlElement_97bd46b1ff6a2cf5 = function(arg0) {
+const __wbg_instanceof_HtmlElement_67a9589b0f1c5c31 = function(arg0) {
     var ret = getObject(arg0) instanceof HTMLElement;
     return ret;
 };
 
-const __wbg_focus_7d47c620082c997f = handleError(function(arg0) {
+const __wbg_focus_2617465192028e1c = handleError(function(arg0) {
     getObject(arg0).focus();
 });
 
-const __wbg_data_188f0895e3720bd5 = function(arg0, arg1) {
+const __wbg_data_e09ed4fd8944fe35 = function(arg0, arg1) {
     var ret = getObject(arg1).data;
     var ptr0 = passStringToWasm0(ret, _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_malloc */ "f"], _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* __wbindgen_realloc */ "g"]);
     var len0 = WASM_VECTOR_LEN;
@@ -882,69 +882,69 @@ const __wbg_data_188f0895e3720bd5 = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-const __wbg_length_c1ef08b31b4fb00e = function(arg0) {
+const __wbg_length_cca45aa2d6b01dfc = function(arg0) {
     var ret = getObject(arg0).length;
     return ret;
 };
 
-const __wbg_instanceof_HtmlDocument_0adbd48db70bba28 = function(arg0) {
+const __wbg_instanceof_HtmlDocument_4e420d706512e41e = function(arg0) {
     var ret = getObject(arg0) instanceof HTMLDocument;
     return ret;
 };
 
-const __wbg_execCommand_20ddd46f990aa33d = handleError(function(arg0, arg1, arg2, arg3, arg4, arg5) {
+const __wbg_execCommand_81e83cf93eb6abe3 = handleError(function(arg0, arg1, arg2, arg3, arg4, arg5) {
     var ret = getObject(arg0).execCommand(getStringFromWasm0(arg1, arg2), arg3 !== 0, getStringFromWasm0(arg4, arg5));
     return ret;
 });
 
-const __wbg_add_7c46494413f58bc4 = handleError(function(arg0, arg1, arg2, arg3, arg4) {
+const __wbg_add_0850d066114a0d43 = handleError(function(arg0, arg1, arg2, arg3, arg4) {
     getObject(arg0).add(getStringFromWasm0(arg1, arg2), getStringFromWasm0(arg3, arg4));
 });
 
-const __wbg_rangeCount_666d045004075d8a = function(arg0) {
+const __wbg_rangeCount_d9e8306d3ad9a1c4 = function(arg0) {
     var ret = getObject(arg0).rangeCount;
     return ret;
 };
 
-const __wbg_addRange_84469932abae757e = handleError(function(arg0, arg1) {
+const __wbg_addRange_fbef75e804365d45 = handleError(function(arg0, arg1) {
     getObject(arg0).addRange(getObject(arg1));
 });
 
-const __wbg_getRangeAt_a331e1ba415ecdac = handleError(function(arg0, arg1) {
+const __wbg_getRangeAt_778d713a86839a99 = handleError(function(arg0, arg1) {
     var ret = getObject(arg0).getRangeAt(arg1 >>> 0);
     return addHeapObject(ret);
 });
 
-const __wbg_removeAllRanges_b305ea0fdd3f48b9 = handleError(function(arg0) {
+const __wbg_removeAllRanges_54eda87c037227c5 = handleError(function(arg0) {
     getObject(arg0).removeAllRanges();
 });
 
-const __wbg_newnoargs_bfddd41728ab0b9c = function(arg0, arg1) {
+const __wbg_newnoargs_db0587fa712f9acc = function(arg0, arg1) {
     var ret = new Function(getStringFromWasm0(arg0, arg1));
     return addHeapObject(ret);
 };
 
-const __wbg_call_20c04382b27a4486 = handleError(function(arg0, arg1) {
+const __wbg_call_79ca0d435495a83a = handleError(function(arg0, arg1) {
     var ret = getObject(arg0).call(getObject(arg1));
     return addHeapObject(ret);
 });
 
-const __wbg_self_944d201f31e01c91 = handleError(function() {
+const __wbg_self_d1b58dbab69d5bb1 = handleError(function() {
     var ret = self.self;
     return addHeapObject(ret);
 });
 
-const __wbg_window_993fd51731b86960 = handleError(function() {
+const __wbg_window_de445cb18819ad4b = handleError(function() {
     var ret = window.window;
     return addHeapObject(ret);
 });
 
-const __wbg_globalThis_8379563d70fab135 = handleError(function() {
+const __wbg_globalThis_68afcb0d98f0112d = handleError(function() {
     var ret = globalThis.globalThis;
     return addHeapObject(ret);
 });
 
-const __wbg_global_073eb4249a3a8c12 = handleError(function() {
+const __wbg_global_baed4e4fa850c0d0 = handleError(function() {
     var ret = global.global;
     return addHeapObject(ret);
 });
