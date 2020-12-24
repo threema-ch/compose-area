@@ -332,6 +332,50 @@ async function handleSelectionChanges(driver: WebDriver) {
     );
 }
 
+/**
+ * When inserting an empty line, the newlines should not be duplicated.
+ * Regression test for https://github.com/threema-ch/compose-area/issues/72.
+ */
+async function noDuplicatedNewlines1(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('Hello');
+    await wrapperElement.sendKeys(Key.ENTER);
+    await wrapperElement.sendKeys(Key.ENTER);
+    await wrapperElement.sendKeys('World');
+
+    const text = await extractText(driver);
+    expect(text).to.equal('Hello\n\nWorld');
+}
+
+/**
+ * When inserting an empty line, the newlines should not be duplicated.
+ * Regression test for https://github.com/threema-ch/compose-area/issues/72.
+ * This one only seems to apply to Chrome, not to Firefox.
+ */
+async function noDuplicatedNewlines2(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    await wrapperElement.click();
+
+    await wrapperElement.sendKeys('Hello');
+    await wrapperElement.sendKeys(Key.ENTER);
+    await wrapperElement.sendKeys('World');
+
+    const text1 = await extractText(driver);
+    expect(text1).to.equal('Hello\nWorld');
+
+    await wrapperElement.sendKeys(Key.ARROW_UP);
+    await wrapperElement.sendKeys(Key.ENTER);
+
+    const text2 = await extractText(driver);
+    expect(text2).to.equal('Hello\n\nWorld');
+}
+
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
     ['Insert three emoji', insertThreeEmoji],
@@ -345,4 +389,6 @@ export const TESTS: Array<[string, Testfunc]> = [
     ['Cut and paste', cutAndPaste],
     ['Don\'t insert outside wrapper', noInsertOutsideWrapper],
     ['Handle selection changes', handleSelectionChanges],
+    ['Ensure that empty lines are not duplicated (variant 1)', noDuplicatedNewlines1],
+    ['Ensure that empty lines are not duplicated (variant 2)', noDuplicatedNewlines2],
 ];
