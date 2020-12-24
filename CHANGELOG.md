@@ -13,6 +13,11 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.4.3 (2020-12-24)
+
+- [fixed] Avoid duplicated newlines when pressing enter (#72, #74)
+- [maintenance] Update dependencies (#73)
+
 ### v0.4.2 (2020-06-09)
 
 - [fixed] Fix packaging bug caused by wasm-pack (https://github.com/rustwasm/wasm-pack/issues/837)
