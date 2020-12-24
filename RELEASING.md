@@ -22,5 +22,6 @@ Commit & tag:
 Publish:
 
     wasm-pack build --scope threema --release
+    # Ensure that *_bg.js file is included: https://github.com/rustwasm/wasm-pack/issues/837
     cd pkg && npm publish --access=public && cd ..
     git push && git push --tags
