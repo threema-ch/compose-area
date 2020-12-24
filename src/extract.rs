@@ -44,6 +44,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
             Node::ELEMENT_NODE => {
                 let element: &Element = node.unchecked_ref();
                 let tag = element.tag_name().to_lowercase();
+                let parent_tag = parent_node.tag_name().to_lowercase();
                 let last_node_type_clone = last_node_type.clone();
                 last_node_type = tag.clone();
                 // Please note: Browser rendering of a contenteditable div is the worst thing ever.
@@ -52,7 +53,11 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                         visit_child_nodes(element, text);
                     }
                     "div" => {
-                        text.push('\n');
+                        if parent_tag == "div" && i == 0 {
+                            // No newline, in order to handle things like <div><div>hello</div></div>
+                        } else {
+                            text.push('\n');
+                        }
                         visit_child_nodes(element, text);
                     }
                     "img" => {
@@ -63,7 +68,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                         text.push_str(&node.unchecked_ref::<HtmlImageElement>().alt());
                     }
                     "br" => {
-                        if parent_node.tag_name().to_lowercase() == "div" && i == 0 {
+                        if parent_tag == "div" && i == 0 {
                             // A <br> as the first child of a <div> should not result in an
                             // *additional* newline (a newline is already added when the div
                             // started).
@@ -222,6 +227,15 @@ mod tests {
             ExtractTextTest {
                 html: html! { <div>Hello<div><br><div>World</div></div> },
                 expected: "Hello\n\nWorld",
+            }
+            .test();
+        }
+
+        #[wasm_bindgen_test]
+        fn two_nested_divs() {
+            ExtractTextTest {
+                html: html! { <div>Hello<div><div>World</div></div> },
+                expected: "Hello\nWorld",
             }
             .test();
         }
