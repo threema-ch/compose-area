@@ -286,20 +286,20 @@ jobs:
 
   audit:
     docker:
-      - image: rust:latest
+      - image: dbrgn/cargo-audit:latest
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-cargo-audit-cache
+            - v2-cargo-audit-cache
       - run:
-          name: Install cargo-audit
-          command: cargo install --force cargo-audit
+          name: Show versions
+          command: rustc --version && cargo --version && cargo audit --version
       - run:
           name: Run cargo audit
           command: cargo audit
       - save_cache:
-          key: v1-cargo-audit-cache
+          key: v2-cargo-audit-cache
           paths:
             - /usr/local/cargo
 
