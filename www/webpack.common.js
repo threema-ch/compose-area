@@ -16,7 +16,14 @@ module.exports = {
         ],
     },
     plugins: [
-        new CopyWebpackPlugin(['index.html']),
-        new CopyWebpackPlugin(['benchmark.html']),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'index.html', to: 'index.html' },
+                { from: 'benchmark.html', to: 'benchmark.html' },
+            ],
+        }),
     ],
+    experiments: {
+        syncWebAssembly: true,
+    },
 };
