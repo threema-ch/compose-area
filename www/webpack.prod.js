@@ -13,11 +13,10 @@ module.exports = merge(common, {
         pathinfo: false
     },
     optimization: {
-        namedModules: false,
-        namedChunks: false,
         nodeEnv: 'production',
         flagIncludedChunks: true,
-        occurrenceOrder: true,
+        chunkIds: 'total-size',
+        moduleIds: 'size',
         sideEffects: true,
         usedExports: true,
         concatenateModules: true,
