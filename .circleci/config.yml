@@ -272,14 +272,14 @@ jobs:
 
   test-integration-firefox:
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:16-browsers
     steps: *steps-integrationtests
     environment:
       BROWSER: firefox
 
   test-integration-chrome:
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:16-browsers
     steps: *steps-integrationtests
     environment:
       BROWSER: chrome
@@ -305,7 +305,7 @@ jobs:
 
   deploy-demo:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:16
     environment:
       OUT: html
     steps:
