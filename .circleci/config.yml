@@ -303,7 +303,7 @@ jobs:
           paths:
             - /usr/local/cargo
 
-  deploy-demo:
+  build-demo:
     docker:
       - image: circleci/node:16
     environment:
@@ -320,7 +320,7 @@ jobs:
             - v1-npm-cache-demo-{{ arch }}-{{ .Branch }}
             - v1-npm-cache-demo-{{ arch }}
 
-      # Prepare demo
+      # Build demo
       - run:
           name: Build demo page
           command: >
@@ -343,6 +343,28 @@ jobs:
             && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/index.html
             && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/benchmark.html
 
+      # Save cache
+      - save_cache:
+          key: v1-npm-cache-demo-{{ arch }}-{{ .Branch }}
+          paths:
+            - www/node_modules
+            - selenium/node_modules
+      - save_cache:
+          key: v1-npm-cache-demo-{{ arch }}
+          paths:
+            - www/node_modules
+            - selenium/node_modules
+
+  deploy-demo:
+    docker:
+      - image: circleci/node:16
+    environment:
+      OUT: html
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+
       # Deploy
       - run:
           name: Install and configure deployment dependencies
@@ -356,18 +378,6 @@ jobs:
       - run:
           name: Deploy demo to gh-pages branch
           command: node_modules/.bin/gh-pages --dotfiles --message "[skip ci] Updates" --dist $OUT
-
-      # Save cache
-      - save_cache:
-          key: v1-npm-cache-demo-{{ arch }}-{{ .Branch }}
-          paths:
-            - www/node_modules
-            - selenium/node_modules
-      - save_cache:
-          key: v1-npm-cache-demo-{{ arch }}
-          paths:
-            - www/node_modules
-            - selenium/node_modules
 
 workflows:
   version: 2
@@ -385,11 +395,14 @@ workflows:
       - test-integration-chrome:
           requires:
             - build
-      - deploy-demo:
+      - build-demo:
           requires:
             - build
             - test-integration-firefox
             - test-integration-chrome
+      - deploy-demo:
+          requires:
+            - build-demo
           filters:
             branches:
               only: master
@@ -415,4 +428,9 @@ workflows:
       - test-integration-chrome:
           requires:
             - build
+      - build-demo:
+          requires:
+            - build
+            - test-integration-firefox
+            - test-integration-chrome
       - audit
