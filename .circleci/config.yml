@@ -306,8 +306,6 @@ jobs:
   build-demo:
     docker:
       - image: circleci/node:16
-    environment:
-      OUT: html
     steps:
       - checkout
       - attach_workspace:
@@ -336,16 +334,16 @@ jobs:
       - run:
           name: Prepare dist files
           command: >
-            mkdir $OUT
-            && touch $OUT/.nojekyll
-            && cp -Rv www/dist/* $OUT/
+            mkdir html
+            && touch html/.nojekyll
+            && cp -Rv www/dist/* html/
             && export VERSION=$(git show -s --format="Version: %h (%ci)")
-            && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/index.html
-            && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/benchmark.html
+            && sed -i "s/\[\[VERSION\]\]/${VERSION}/" html/index.html
+            && sed -i "s/\[\[VERSION\]\]/${VERSION}/" html/benchmark.html
       - persist_to_workspace:
           root: .
           paths:
-            - $OUT
+            - html
 
       # Save cache
       - save_cache:
@@ -362,8 +360,6 @@ jobs:
   deploy-demo:
     docker:
       - image: circleci/node:16
-    environment:
-      OUT: html
     steps:
       - checkout
       - attach_workspace:
@@ -381,7 +377,7 @@ jobs:
             - "32:c5:e4:2f:85:f2:6b:3e:ae:fa:60:9d:15:66:0e:55"
       - run:
           name: Deploy demo to gh-pages branch
-          command: node_modules/.bin/gh-pages --dotfiles --message "[skip ci] Updates" --dist $OUT
+          command: node_modules/.bin/gh-pages --dotfiles --message "[skip ci] Updates" --dist html
 
 workflows:
   version: 2
