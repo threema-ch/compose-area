@@ -342,6 +342,10 @@ jobs:
             && export VERSION=$(git show -s --format="Version: %h (%ci)")
             && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/index.html
             && sed -i "s/\[\[VERSION\]\]/${VERSION}/" $OUT/benchmark.html
+      - persist_to_workspace:
+          root: .
+          paths:
+            - $OUT
 
       # Save cache
       - save_cache:
