@@ -102,7 +102,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
 mod tests {
     use super::*;
 
-    use wasm_bindgen_test::*;
+    use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};
 
     wasm_bindgen_test_configure!(run_in_browser);
 

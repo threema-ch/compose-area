@@ -31,6 +31,13 @@ async function extractText(driver: WebDriver): Promise<string> {
     return text;
 }
 
+async function isEmpty(driver: WebDriver): Promise<boolean> {
+    const isEmpty: boolean = await driver.executeScript(`
+        return window.composeArea.is_empty();
+    `);
+    return isEmpty;
+}
+
 async function clearSelectionRange(driver: WebDriver): Promise<void> {
     const clearBtn = await driver.findElement(By.id('clearselection'));
     await clearBtn.click();
@@ -52,6 +59,23 @@ async function skipInBrowser(driver: WebDriver, browser: string): Promise<boolea
 async function wrapperFound(driver: WebDriver) {
     const wrapperElement = await driver.findElement(wrapper);
     expect(wrapperElement).to.exist;
+}
+
+/**
+ * Text insertion and the `is_empty` method should work as intended.
+ */
+async function insertText(driver: WebDriver) {
+    await driver.sleep(100); // Wait for compose area init
+    const wrapperElement = await driver.findElement(wrapper);
+
+    expect(await extractText(driver)).to.equal('');
+    expect(await isEmpty(driver)).to.be.true;
+
+    await wrapperElement.click();
+    await wrapperElement.sendKeys('abcde');
+
+    expect(await extractText(driver)).to.equal('abcde');
+    expect(await isEmpty(driver)).to.be.false;
 }
 
 /**
@@ -378,6 +402,7 @@ async function noDuplicatedNewlines2(driver: WebDriver) {
 
 export const TESTS: Array<[string, Testfunc]> = [
     ['Make sure that the wrapper element can be found', wrapperFound],
+    ['Insert text', insertText],
     ['Insert three emoji', insertThreeEmoji],
     ['Insert text between emoji', insertTextBetweenEmoji],
     ['Replace selected text with text', replaceSelectedTextWithText],
