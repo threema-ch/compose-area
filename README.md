@@ -157,7 +157,28 @@ To extract the text from the area, there's also a method:
 area.get_text();
 ```
 
+By default, leading and trailing white-space is trimmed from the text. To
+disable this, pass `true` to the `get_text` method.
+
+```js
+area.get_text(true /* no_trim */);
+```
+
 ### Other helpers
+
+To test whether the compose area is empty:
+
+```js
+area.is_empty();
+```
+
+By default, if the compose area contains purely white-space, this method still
+considers the compose area to be empty. If you want a compose area containing
+white-space to be treated as non-empty, pass `true` to the `is_empty` method.
+
+```js
+area.is_empty(true /* no_trim */);
+```
 
 To focus the compose area programmatically:
 

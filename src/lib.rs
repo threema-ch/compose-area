@@ -483,6 +483,20 @@ impl ComposeArea {
         extract_text(&self.wrapper, no_trim.unwrap_or(false))
     }
 
+    /// Return whether the compose area is empty.
+    ///
+    /// Note: Right now this is a convenience wrapper around
+    /// `get_text(no_trim).length === 0`, but it might get optimized in the
+    /// future.
+    ///
+    /// Args:
+    /// - `no_trim`: If set to `true`, don't trim leading / trailing whitespace
+    ///   from returned text. Default: `false`.
+    pub fn is_empty(&self, no_trim: Option<bool>) -> bool {
+        debug!("[compose_area] is_empty");
+        extract_text(&self.wrapper, no_trim.unwrap_or(false)).is_empty()
+    }
+
     /// Focus the compose area.
     pub fn focus(&self) {
         debug!("[compose_area] focus");
