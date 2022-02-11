@@ -443,6 +443,23 @@ class ComposeArea {
         }
     }
     /**
+    * Return whether the compose area is empty.
+    *
+    * Note: Right now this is a convenience wrapper around
+    * `get_text(no_trim).length === 0`, but it might get optimized in the
+    * future.
+    *
+    * Args:
+    * - `no_trim`: If set to `true`, don't trim leading / trailing whitespace
+    *   from returned text. Default: `false`.
+    * @param {boolean | undefined} no_trim
+    * @returns {boolean}
+    */
+    is_empty(no_trim) {
+        var ret = _compose_area_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.composearea_is_empty(this.ptr, isLikeNone(no_trim) ? 0xFFFFFF : no_trim ? 1 : 0);
+        return ret !== 0;
+    }
+    /**
     * Focus the compose area.
     */
     focus() {
