@@ -7,8 +7,6 @@ A compose area with support for Emoji, written with Rust + Webassembly.
 
 Demo: https://threema-ch.github.io/compose-area/
 
-Project status: Used in production, but may still contain some bugs.
-
 
 ## Concepts
 
@@ -19,6 +17,21 @@ The input handling is done entirely by the browser. The library should be
 notified every time the caret position is changed, so it can update its
 internal state. It provides methods to insert text, images or other block
 elements. Selection and caret position are handled automatically.
+
+
+## Package on npmjs.com
+
+This project is published to npmjs.com:
+
+<https://www.npmjs.com/package/@threema/compose-area>
+
+The published package contains files for two different [wasm-pack build
+targets](https://rustwasm.github.io/wasm-pack/book/commands/build.html#target):
+
+- The root directory contains files for the wasm-pack `bundler` target. You
+  will need a bundler like webpack in order to use the library this way.
+- In the `web` subdirectory (i.e. `node_modules/@threema/compose-area/web/`)
+  you will find files built for the wasm-pack `web` target.
 
 
 ## Setup
