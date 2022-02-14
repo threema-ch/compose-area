@@ -1,5 +1,5 @@
 use log::Level;
-use virtual_dom_rs::VirtualNode;
+use percy_dom::{event::EventsByNodeIdx, VirtualNode};
 
 /// Setup function that should be called by all tests.
 pub(crate) fn setup_test() {
@@ -29,10 +29,10 @@ pub(crate) fn setup_compose_area_test(wrapper_id: &str) -> web_sys::Document {
         div.as_velement_mut()
             .unwrap()
             .attrs
-            .insert("id".to_string(), wrapper_id.to_string());
+            .insert("id".to_string(), wrapper_id.into());
         div
     };
-    body.append_child(&wrapper.create_dom_node())
+    body.append_child(&wrapper.create_dom_node(0, &mut EventsByNodeIdx::new()))
         .expect("Could not append node to body");
 
     // Ensure that wrapper was created

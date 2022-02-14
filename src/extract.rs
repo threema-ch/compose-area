@@ -109,7 +109,10 @@ mod tests {
     mod extract_text {
         use super::*;
 
-        use virtual_dom_rs::prelude::*;
+        use percy_dom::{
+            event::EventsByNodeIdx,
+            prelude::{html, VirtualNode},
+        };
 
         struct ExtractTextTest {
             html: VirtualNode,
@@ -128,7 +131,7 @@ mod tests {
                     .expect("Could not create test wrapper");
 
                 // Write HTML to DOM
-                let node: Node = self.html.create_dom_node().node;
+                let node: Node = self.html.create_dom_node(0, &mut EventsByNodeIdx::new());
                 test_wrapper
                     .append_child(&node)
                     .expect("Could not append node to test wrapper");

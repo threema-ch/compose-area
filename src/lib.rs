@@ -1,4 +1,3 @@
-#![cfg_attr(test, feature(proc_macro_hygiene))]
 #![deny(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(
