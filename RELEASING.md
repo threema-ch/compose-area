@@ -9,6 +9,7 @@ Update version numbers:
 
     vim -p Cargo.toml
     cargo update -p compose-area
+    cd www && npm install && cd ..
 
 Update changelog:
 

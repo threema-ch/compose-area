@@ -13,6 +13,12 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.4.5 (2022-02-14)
+
+- [added] Add web target to package in addition to bundler target (#91)
+- [added] Add `is_empty` method (#93)
+- [maintenance] Update dependencies
+
 ### v0.4.4 (2020-12-24)
 
 - [fixed] Fix packaging bug caused by wasm-pack (https://github.com/rustwasm/wasm-pack/issues/837)
