@@ -1,6 +1,5 @@
 //! Test suite for the Web and headless browsers.
 #![cfg(target_arch = "wasm32")]
-#![feature(proc_macro_hygiene)]
 
 use compose_area::ComposeArea;
 use wasm_bindgen_test::*;

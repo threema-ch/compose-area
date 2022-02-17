@@ -94,7 +94,7 @@ pub fn activate_selection_range(selection: &Selection, range: &Range) {
     //
     //       See https://bugs.webkit.org/show_bug.cgi?id=145212
     selection.remove_all_ranges().unwrap();
-    selection.add_range(&range).expect("Could not add range");
+    selection.add_range(range).expect("Could not add range");
 }
 
 #[cfg(test)]
@@ -126,8 +126,8 @@ pub fn unset_selection_range() {
 ///
 /// - `<span>|"abc"</span>`
 /// - `<span>"abc"</span>|`
-/// - `<span>"abc"<img>|</span>
-/// - `<span>"abc"<span></span>|</span>
+/// - `<span>"abc"<img>|</span>`
+/// - `<span>"abc"<span></span>|</span>`
 ///
 pub fn glue_range_to_text(range: &mut Range) -> bool {
     // Reject non-collapsed ranges
@@ -168,7 +168,7 @@ pub fn glue_range_to_text(range: &mut Range) -> bool {
 mod tests {
     use super::*;
 
-    use wasm_bindgen_test::*;
+    use wasm_bindgen_test::wasm_bindgen_test;
     use web_sys::Document;
 
     fn document() -> Document {

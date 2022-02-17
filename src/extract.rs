@@ -1,10 +1,9 @@
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::JsCast;
 use web_sys::{Element, HtmlImageElement, Node};
 
 /// Process a DOM node recursively and extract text.
 ///
 /// Convert elements like images to alt text.
-#[wasm_bindgen]
 pub fn extract_text(root_element: &Element, no_trim: bool) -> String {
     let mut text = String::new();
     visit_child_nodes(root_element, &mut text);
@@ -109,7 +108,10 @@ mod tests {
     mod extract_text {
         use super::*;
 
-        use virtual_dom_rs::prelude::*;
+        use percy_dom::{
+            event::EventsByNodeIdx,
+            prelude::{html, IterableNodes, VirtualNode},
+        };
 
         struct ExtractTextTest {
             html: VirtualNode,
@@ -128,7 +130,7 @@ mod tests {
                     .expect("Could not create test wrapper");
 
                 // Write HTML to DOM
-                let node: Node = self.html.create_dom_node().node;
+                let node: Node = self.html.create_dom_node(0, &mut EventsByNodeIdx::new());
                 test_wrapper
                     .append_child(&node)
                     .expect("Could not append node to test wrapper");
@@ -142,7 +144,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn simple() {
             ExtractTextTest {
-                html: html! { Hello World },
+                html: html! { { "Hello World" } },
                 expected: "Hello World",
             }
             .test();
@@ -151,7 +153,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn single_div() {
             ExtractTextTest {
-                html: html! { <div>Hello World</div> },
+                html: html! { <div>{ "Hello World" }</div> },
                 expected: "Hello World",
             }
             .test();
@@ -160,7 +162,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn single_span() {
             ExtractTextTest {
-                html: html! { <span>Hello World</span> },
+                html: html! { <span>{ "Hello World" }</span> },
                 expected: "Hello World",
             }
             .test();
@@ -169,7 +171,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn image() {
             ExtractTextTest {
-                html: html! { <div>Hello <img src="#" alt="Big">World</div> },
+                html: html! { <div>{ "Hello " }<img src="#" alt="Big">World</div> },
                 expected: "Hello BigWorld",
             }
             .test();

@@ -1,4 +1,3 @@
-#![cfg_attr(test, feature(proc_macro_hygiene))]
 #![deny(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(
@@ -7,7 +6,8 @@
     clippy::if_not_else,
     clippy::similar_names,
     clippy::module_name_repetitions,
-    clippy::must_use_candidate
+    clippy::must_use_candidate,
+    clippy::unused_unit, // TODO: Remove once https://github.com/rustwasm/wasm-bindgen/issues/2774 is released
 )]
 
 #[macro_use]
@@ -22,9 +22,9 @@ use log::Level;
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{self, Element, HtmlDocument, HtmlElement, Node, Range, Selection, Text};
 
-use crate::extract::extract_text;
-use crate::selection::{
-    activate_selection_range, glue_range_to_text, set_selection_range, Position,
+use crate::{
+    extract::extract_text,
+    selection::{activate_selection_range, glue_range_to_text, set_selection_range, Position},
 };
 
 cfg_if! {
@@ -107,38 +107,53 @@ impl RangeResult {
         }
     }
 
-    /// Used by JS code to show a string representation of the range.
-    #[allow(clippy::inherent_to_string)]
-    pub fn to_string(&self) -> String {
+    /// Return a compact or non-compact string representation of the range.
+    fn to_string_impl(&self, compact: bool) -> String {
         match (&self.range, self.outside) {
             (_, true) => "Outside".to_string(),
             (None, _) => "None".to_string(),
-            (Some(range), false) => format!(
-                "Range {{\n  \
-                  start: {} ~ {}\n  \
-                  end: {} ~ {}\n\
-                }}",
-                Self::format_node(&range.start_container().unwrap()),
-                &range.start_offset().unwrap(),
-                Self::format_node(&range.end_container().unwrap()),
-                &range.end_offset().unwrap(),
-            ),
+            (Some(range), false) => {
+                let sc = range.start_container().ok();
+                let so = range.start_offset().ok();
+                let ec = range.end_container().ok();
+                let eo = range.end_offset().ok();
+                match (sc, so, ec, eo, compact) {
+                    (Some(sc), Some(so), Some(ec), Some(eo), true) => {
+                        format!(
+                            "Range({}~{}, {}~{})",
+                            Self::format_node(&sc),
+                            &so,
+                            Self::format_node(&ec),
+                            &eo,
+                        )
+                    }
+                    (Some(sc), Some(so), Some(ec), Some(eo), false) => {
+                        format!(
+                            "Range {{\n  \
+                              start: {} ~ {}\n  \
+                              end: {} ~ {}\n\
+                            }}",
+                            Self::format_node(&sc),
+                            &so,
+                            Self::format_node(&ec),
+                            &eo,
+                        )
+                    }
+                    _ => "Incomplete Range".to_string(),
+                }
+            }
         }
     }
 
     /// Used by JS code to show a string representation of the range.
+    #[allow(clippy::inherent_to_string)]
+    pub fn to_string(&self) -> String {
+        self.to_string_impl(false)
+    }
+
+    /// Used by JS code to show a string representation of the range.
     pub fn to_string_compact(&self) -> String {
-        match (&self.range, self.outside) {
-            (_, true) => "Outside".to_string(),
-            (None, _) => "None".to_string(),
-            (Some(range), false) => format!(
-                "Range({}~{}, {}~{})",
-                Self::format_node(&range.start_container().unwrap()),
-                &range.start_offset().unwrap(),
-                Self::format_node(&range.end_container().unwrap()),
-                &range.end_offset().unwrap(),
-            ),
-        }
+        self.to_string_impl(true)
     }
 }
 
@@ -303,7 +318,7 @@ impl ComposeArea {
                             // area is a `<br>` node. This is needed because Firefox
                             // always adds a trailing newline that isn't rendered
                             let mut insert_before = false;
-                            if let Some(ref element) = node.dyn_ref::<Element>() {
+                            if let Some(element) = node.dyn_ref::<Element>() {
                                 if element.tag_name() == "BR" {
                                     insert_before = true;
                                 }
@@ -427,7 +442,7 @@ impl ComposeArea {
 
     /// Normalize the contents of the wrapper element.
     ///
-    /// See https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+    /// See <https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize>
     fn normalize(&self) {
         trace!("[compose_area]   normalize");
         self.wrapper.normalize();
@@ -555,7 +570,6 @@ impl ComposeArea {
             let mut start = 0;
             let mut end = 0;
             let is_word_boundary = |c: u16| c == 0x20 /* space */ || c == 0x09 /* tab */;
-            #[allow(clippy::collapsible_if)]
             for (i, c) in text.encode_utf16().enumerate() {
                 if i < offset as usize {
                     if is_word_boundary(c) {
@@ -568,9 +582,8 @@ impl ComposeArea {
                     if is_word_boundary(c) {
                         end = i;
                         break;
-                    } else {
-                        after.push(c);
                     }
+                    after.push(c);
                 }
             }
             if end <= start {
@@ -617,7 +630,7 @@ impl ComposeArea {
 mod tests {
     use super::*;
 
-    use wasm_bindgen_test::*;
+    use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};
 
     wasm_bindgen_test_configure!(run_in_browser);
 
@@ -732,7 +745,7 @@ mod tests {
                 node
             }
 
-            fn do_test<F>(&self, mut ca: &mut ComposeArea, insert_func: F)
+            fn do_test<F>(&self, ca: &mut ComposeArea, insert_func: F)
             where
                 F: FnOnce(&mut ComposeArea, &N),
             {
@@ -765,7 +778,7 @@ mod tests {
 
                 // Insert node and verify
                 ca.store_selection_range();
-                insert_func(&mut ca, &self.node);
+                insert_func(ca, &self.node);
                 assert_eq!(ca.wrapper.inner_html(), self.final_html);
             }
         }
@@ -887,7 +900,7 @@ mod tests {
                 selection::unset_selection_range();
 
                 // Insert node and verify
-                ca.insert_image(&img.src, &img.alt, &img.cls);
+                ca.insert_image(img.src, img.alt, img.cls);
                 assert_eq!(ca.wrapper.inner_html(), img.html(0));
             }
 
