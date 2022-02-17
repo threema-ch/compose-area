@@ -8,6 +8,10 @@ import { TESTS } from './tests';
 const TEST_URL = 'http://localhost:8080/';
 
 
+// Ensure that unhandled rejections result in aborting
+process.on('unhandledRejection', (up) => { throw up });
+
+
 // Script arguments
 const browser = process.argv[2];
 const filterQuery = process.argv[3];
