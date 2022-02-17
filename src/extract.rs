@@ -52,8 +52,19 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                         visit_child_nodes(element, text);
                     }
                     "div" => {
+                        #[allow(clippy::if_same_then_else)]
                         if parent_tag == "div" && i == 0 {
                             // No newline, in order to handle things like <div><div>hello</div></div>
+                        } else if prev_node_type_clone == "br" && i > 1 {
+                            // A <div> directly following a <br> should not result in an
+                            // *additional* newline (a newline is already added with the <br>).
+                            //
+                            // There is an exception though: When the markup is like this (i=1):
+                            //
+                            //     <div><br><div>a</div></div>
+                            //
+                            // ...then the newline should not be ignored, to avoid an
+                            // interaction with the nested-div handling rule above.
                         } else {
                             text.push('\n');
                         }
@@ -227,7 +238,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn br_in_nested_div() {
             ExtractTextTest {
-                html: html! { <div>Hello<div><br><div>World</div></div> },
+                html: html! { <div>Hello<div><br><div>World</div></div></div> },
                 expected: "Hello\n\nWorld",
             }
             .test();
@@ -256,6 +267,16 @@ mod tests {
             ExtractTextTest {
                 html: node,
                 expected: "Hello\nWorld",
+            }
+            .test();
+        }
+
+        /// Regression test for https://github.com/threema-ch/compose-area/issues/75
+        #[wasm_bindgen_test]
+        fn newline_regression_75() {
+            ExtractTextTest {
+                html: html! { <div>a<br><div>b</div><div>c<br></div></div> },
+                expected: "a\nb\nc",
             }
             .test();
         }
