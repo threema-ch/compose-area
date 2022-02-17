@@ -18,7 +18,7 @@ pub fn extract_text(root_element: &Element, no_trim: bool) -> String {
 ///
 /// TODO: This could be optimized by avoiding copies and re-allocations.
 fn visit_child_nodes(parent_node: &Element, text: &mut String) {
-    let mut last_node_type = "".to_string();
+    let mut prev_node_type = "".to_string();
     let children = parent_node.child_nodes();
     for i in 0..children.length() {
         let node = match children.item(i) {
@@ -30,11 +30,11 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
         };
         match node.node_type() {
             Node::TEXT_NODE => {
-                if last_node_type == "div" {
+                if prev_node_type == "div" {
                     // A text node following a div should go on a new line
                     text.push('\n');
                 }
-                last_node_type = "text".to_string();
+                prev_node_type = "text".to_string();
                 // Append text, but strip leading and trailing newlines
                 if let Some(ref val) = node.node_value() {
                     text.push_str(val);
@@ -44,23 +44,34 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                 let element: &Element = node.unchecked_ref();
                 let tag = element.tag_name().to_lowercase();
                 let parent_tag = parent_node.tag_name().to_lowercase();
-                let last_node_type_clone = last_node_type.clone();
-                last_node_type = tag.clone();
+                let prev_node_type_clone = prev_node_type.clone();
+                prev_node_type = tag.clone();
                 // Please note: Browser rendering of a contenteditable div is the worst thing ever.
                 match &*tag {
                     "span" => {
                         visit_child_nodes(element, text);
                     }
                     "div" => {
+                        #[allow(clippy::if_same_then_else)]
                         if parent_tag == "div" && i == 0 {
                             // No newline, in order to handle things like <div><div>hello</div></div>
+                        } else if prev_node_type_clone == "br" && i > 1 {
+                            // A <div> directly following a <br> should not result in an
+                            // *additional* newline (a newline is already added with the <br>).
+                            //
+                            // There is an exception though: When the markup is like this (i=1):
+                            //
+                            //     <div><br><div>a</div></div>
+                            //
+                            // ...then the newline should not be ignored, to avoid an
+                            // interaction with the nested-div handling rule above.
                         } else {
                             text.push('\n');
                         }
                         visit_child_nodes(element, text);
                     }
                     "img" => {
-                        if last_node_type_clone == "div" {
+                        if prev_node_type_clone == "div" {
                             // An image following a div should go on a new line
                             text.push('\n');
                         }
@@ -227,7 +238,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn br_in_nested_div() {
             ExtractTextTest {
-                html: html! { <div>Hello<div><br><div>World</div></div> },
+                html: html! { <div>Hello<div><br><div>World</div></div></div> },
                 expected: "Hello\n\nWorld",
             }
             .test();
@@ -256,6 +267,16 @@ mod tests {
             ExtractTextTest {
                 html: node,
                 expected: "Hello\nWorld",
+            }
+            .test();
+        }
+
+        /// Regression test for https://github.com/threema-ch/compose-area/issues/75
+        #[wasm_bindgen_test]
+        fn newline_regression_75() {
+            ExtractTextTest {
+                html: html! { <div>a<br><div>b</div><div>c<br></div></div> },
+                expected: "a\nb\nc",
             }
             .test();
         }
