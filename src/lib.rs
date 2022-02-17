@@ -106,38 +106,53 @@ impl RangeResult {
         }
     }
 
-    /// Used by JS code to show a string representation of the range.
-    #[allow(clippy::inherent_to_string)]
-    pub fn to_string(&self) -> String {
+    /// Return a compact or non-compact string representation of the range.
+    fn to_string_impl(&self, compact: bool) -> String {
         match (&self.range, self.outside) {
             (_, true) => "Outside".to_string(),
             (None, _) => "None".to_string(),
-            (Some(range), false) => format!(
-                "Range {{\n  \
-                  start: {} ~ {}\n  \
-                  end: {} ~ {}\n\
-                }}",
-                Self::format_node(&range.start_container().unwrap()),
-                &range.start_offset().unwrap(),
-                Self::format_node(&range.end_container().unwrap()),
-                &range.end_offset().unwrap(),
-            ),
+            (Some(range), false) => {
+                let sc = range.start_container().ok();
+                let so = range.start_offset().ok();
+                let ec = range.end_container().ok();
+                let eo = range.end_offset().ok();
+                match (sc, so, ec, eo, compact) {
+                    (Some(sc), Some(so), Some(ec), Some(eo), true) => {
+                        format!(
+                            "Range({}~{}, {}~{})",
+                            Self::format_node(&sc),
+                            &so,
+                            Self::format_node(&ec),
+                            &eo,
+                        )
+                    }
+                    (Some(sc), Some(so), Some(ec), Some(eo), false) => {
+                        format!(
+                            "Range {{\n  \
+                              start: {} ~ {}\n  \
+                              end: {} ~ {}\n\
+                            }}",
+                            Self::format_node(&sc),
+                            &so,
+                            Self::format_node(&ec),
+                            &eo,
+                        )
+                    }
+                    _ => "Incomplete Range".to_string(),
+                }
+            }
         }
     }
 
     /// Used by JS code to show a string representation of the range.
+    #[allow(clippy::inherent_to_string)]
+    pub fn to_string(&self) -> String {
+        self.to_string_impl(false)
+    }
+
+    /// Used by JS code to show a string representation of the range.
     pub fn to_string_compact(&self) -> String {
-        match (&self.range, self.outside) {
-            (_, true) => "Outside".to_string(),
-            (None, _) => "None".to_string(),
-            (Some(range), false) => format!(
-                "Range({}~{}, {}~{})",
-                Self::format_node(&range.start_container().unwrap()),
-                &range.start_offset().unwrap(),
-                Self::format_node(&range.end_container().unwrap()),
-                &range.end_offset().unwrap(),
-            ),
-        }
+        self.to_string_impl(true)
     }
 }
 
