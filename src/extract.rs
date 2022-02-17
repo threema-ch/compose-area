@@ -111,7 +111,7 @@ mod tests {
 
         use percy_dom::{
             event::EventsByNodeIdx,
-            prelude::{html, VirtualNode},
+            prelude::{html, IterableNodes, VirtualNode},
         };
 
         struct ExtractTextTest {
@@ -145,7 +145,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn simple() {
             ExtractTextTest {
-                html: html! { Hello World },
+                html: html! { { "Hello World" } },
                 expected: "Hello World",
             }
             .test();
@@ -154,7 +154,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn single_div() {
             ExtractTextTest {
-                html: html! { <div>Hello World</div> },
+                html: html! { <div>{ "Hello World" }</div> },
                 expected: "Hello World",
             }
             .test();
@@ -163,7 +163,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn single_span() {
             ExtractTextTest {
-                html: html! { <span>Hello World</span> },
+                html: html! { <span>{ "Hello World" }</span> },
                 expected: "Hello World",
             }
             .test();
@@ -172,7 +172,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn image() {
             ExtractTextTest {
-                html: html! { <div>Hello <img src="#" alt="Big">World</div> },
+                html: html! { <div>{ "Hello " }<img src="#" alt="Big">World</div> },
                 expected: "Hello BigWorld",
             }
             .test();
