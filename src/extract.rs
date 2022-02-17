@@ -1,10 +1,9 @@
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::JsCast;
 use web_sys::{Element, HtmlImageElement, Node};
 
 /// Process a DOM node recursively and extract text.
 ///
 /// Convert elements like images to alt text.
-#[wasm_bindgen]
 pub fn extract_text(root_element: &Element, no_trim: bool) -> String {
     let mut text = String::new();
     visit_child_nodes(root_element, &mut text);
