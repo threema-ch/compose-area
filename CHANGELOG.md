@@ -13,6 +13,11 @@ Possible log types:
 - `[maintenance]` for maintenance work like dependency updates.
 
 
+### v0.4.6 (2022-04-04)
+
+- [fixed] Fix another double-newline issue (#96)
+- [maintenance] Update dependencies
+
 ### v0.4.5 (2022-02-14)
 
 - [added] Add web target to package in addition to bundler target (#91)
