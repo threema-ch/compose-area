@@ -58,7 +58,7 @@ pub struct ComposeArea {
 /// exactly between two nodes.
 ///
 /// Depending on this enum value, the node before or after the cursor is returned.
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Direction {
     Before,
     After,
