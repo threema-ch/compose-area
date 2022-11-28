@@ -86,6 +86,18 @@ suite.add('4. Fetch selection range', {
         teardownTest(ctx.divId);
     },
 });
+suite.add('5. Insert multi-line text (400x hello world)', {
+    setup: () => {
+        const ctx = setupTest();
+    },
+    fn: () => {
+        let text = 'hello world\n'.repeat(400);
+        ctx.composeArea.insert_text('hello world');
+    },
+    teardown: () => {
+        teardownTest(ctx.divId);
+    },
+});
 
 // Add listeners
 suite.on('start', function() {
