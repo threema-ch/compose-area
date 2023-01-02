@@ -4,3 +4,4 @@
 **/*.rs.bk
 wasm-pack.log
 node_modules/
+.git/
