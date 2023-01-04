@@ -258,3 +258,4 @@ at your option.
 [circle-ci-badge]: https://circleci.com/gh/threema-ch/compose-area/tree/master.svg?style=shield
 [license]: https://github.com/threema-ch/compose-area#license
 [license-badge]: https://img.shields.io/badge/License-Apache%202.0%20%2f%20MIT-blue.svg
+test
