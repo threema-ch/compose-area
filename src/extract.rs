@@ -18,7 +18,7 @@ pub fn extract_text(root_element: &Element, no_trim: bool) -> String {
 ///
 /// TODO: This could be optimized by avoiding copies and re-allocations.
 fn visit_child_nodes(parent_node: &Element, text: &mut String) {
-    let mut prev_node_type = "".to_string();
+    let mut prev_node_type = String::new();
     let children = parent_node.child_nodes();
     for i in 0..children.length() {
         let node = match children.item(i) {
@@ -247,7 +247,7 @@ mod tests {
         #[wasm_bindgen_test]
         fn two_nested_divs() {
             ExtractTextTest {
-                html: html! { <div>Hello<div><div>World</div></div> },
+                html: html! { <div>Hello<div>World</div></div> },
                 expected: "Hello\nWorld",
             }
             .test();
