@@ -8,6 +8,7 @@
     clippy::module_name_repetitions,
     clippy::must_use_candidate,
     clippy::unused_unit, // TODO: Remove once https://github.com/rustwasm/wasm-bindgen/issues/2774 is released
+    clippy::manual_let_else,
 )]
 
 #[macro_use]
@@ -209,9 +210,11 @@ impl ComposeArea {
                 "info" => utils::init_log(Level::Info),
                 "warn" => utils::init_log(Level::Warn),
                 "error" => utils::init_log(Level::Error),
-                other => web_sys::console::warn_1(
-                    &format!("bind_to: Invalid log level: {}", other).into(),
-                ),
+                other => {
+                    web_sys::console::warn_1(
+                        &format!("bind_to: Invalid log level: {other}").into(),
+                    );
+                }
             }
         }
         trace!("[compose_area] bind_to");

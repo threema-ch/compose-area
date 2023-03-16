@@ -26,7 +26,7 @@ module.exports = merge(common, {
             maxAsyncRequests: 5,
             maxInitialRequests: 3,
         },
-        noEmitOnErrors: true,
+        emitOnErrors: false,
         checkWasmTypes: true,
         minimize: false,
     },
