@@ -1,6 +1,15 @@
-version: 2
+version: 2.1
+
+orbs:
+  macos: circleci/macos@2.1.0
 
 references:
+
+  parameters-integrationtests: &parameters-integrationtests
+    setup-safari:
+      type: boolean
+      default: false
+
   steps-integrationtests: &steps-integrationtests
     - attach_workspace:
         at: .
@@ -12,22 +21,22 @@ references:
           - v1-npm-cache-integrationtest-{{ arch }}-{{ .Branch }}
           - v1-npm-cache-integrationtest-{{ arch }}
 
-    - run:
-        name: Prepare non-global npm directory
-        command: mkdir ~/.npm-global && npm config set prefix '~/.npm-global'
+    # Add safari permissions: https://circleci.com/developer/orbs/orb/circleci/macos#commands-add-safari-permissions
+    - when:
+        condition: << parameters.setup-safari >>
+        steps:
+          - macos/add-safari-permissions
+
+    # Start test server
     - run:
         name: Set up test server
-        command: >
-          PATH=~/.npm-global/bin:$PATH
-          && cd pkg
-          && npm link
-          && cd ../www
-          && npm ci
-          && npm link compose-area
+        command: cd www && npm ci
     - run:
         name: Start test server
         command: cd www && npm run start
         background: true
+
+    # Test
     - run:
         name: Set up selenium tests
         command: cd selenium && npm ci
@@ -270,7 +279,10 @@ jobs:
           paths:
             - /usr/local/cargo
 
+
+
   test-integration-firefox:
+    parameters: *parameters-integrationtests
     docker:
       - image: circleci/node:16-browsers
     steps: *steps-integrationtests
@@ -278,11 +290,20 @@ jobs:
       BROWSER: firefox
 
   test-integration-chrome:
+    parameters: *parameters-integrationtests
     docker:
       - image: circleci/node:16-browsers
     steps: *steps-integrationtests
     environment:
       BROWSER: chrome
+
+  test-integration-safari:
+    parameters: *parameters-integrationtests
+    macos:
+      xcode: 13.2.1
+    steps: *steps-integrationtests
+    environment:
+      BROWSER: safari
 
   audit:
     docker:
@@ -395,11 +416,16 @@ workflows:
       - test-integration-chrome:
           requires:
             - build
+      - test-integration-safari:
+          setup-safari: true
+          requires:
+            - build
       - build-demo:
           requires:
             - build
             - test-integration-firefox
             - test-integration-chrome
+            - test-integration-safari
       - deploy-demo:
           requires:
             - build-demo
@@ -428,9 +454,14 @@ workflows:
       - test-integration-chrome:
           requires:
             - build
+      - test-integration-safari:
+          setup-safari: true
+          requires:
+            - build
       - build-demo:
           requires:
             - build
             - test-integration-firefox
             - test-integration-chrome
+            - test-integration-safari
       - audit
