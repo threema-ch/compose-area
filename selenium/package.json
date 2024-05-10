@@ -9,10 +9,10 @@
   "author": "dbrgn",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^12.12.5",
-    "@types/selenium-webdriver": "^4.0.5",
+    "@types/node": "^12.20.55",
+    "@types/selenium-webdriver": "^4.1.22",
     "chai": "^4.2.0",
-    "selenium-webdriver": "^4.0.0-alpha.5",
+    "selenium-webdriver": "^4.20.0",
     "term-color": "^1.0.1",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.4"
