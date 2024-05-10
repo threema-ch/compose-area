@@ -199,6 +199,11 @@ impl ComposeArea {
     /// If the `log_level` argument is supplied, the console logger is
     /// initialized. Valid log levels: `trace`, `debug`, `info`, `warn` or
     /// `error`.
+    ///
+    /// # Panics
+    ///
+    /// - If global `window` or `window.document` does not exist
+    /// - If modifying attributes of the wrapper element fails
     pub fn bind_to(wrapper: Element, log_level: Option<String>) -> Self {
         utils::set_panic_hook();
 
@@ -283,7 +288,7 @@ impl ComposeArea {
                 error!("[compose_area] Removing all ranges failed");
             }
             match selection.add_range(range) {
-                Ok(_) => true,
+                Ok(()) => true,
                 Err(_) => {
                     error!("[compose_area] Adding range failed");
                     false
@@ -359,6 +364,11 @@ impl ComposeArea {
     /// Insert an image at the current caret position.
     ///
     /// Return a reference to the inserted image element.
+    ///
+    /// # Panics
+    ///
+    /// - If inserted image node could not be found
+    /// - If inserted image node could not be cast into `HtmlElement`
     pub fn insert_image(&mut self, src: &str, alt: &str, cls: &str) -> HtmlElement {
         debug!("[compose_area] insert_image ({})", &alt);
 
@@ -407,6 +417,12 @@ impl ComposeArea {
     /// **NOTE:** Due to browser limitations, this will not result in a new
     /// entry in the browser's internal undo stack. This means that the node
     /// insertion cannot be undone using Ctrl+Z.
+    ///
+    /// # Panics
+    ///
+    /// - If the selection contents could not be removed
+    /// - If the replacement node could not be inserted
+    /// - If child nodes could not be appended or inserted
     pub fn insert_node(&mut self, node_ref: &Node) {
         debug!("[compose_area] insert_node");
 
@@ -452,6 +468,10 @@ impl ComposeArea {
     }
 
     /// Return the DOM selection.
+    ///
+    /// # Panics
+    ///
+    /// - If selection could not be obtained from window
     fn fetch_selection(&self) -> Option<Selection> {
         trace!("[compose_area]   fetch_selection");
         self.window
@@ -461,6 +481,11 @@ impl ComposeArea {
 
     /// Return the last range of the selection that is within the wrapper
     /// element.
+    ///
+    /// # Panics
+    ///
+    /// - If range could not be obtained from selection
+    /// - If common ancestor container could not be determined for range
     pub fn fetch_range(&self) -> RangeResult {
         trace!("[compose_area] fetch_range");
         let selection = match self.fetch_selection() {
@@ -526,6 +551,10 @@ impl ComposeArea {
     }
 
     /// Clear the contents of the compose area.
+    ///
+    /// # Panics
+    ///
+    /// - If last child could not be found or removed
     pub fn clear(&mut self) {
         debug!("[compose_area] clear");
         while self.wrapper.has_child_nodes() {
@@ -544,6 +573,12 @@ impl ComposeArea {
     ///
     /// Note: This methods uses the range that was last set with
     /// `store_selection_range`.
+    ///
+    /// # Panics
+    ///
+    /// - If text node could not be obtained
+    /// - If start offset of range could not be obtained
+    /// - If text from DOM could not be UTF16-decoded
     pub fn get_word_at_caret(&mut self) -> Option<WordAtCaret> {
         debug!("[compose_area] get_word_at_caret");
 

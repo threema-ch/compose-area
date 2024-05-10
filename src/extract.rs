@@ -45,7 +45,7 @@ fn visit_child_nodes(parent_node: &Element, text: &mut String) {
                 let tag = element.tag_name().to_lowercase();
                 let parent_tag = parent_node.tag_name().to_lowercase();
                 let prev_node_type_clone = prev_node_type.clone();
-                prev_node_type = tag.clone();
+                prev_node_type.clone_from(&tag);
                 // Please note: Browser rendering of a contenteditable div is the worst thing ever.
                 match &*tag {
                     "span" => {
