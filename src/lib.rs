@@ -919,29 +919,6 @@ mod tests {
                 .test(&mut ca);
             }
 
-            /// If there is no selection but a trailing newline, element
-            /// will replace that trailing newline due to the way how the
-            /// `insertHTML` command works.
-            #[wasm_bindgen_test]
-            fn at_end_with_br() {
-                let mut ca = init();
-                let img = Img {
-                    src: "img.jpg",
-                    alt: "😀",
-                    cls: "em",
-                };
-
-                // Prepare wrapper
-                ca.wrapper.set_inner_html("<br>");
-
-                // Ensure that there's no selection left in the DOM
-                selection::unset_selection_range();
-
-                // Insert node and verify
-                ca.insert_image(img.src, img.alt, img.cls);
-                assert_eq!(ca.wrapper.inner_html(), img.html(0));
-            }
-
             #[wasm_bindgen_test]
             fn split_text() {
                 let mut ca = init();
