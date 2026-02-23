@@ -1,7 +1,11 @@
-version: 2
+version: "2.1"
+
+orbs:
+  browser-tools: circleci/browser-tools@1.4.8
 
 references:
   steps-integrationtests: &steps-integrationtests
+    - browser-tools/install_browser_tools
     - attach_workspace:
         at: .
 
@@ -48,7 +52,6 @@ references:
           - selenium/node_modules
 
 jobs:
-
   build:
     docker:
       - image: rust:latest
@@ -247,7 +250,7 @@ jobs:
             apt-get update
             && apt-get install -y libgtk-3-0 libdbus-glib-1-2 libx11-xcb1 libasound2
             && wget -q -O - "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US"
-            |  tar xj
+            |  tar xf
 
       # Show versions
       - run:
@@ -272,14 +275,14 @@ jobs:
 
   test-integration-firefox:
     docker:
-      - image: circleci/node:16-browsers
+      - image: cimg/node:20.13-browsers
     steps: *steps-integrationtests
     environment:
       BROWSER: firefox
 
   test-integration-chrome:
     docker:
-      - image: circleci/node:16-browsers
+      - image: cimg/node:20.13-browsers
     steps: *steps-integrationtests
     environment:
       BROWSER: chrome
@@ -305,7 +308,7 @@ jobs:
 
   build-demo:
     docker:
-      - image: circleci/node:16
+      - image: circleci/node:20
     steps:
       - checkout
       - attach_workspace:
@@ -359,7 +362,7 @@ jobs:
 
   deploy-demo:
     docker:
-      - image: circleci/node:16
+      - image: circleci/node:20
     steps:
       - checkout
       - attach_workspace:
@@ -380,7 +383,7 @@ jobs:
           command: node_modules/.bin/gh-pages --dotfiles --message "[skip ci] Updates" --dist html
 
 workflows:
-  version: 2
+  version: "2.1"
 
   build-and-test:
     jobs:

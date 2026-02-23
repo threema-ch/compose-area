@@ -1,6 +1,5 @@
 // benchmark.js
-import _ from 'lodash';
-import * as Benchmark from 'benchmark';
+import Benchmark from 'benchmark';
 
 // compose-area
 import {ComposeArea} from 'compose-area';
